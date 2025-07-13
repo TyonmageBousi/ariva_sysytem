@@ -1,6 +1,6 @@
 'use client';
 
-export default function Header() {
+export default function header() {
     type Menu = {
         label: string
     };

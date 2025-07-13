@@ -4,6 +4,7 @@
   --background: #ffffff;
   --foreground: #171717;
   --base: #011c3f;
+  --footer: #000000;
 }
 
 @theme inline {
@@ -25,3 +26,8 @@ body {
   color: var(--foreground);
   font-family: serif, Arial, Helvetica, sans-serif;
 }
+
+footer {
+  background: var(--footer);
+}
+
