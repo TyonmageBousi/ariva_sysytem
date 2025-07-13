@@ -11,7 +11,7 @@ export default function Footer() {
         { label: "お問い合わせ" },
     ];
     return (
-        <footer className="justify-between px-10 py-8">
+        <footer>
             <ul className="flex justify-center gap-20 ">
                 {menu.map((item, index) => (<li key={index}>{item.label}</li>))}
             </ul>
