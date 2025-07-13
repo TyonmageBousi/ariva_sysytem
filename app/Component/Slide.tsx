@@ -40,8 +40,12 @@ export default function Slide() {
             speed={duration}
         >
             {slide.map((item, index) => (
-                <SwiperSlide key={index}><Image className="w-full h-[77vh] object-cover block rounded-[2%]" src={item.label} alt={`Slide ${index + 1}`} /></SwiperSlide>
+                <SwiperSlide key={index}><Image className="relative z-10 w-full h-[77vh] object-cover block rounded-[2%]" src={item.label} alt={`Slide ${index + 1}`} /></SwiperSlide>
             ))}
+            <div className="absolute top-[80%]  z-20">
+                <p className="text-[3.5rem] my-2.5">自分へのご褒美に</p>
+                <p className="text-[1.5rem] my-2.5">日々の忙しさのなかでひとつくらいご褒美があってもいいじゃないそんな思いで作りました</p>
+            </div>
         </Swiper>
 
     );
