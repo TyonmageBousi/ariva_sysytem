@@ -1,8 +1,8 @@
 'use client';
-import Header from './component/Header';
-import Slide from './component/Slide';
-import Footer from './component/Footer';
-import PickUp from './component/Pickup';
+import Header from './Component/Header';
+import Slide from './Component/Slide';
+import Footer from './Component/Footer';
+import PickUp from './Component/Pickup';
 
 export default function Index() {
   return (

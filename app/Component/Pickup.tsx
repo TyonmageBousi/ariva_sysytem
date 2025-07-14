@@ -21,8 +21,8 @@ export default function PickUp() {
             <ul className="flex justify-around">
                 {products.map((item, index) => (
                     <li key={index}>
-                        <Image src={item.image} alt={`product ${index + 1}`} />
-                        <p className=' w-fit mx-auto my-[1rem]'>{item.name}</p>
+                        <Image className='max-w-[350px] max-h-[350px]' src={item.image} alt={`product ${index + 1}`} />
+                        <p className=' w-fit my-[1rem] pl-0'>{item.name}</p>
                     </li>
                 ))}
             </ul>
