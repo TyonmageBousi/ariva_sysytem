@@ -10,9 +10,8 @@ import slide3 from '../assets/main-slide/slide3.png';
 import slide4 from '../assets/main-slide/slide4.png';
 import slide5 from '../assets/main-slide/slide5.png';
 import type { StaticImageData } from 'next/image';
-
-
 import Image from 'next/image';
+
 type Slide = {
     label: StaticImageData
 }
@@ -47,6 +46,5 @@ export default function Slide() {
                 <p className="text-[1.5rem] my-2.5">日々の忙しさのなかでひとつくらいご褒美があってもいいじゃないそんな思いで作りました</p>
             </div>
         </Swiper>
-
     );
 };
