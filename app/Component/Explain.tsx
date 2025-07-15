@@ -56,8 +56,8 @@ export default function Explain() {
 
             {concepts.map((item, index) => (
                 <div key={index} className='relative w-[80%] h-[60vh] mx-auto'>
-                    <p className='relative z-20 text-[1.5rem] mx-auto w-fit mb-20 '>{item.title}</p>
-                    <p className='relative z-20 text-[1rem] mx-auto w-[50%] '>
+                    <p className='relative z-20 text-[1.5rem] text-center mx-auto w-fit mb-20 '>{item.title}</p>
+                    <p className='relative z-20 text-[1rem] text-center mx-auto w-[50%]  '>
                         {item.text.split('\n').map((line, i) => (
                             <span key={i}>
                                 {line}
