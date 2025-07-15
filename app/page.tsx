@@ -3,6 +3,8 @@ import Header from './Component/Header';
 import Slide from './Component/Slide';
 import Footer from './Component/Footer';
 import PickUp from './Component/Pickup';
+import Explain from './Component/Explain';
+
 
 export default function Index() {
   return (
@@ -10,6 +12,7 @@ export default function Index() {
       <Header />
       <Slide />
       <PickUp />
+      <Explain />
       <Footer />
     </div >
   )
