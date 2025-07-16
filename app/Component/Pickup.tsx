@@ -5,19 +5,25 @@ import product3 from '../assets/limited-time/product3.png';
 import type { StaticImageData } from 'next/image';
 import Image from 'next/image';
 
-export default function PickUp() {
-    type Product = {
-        image: StaticImageData,
-        name: string
-    }
-    const products: Product[] = [
-        { image: product1, name: 'クリスマスケーキ' },
-        { image: product2, name: 'クリスマス限定特別セット' },
-        { image: product3, name: 'サンタチョコ' },
-    ]
+type Props = {
+    title: string;
+}
+
+type Product = {
+    image: StaticImageData,
+    name: string
+}
+const products: Product[] = [
+    { image: product1, name: 'クリスマスケーキ' },
+    { image: product2, name: 'クリスマス限定特別セット' },
+    { image: product3, name: 'サンタチョコ' },
+]
+
+
+export default function PickUp({ title }: Props) {
     return (
         <div>
-            <p className="mx-auto w-fit text-[3.0rem] font-bold mt-[10rem] mb-[1rem]">PickUp</p>
+            <p className={title}>PickUp</p>
             <ul className="flex justify-around">
                 {products.map((item, index) => (
                     <li key={index}>
