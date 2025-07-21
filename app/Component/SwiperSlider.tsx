@@ -12,12 +12,13 @@ type Slide = {
 };
 
 type Props = {
-    slides: Slide[];
-    interval: number;
-    duration: number;
-    slidesPerView: number;
-    loop: boolean
+    slides: Slide[];            // スライド画像の配列
+    interval: number;           // 自動切り替えの間隔（ミリ秒）
+    duration: number;           // スライドの切り替え速度（ミリ秒）
+    slidesPerView: number;      // 一度に表示する画像の数
+    loop: boolean;              // スライドをループさせるかどうか
 };
+
 
 
 export default function SwiperSlider({ slides, interval, duration, slidesPerView, loop }: Props) {
