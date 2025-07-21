@@ -1,6 +1,6 @@
 'use client';
 import Header from './Component/Header';
-import Slide from './Component/Slide';
+import Slide from './Component/Main';
 import Footer from './Component/Footer';
 import PickUp from './Component/Pickup';
 import Explain from './Component/Explain';
