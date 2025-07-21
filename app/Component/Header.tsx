@@ -1,7 +1,6 @@
 'use client';
 
-export default function Header() {
-    type Menu = {
+ type Menu = {
         label: string
     };
     const menu: Menu[] = [
@@ -14,6 +13,8 @@ export default function Header() {
         { label: "Shop" },
         { label: "お問い合わせ" },
     ];
+
+export default function Header() {
     return (
         <header className="flex justify-between	 px-10 py-8">
             <p>ロゴ</p>
