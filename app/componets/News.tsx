@@ -2,29 +2,29 @@
 
 import { useEffect, useState } from 'react';
 
-type News = {
+type NewsItem  = {
     date: string;
     news: string;
 };
 
-type Props = {
-    title: string;
+type NewsPageProps  = {
+    titleClass: string;
 }
 
 
-export default function NewsPage({ title }: Props) {
-    const [newsList, setNewsList] = useState<News[]>([]);
+export default function NewsPage({ titleClass }: NewsPageProps ) {
+        const [newsList, setNewsList] = useState<NewsItem []>([]);
 
-    useEffect(() => {
-        const stored = localStorage.getItem('newsList');
-        if (stored) {
-            setNewsList(JSON.parse(stored));
-        }
+        useEffect(() => {
+            const stored = localStorage.getItem('newsList');
+            if (stored) {
+                setNewsList(JSON.parse(stored));
+            }
     }, []);
 
     return (
         <div>
-            <h1 className={title}>NEWS</h1>
+            <h1 className={titleClass}>NEWS</h1>
             <ul className='w-[90%] mx-auto'>
                 {newsList.length === 0 && <li>投稿がありません</li>}
                 {newsList.map((item, index) => (

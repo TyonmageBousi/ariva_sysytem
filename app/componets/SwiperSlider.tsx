@@ -3,16 +3,15 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
 import 'swiper/css';
-
 import Image from 'next/image';
 import type { StaticImageData } from 'next/image';
 
-type Slide = {
-    label: StaticImageData;
+type SlideImage  = {
+    src: StaticImageData;
 };
 
 type Props = {
-    slides: Slide[];
+    slideImages: SlideImage [];
     interval: number;
     duration: number;
     slidesPerView: number;
@@ -20,7 +19,7 @@ type Props = {
 };
 
 
-export default function SwiperSlider({ slides, interval, duration, slidesPerView, loop }: Props) {
+export default function SwiperSlider({ slideImages, interval, duration, slidesPerView, loop }: Props) {
     return (
         <Swiper
             modules={[Autoplay]}
@@ -29,11 +28,11 @@ export default function SwiperSlider({ slides, interval, duration, slidesPerView
             autoplay={{ delay: interval, disableOnInteraction: false }}
             speed={duration}
         >
-            {slides.map((item, index) => (
+            {slideImages.map((slideImage, index) => (
                 <SwiperSlide key={index}>
                     <Image
-                        className="z-10 w-full h-[77vh] object-cover block rounded-[2%]"
-                        src={item.label}
+                        className="z-10 w-full h-[77vh] object-cover block rounded-lg"
+                        src={slideImage.src}
                         alt={`Slide ${index + 1}`}
                     />
                 </SwiperSlide>
