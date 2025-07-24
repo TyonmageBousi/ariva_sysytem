@@ -12,7 +12,7 @@ const menu: Menu[] = [
 
 export default function Footer() {
     return (
-        <footer className="justify-between px-10 py-8">
+        <footer>
             <ul className="flex justify-center gap-20 ">
                 {menu.map((item, index) => (<li key={index}>{item.label}</li>))}
             </ul>
