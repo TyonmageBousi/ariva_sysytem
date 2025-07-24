@@ -17,11 +17,12 @@ type Props = {
     duration: number;           // スライドの切り替え速度（ミリ秒）
     slidesPerView: number;      // 一度に表示する画像の数
     loop: boolean;              // スライドをループさせるかどうか
+    style:string
 };
 
 
 
-export default function SwiperSlider({ slides, interval, duration, slidesPerView, loop }: Props) {
+export default function SwiperSlider({ slides, interval, duration, slidesPerView, loop ,style}: Props) {
     return (
         <Swiper
             modules={[Autoplay]}
@@ -33,7 +34,7 @@ export default function SwiperSlider({ slides, interval, duration, slidesPerView
             {slides.map((item, index) => (
                 <SwiperSlide key={index}>
                     <Image
-                        className="z-10 w-full h-[77vh] object-cover block rounded-[2%]"
+                        className={style}
                         src={item.label}
                         alt={`Slide ${index + 1}`}
                     />

@@ -1,4 +1,5 @@
 'use client';
+
 import Header from './Component/Header';
 import Slide from './Component/Main';
 import Footer from './Component/Footer';

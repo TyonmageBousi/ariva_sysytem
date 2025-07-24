@@ -23,7 +23,7 @@ const slides: Slide[] = [
 export default function MainSlide() {
     return (
         <div className="relative">
-            <SwiperSlider slides={slides} interval={3000} duration={800} slidesPerView={1} loop= {true} />
+            <SwiperSlider slides={slides} interval={3000} duration={800} slidesPerView={1} loop= {true} style="z-10 w-full h-[77vh] object-cover block rounded-[2%]" />
             <div className="absolute top-[80%] z-20 text-white px-6">
                 <p className="text-[3.5rem] my-2.5">自分へのご褒美に</p>
                 <p className="text-[1.5rem] my-2.5">
