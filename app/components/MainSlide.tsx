@@ -1,7 +1,7 @@
 'use client';
 
-import type { StaticImageData } from 'next/image';
 import SwiperSlider from './SwiperSlider'; 
+import type { SlideImage } from './SwiperSlider';
 
 //DBに置き換える予定
 import slide1 from '../assets/main-slide/slide1.png';
@@ -10,12 +10,7 @@ import slide3 from '../assets/main-slide/slide3.png';
 import slide4 from '../assets/main-slide/slide4.png';
 import slide5 from '../assets/main-slide/slide5.png';
 
-
-type Slide = {
-    src: StaticImageData;
-};
-
-const slides: Slide[] = [
+const slideImages: SlideImage[] = [
     { src: slide1 },
     { src: slide2 },
     { src: slide3 },
@@ -26,7 +21,7 @@ const slides: Slide[] = [
 export default function MainSlide() {
     return (
         <div className="relative">
-            <SwiperSlider slideImages={slides} interval={3000} duration={800} slidesPerView={1} loop= {true} />
+            <SwiperSlider slideImages={slideImages} interval={3000} duration={800} slidesPerView={1} loop= {true} />
             <div className="absolute top-[80%] z-20 text-white px-6">
                 <p className="text-[3.5rem] my-2.5">自分へのご褒美に</p>
                 <p className="text-[1.5rem] my-2.5">

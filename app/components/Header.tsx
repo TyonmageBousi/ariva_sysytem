@@ -9,8 +9,7 @@ const menu: Menu[] = [
     { label: "LineUp" },
     { label: "楽しみ方" },
     { label: "News" },
-    { label: "Shop" },
-        
+    { label: "Shop" },      
     { label: "お問い合わせ" },
 ];
 export default function Header() {

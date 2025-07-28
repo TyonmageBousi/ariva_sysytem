@@ -1,11 +1,12 @@
 'use client';
-import Header from './Component/Header';
-import Slide from './Component/Main';
-import Footer from './Component/Footer';
-import PickUp from './Component/Pickup';
-import Explain from './Component/Explain';
-import Lineup from './Component/Lineup';
-import Enjoy_guide from './Component/Enjoy_guide';
+
+import Header from './components/Header';
+import Slide from './components/MainSlide';
+import Footer from './components/Footer';
+import PickUp from './components/Pickup';
+import Explain from './components/Explain';
+import Lineup from './components/Lineup';
+import EnjoyScene from './components/EnjoyScene';
 
 const title_css = 'text-center text-[2.5rem] mx-auto w-fit mb-8 mt-48'
 
@@ -14,10 +15,10 @@ export default function Index() {
     <div className="max-w-[1600px] mx-auto px-4">
       <Header />
       <Slide />
-      <PickUp title={title_css} />
-      <Explain title={title_css} />
-      <Lineup title={title_css} />
-      <Enjoy_guide title={title_css} />
+      <PickUp titleStyle={title_css} />
+      <Explain titleStyle={title_css} />
+      <Lineup titleStyle={title_css} />
+      <EnjoyScene titleStyle={title_css} />
       <Footer />
     </div >
   )

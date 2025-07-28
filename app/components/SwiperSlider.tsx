@@ -6,17 +6,18 @@ import 'swiper/css';
 import Image from 'next/image';
 import type { StaticImageData } from 'next/image';
 
-type SlideImage  = {
+export type SlideImage = {
     src: StaticImageData;
 };
 
 type Props = {
-    slideImages: SlideImage [];
-    interval: number;
-    duration: number;
-    slidesPerView: number;
-    loop: boolean
+    slideImages: SlideImage[];  // スライド画像の配列
+    interval: number;           // 自動切り替えの間隔（ミリ秒）
+    duration: number;           // スライドの切り替え速度（ミリ秒）
+    slidesPerView: number;      // 一度に表示する画像の数
+    loop: boolean;              // スライドをループさせるかどうか
 };
+
 
 
 export default function SwiperSlider({ slideImages, interval, duration, slidesPerView, loop }: Props) {
@@ -31,7 +32,7 @@ export default function SwiperSlider({ slideImages, interval, duration, slidesPe
             {slideImages.map((slideImage, index) => (
                 <SwiperSlide key={index}>
                     <Image
-                        className="z-10 w-full h-[77vh] object-cover block rounded-lg"
+                        className="z-10 w-full h-[77vh] object-cover block rounded-[2%]"
                         src={slideImage.src}
                         alt={`Slide ${index + 1}`}
                     />

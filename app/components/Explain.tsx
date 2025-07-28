@@ -1,17 +1,17 @@
 'use client';
+import type { StaticImageData } from 'next/image';
+import Image from 'next/image';
+import type { TitleStyle } from '../types/title'
+
+
+
+//DBに格納予定
 import explain1 from '../assets/explain/explain1.png';
 import explain2 from '../assets/explain/explain2.png';
 import explain3 from '../assets/explain/explain3.png';
 import explain4 from '../assets/explain/explain4.png';
 import explain5 from '../assets/explain/explain5.png';
 import explain6 from '../assets/explain/explain6.png';
-import type { StaticImageData } from 'next/image';
-import Image from 'next/image';
-
-
-type Props = {
-    title: string;
-}
 
 type Concepts = {
     title: string,
@@ -39,7 +39,7 @@ const concepts: Concepts[] = [
         image2: explain6
     },
 ];
-const layout: string[][] = [[
+const conceptStyles: string[][] = [[
     'absolute top-0 left-0 z-10 w-[20%] h-[90%] object-cover ',
     'absolute top-[25%] bottom-0 right-0 z-10 w-[35%] h-[45%] object-cover'
 ],
@@ -53,12 +53,11 @@ const layout: string[][] = [[
 ]
 ];
 
-export default function Explain({ title }: Props) {
+export default function Explain({ titleStyle }: TitleStyle) {
 
     return (
         <div>
-            <p className='text-[2.5rem] mx-auto w-fit mb-8 mt-48'>作り手の想い</p>
-
+            <p className={titleStyle}>作り手の想い</p>
             {concepts.map((item, index) => (
                 <div key={index} className='relative w-[80%] h-[60vh] mx-auto'>
                     <p className='relative z-20 text-[1.5rem] text-center mx-auto w-fit mb-20 '>{item.title}</p>
@@ -71,12 +70,12 @@ export default function Explain({ title }: Props) {
                         ))}
                     </p>
                     <Image
-                        className={layout[index][0]}
+                        className={conceptStyles[index][0]}
                         src={item.image1}
                         alt={`Slide ${index}`}
                     />
                     <Image
-                        className={layout[index][1]}
+                        className={conceptStyles[index][1]}
                         src={item.image2}
                         alt={`Slide ${index + 1}`}
                     />
