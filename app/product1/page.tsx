@@ -64,36 +64,35 @@ const otherProductTitles = [
     '期間限定',
 ];
 export default function Index() {
-    const { scrollY } = useScroll();
-    const [isFixed, setIsFixed] = useState(true);
-    const [releasedTop, setReleasedTop] = useState(0);
-    const tickingRef = useRef(false);
+    const { scrollY } = useScroll();  //Y座標のスクロール量を取得
+    const [isFixed, setIsFixed] = useState(true); //trueでfixed、falseでabsolute
+    const [releasedTop, setReleasedTop] = useState(0);//topの高さを設定
+    const tickingRef = useRef(false);  //連続発火を阻止
 
-    const offsetY = 100; // fixed表示時のtopオフセット
+    const offsetY = 100; // fixed表示時の
 
     useEffect(() => {
         const onScroll = () => {
             if (!tickingRef.current) {
                 requestAnimationFrame(() => {
-                    const currentScroll = window.scrollY;
-                    const stopY = window.innerHeight * 0.5;
+                    const currentScroll = window.scrollY; //スクロール量を測定
+                    const stopY = window.innerHeight * 0.5; //現在のブラウザの高さ*0.5
                     const buffer = 20;
 
-                    if (currentScroll >= stopY - buffer && isFixed) {
-                        setReleasedTop(currentScroll + offsetY); // ← スクロール位置を記録
-                        setIsFixed(false);
-                    } else if (currentScroll < stopY - buffer && !isFixed) {
-                        setIsFixed(true);
+                    if (currentScroll >= stopY - buffer && isFixed) { //現在のスクロール量が、半分以上かつ要素はfixedだったら、
+                        setReleasedTop(currentScroll + offsetY); //現在のスクロール量＋元の要素の高さ
+                        setIsFixed(false); //absoluteに変更
+                    } else if (currentScroll < stopY - buffer && !isFixed) { //違うなら、
+                        setIsFixed(true); //fixedに変更
                     }
-
                     tickingRef.current = false;
                 });
                 tickingRef.current = true;
             }
         };
-
         window.addEventListener('scroll', onScroll);
         return () => window.removeEventListener('scroll', onScroll);
+
     }, [isFixed]);
 
     // 画面幅に応じた width のアニメーション
@@ -108,7 +107,7 @@ export default function Index() {
                 className="z-20 overflow-hidden h-[90vh] relative"
                 style={{
                     position: isFixed ? 'fixed' : 'absolute',
-                    top: isFixed ? 100 : releasedTop, // ←ここがポイント！
+                    top: isFixed ? 100 : releasedTop, 
                     width,
                     transformOrigin: 'left center',
                     left: 20, // ←追加（固定時のずれ防止）
@@ -133,7 +132,7 @@ export default function Index() {
             </div>
 
             {/* 商品説明 */}
-            <div className="absolute top-[30%] left-1/2 translate-x-[10%] text-left">
+            <div className="absolute top-[20%] left-1/2 translate-x-[10%] text-left">
                 <p>クラシックチョコレート</p>
                 <p>「はじまりのレシピ、名前のない衝動」</p>
                 <p>
@@ -145,3 +144,4 @@ export default function Index() {
 
 
 
+}
