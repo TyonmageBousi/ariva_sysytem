@@ -10,33 +10,33 @@ import Image from 'next/image';
 
 
 type Props = {
-    title: string;
+    titleCss: string;
 }
 
-type Concepts = {
+type OurThought = {
     title: string,
     text: string,
-    image1: StaticImageData,
-    image2: StaticImageData,
+    src1: StaticImageData,
+    src2: StaticImageData,
 }
-const concepts: Concepts[] = [
+const ourThoughts: OurThought[] = [
     {
         title: '日々のちょっとした贅沢に',
         text: '日々の喧騒の中で、お菓子を食べる安らぎの時間。その時間を至福のひと時にしたい思いでチョコレートを作ってます。',
-        image1: explain1,
-        image2: explain2
+        src1: explain1,
+        src2: explain2
     },
     {
         title: 'パティシエ',
         text: `ベルギーで学んだ技術、知識をベースに日本にある美学という考え方の元、\nお客様にもう一つ食べたいと思って頂けるお菓子屋を目指しています。`,
-        image1: explain3,
-        image2: explain4
+        src1: explain3,
+        src2: explain4
     },
     {
         title: '製造法',
         text: `手間を惜しまず、あたり前のことを大切に。\n一つひとつの手仕事と実直に向き合うお菓子作りをしています。`,
-        image1: explain5,
-        image2: explain6
+        src1: explain5,
+        src2: explain6
     },
 ];
 const layout: string[][] = [[
@@ -53,31 +53,30 @@ const layout: string[][] = [[
 ]
 ];
 
-export default function Explain({ title }: Props) {
-
+export default function OurProductThoughts({ titleCss }: Props) {
     return (
         <div>
-            <p className='text-[2.5rem] mx-auto w-fit mb-8 mt-48'>作り手の想い</p>
+            <p className={titleCss}>作り手の想い</p>
 
-            {concepts.map((item, index) => (
+            {ourThoughts.map((ourThought, index) => (
                 <div key={index} className='relative w-[80%] h-[60vh] mx-auto'>
-                    <p className='relative z-20 text-[1.5rem] text-center mx-auto w-fit mb-20 '>{item.title}</p>
+                    <p className='relative z-20 text-[1.5rem] text-center mx-auto w-fit mb-20 '>{ourThought.title}</p>
                     <p className='relative z-20 text-[1rem] text-center mx-auto w-[50%]  '>
-                        {item.text.split('\n').map((line, i) => (
+                        {ourThought.text.split('\n').map((ourThought, i) => (
                             <span key={i}>
-                                {line}
+                                {ourThought}
                                 <br />
                             </span>
                         ))}
                     </p>
                     <Image
                         className={layout[index][0]}
-                        src={item.image1}
+                        src={ourThought.src1}
                         alt={`Slide ${index}`}
                     />
                     <Image
                         className={layout[index][1]}
-                        src={item.image2}
+                        src={ourThought.src2}
                         alt={`Slide ${index + 1}`}
                     />
                 </div>
