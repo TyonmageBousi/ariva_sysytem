@@ -1,4 +1,4 @@
-    'use client';
+'use client';
     import Header from '../componets/Header';
     import Footer from '../componets/Footer';
     import SwiperSlider from '../componets/SwiperSlider';
