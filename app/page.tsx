@@ -17,6 +17,10 @@ export default function Index() {
 
       <MainSlide />
       <OurProductThoughts titleCss={titleCss} />
+      <ProductLineUp titleCss={titleCss} />
+
+      <EnjoyScenes titleCss={titleCss} />
+      <NewsPage titleCss={titleCss} />
     </div >
   )
 }
