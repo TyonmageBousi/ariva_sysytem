@@ -12,7 +12,9 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+ 
 }
+
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -21,6 +23,9 @@
   }
 }
 
+@theme {
+  --fontelegant: ['"Playfair Display"', 'serif'],
+}
 body {
   background: var(--base);
   color: var(--foreground);
@@ -30,4 +35,3 @@ body {
 footer {
   background: var(--footer);
 }
-
