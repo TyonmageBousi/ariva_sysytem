@@ -5,6 +5,7 @@
   --foreground: #171717;
   --base: #011c3f;
   --footer: #000000;
+  --custom-blue: #0a0a0a;
 }
 
 @theme inline {
@@ -12,6 +13,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-custom-blue: var(--custom-blue);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -30,4 +32,3 @@ body {
 footer {
   background: var(--footer);
 }
-
