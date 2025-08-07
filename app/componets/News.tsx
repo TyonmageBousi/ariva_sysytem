@@ -7,12 +7,12 @@ type NewsItem  = {
     news: string;
 };
 
-type Props  = {
-    titleCss: string;
+type NewsPageProps  = {
+    titleClass: string;
 }
 
 
-export default function NewsPage({ titleCss }: Props ) {
+export default function NewsPage({ titleClass }: NewsPageProps ) {
         const [newsList, setNewsList] = useState<NewsItem []>([]);
 
         useEffect(() => {
@@ -24,7 +24,7 @@ export default function NewsPage({ titleCss }: Props ) {
 
     return (
         <div>
-            <h1 className={titleCss}>NEWS</h1>
+            <h1 className={titleClass}>NEWS</h1>
             <ul className='w-[90%] mx-auto'>
                 {newsList.length === 0 && <li>投稿がありません</li>}
                 {newsList.map((item, index) => (
