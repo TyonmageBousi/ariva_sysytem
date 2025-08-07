@@ -7,10 +7,11 @@ type OtherProduct = {
     alt: string;
 };
 
-type OtherProductstitle = string;
+type OtherProductsTitle = string;
+
 type Props = {
     otherProducts: OtherProduct[];
-    otherProductTitles: OtherProductstitle[];
+    otherProductTitles: OtherProductsTitle[];
 };
 
 export default function OtherProduct({ otherProducts, otherProductTitles }: Props) {
