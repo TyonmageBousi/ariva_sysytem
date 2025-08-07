@@ -17,7 +17,7 @@ type Props = {
 };
 
 
-type ProductsInfo = {
+type ProductsInfo = {  //修正箇所
     src: StaticImageData;
     tagLabel: boolean;
     name: string;
