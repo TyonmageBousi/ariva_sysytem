@@ -15,6 +15,32 @@ const menu: Menu[] = [
     { label: "Shop  お店" },
 ];
 
+const introductionCss: string = `
+  inline-block               // インライン要素として表示
+  text-custom-blue           // 文字色指定
+  cursor-pointer             // ポインター
+  relative                   // 疑似要素の位置基準
+  after:absolute             // 疑似要素を絶対配置
+  after:left-0               // 位置:左0
+  after:bottom-[1px]         // 位置:下に1px
+  after:content-['']         // 疑似要素作成
+  after:w-full               // 親要素一杯
+  after:h-[2px]              // 要素の高さは、2px
+  after:bg-custom-blue       // 背景は、カスタム青
+  after:transition-all       // 変更アニメーションを適用
+  after:duration-500         // 変更時間を500ミリ秒
+  after:ease-out             // 挙動は、終わりをゆっくり、始まり早く
+  after:opacity-0            // 要素の透明度をマックス
+  after:transform            // 変形を有効
+  after:origin-bottom        // 変形（transform）の起点を下端に設定
+  after:scale-y-0            // 疑似要素の高さを0にする
+  after:translate-y-1        // Y方向に1(0.25rem)下にずらす
+  hover:after:opacity-100    // ホバー時:要素の透明度をなくす
+  hover:after:scale-y-[1]    // ホバー時:疑似要素の高さを元に戻す
+  hover:after:translate-y-0  // ホバー時:要素高さを元に戻す
+`;
+
+
 export default function Header() {
     const [openMenu, setIsOpenMenu] = useState<boolean>(false);
     return (
@@ -55,26 +81,7 @@ export default function Header() {
                                     {menu.map((item, index) => (
                                         <li key={index} className='text-3xl py-3'>
                                             <a href={item.label}
-                                                className="inline-block text-custom-blue cursor-pointer relative
-                                                after:absolute  
-                                                after:left-0
-                                                after:bottom-[1px]
-                                                after:content-[''] 
-                                                after:w-full
-                                                after:h-[2px]
-                                                after:bg-custom-blue 
-                                                after:transition-all
-                                                after:duration-500 
-                                                after:ease-out
-                                                after:opacity-0
-                                                after:transform
-                                                after:origin-bottom
-                                                after:scale-y-0
-                                                after:translate-y-1
-                                                hover:after:opacity-100
-                                                hover:after:scale-y-100
-                                                hover:after:translate-y-0
-                                                ">
+                                                className={ introductionCss}>
                                                 {item.label}
                                             </a>
                                         </li>
