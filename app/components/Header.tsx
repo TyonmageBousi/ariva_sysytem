@@ -15,15 +15,8 @@ const menu: Menu[] = [
     { label: "Shop  お店" },
 ];
 
-
-
 export default function Header() {
-    const [openMenu, setOpenMenu] = useState(false);
-
-    const handleMenuOpen = () => {
-        setOpenMenu(!openMenu);
-    };
-
+    const [openMenu, setIsOpenMenu] = useState<boolean>(false);
     return (
         <div className="App">
             <div className="container mx-auto px-3">
@@ -33,7 +26,7 @@ export default function Header() {
                         <User size={24} className="text-white mx-3 hover:text-gray-300 cursor-pointer transition-colors" />
                         <ShoppingCart size={32} className="text-white mx-3 hover:text-gray-300 cursor-pointer transition-colors" />
                         <button
-                            onClick={handleMenuOpen}
+                            onClick={() => setIsOpenMenu((prev: boolean) => !prev)}
                             type="button"
                             className="z-50 relative w-8 h-8 mx-3"
                             aria-label={openMenu ? "メニューを閉じる" : "メニューを開く"}
@@ -49,27 +42,6 @@ export default function Header() {
                                 className={`absolute left-0 top-1/2 w-8 h-0.5  transform transition duration-500 ease-in-out ${openMenu ? "-rotate-45 bg-custom-blue" : "translate-y-2 bg-white"}`}
                             />
                         </button>
-                        <style>{`
-                .hover-underline {
-                    position: relative;
-                    display: inline-block;
-                }
-                
-                .hover-underline::after {
-                    content: '';
-                    position: absolute;
-                    width: 0;
-                    height: 2px;
-                    bottom: 0;
-                    left: 0;
-                    background-color: currentColor;
-                    transition: width 0.3s ease-in-out;
-                }
-                
-                .hover-underline:hover::after {
-                    width: 100%;
-                }
-            `}</style>
                         <nav
                             className={
                                 openMenu
@@ -82,7 +54,27 @@ export default function Header() {
                                 <ul className="mt-6">
                                     {menu.map((item, index) => (
                                         <li key={index} className='text-3xl py-3'>
-                                            <a href={item.label} className="block text-bg-custom-blue hover-underline text-gray-800 cursor-pointer">
+                                            <a href={item.label}
+                                                className="inline-block text-custom-blue cursor-pointer relative
+                                                after:absolute  
+                                                after:left-0
+                                                after:bottom-[1px]
+                                                after:content-[''] 
+                                                after:w-full
+                                                after:h-[2px]
+                                                after:bg-custom-blue 
+                                                after:transition-all
+                                                after:duration-500 
+                                                after:ease-out
+                                                after:opacity-0
+                                                after:transform
+                                                after:origin-bottom
+                                                after:scale-y-0
+                                                after:translate-y-1
+                                                hover:after:opacity-100
+                                                hover:after:scale-y-100
+                                                hover:after:translate-y-0
+                                                ">
                                                 {item.label}
                                             </a>
                                         </li>
@@ -93,8 +85,7 @@ export default function Header() {
                         </nav>
                     </div>
                 </header>
-
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }
