@@ -17,7 +17,7 @@ type Props = {
 };
 
 
-type ProductInfo = {
+type ProductsInfo = {  //修正箇所
     src: StaticImageData;
     tagLabel: boolean;
     name: string;
@@ -25,7 +25,7 @@ type ProductInfo = {
     description: string;
 };
 
-const productsInfo: ProductInfo[] = [{
+const productsInfo: ProductsInfo[] = [{
     src: image1,
     tagLabel: true,
     name: "はじまりのレシピ",
