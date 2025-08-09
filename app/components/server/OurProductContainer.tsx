@@ -13,7 +13,7 @@ export type OurThought = {
 // サーバーコンポーネントなので非同期関数コンポーネントが使える
 export default async function OurProductContainer({ titleCss }: { titleCss: string }) {
   // モックからデータフェッチ
-  const res = await fetch(" http://localhost:3000/api/mock/our_thoughts")
+  const res = await fetch("http://localhost:3000/api/mock/our_thoughts")
   //ここ直す
   const data: OurThought[] = res.json()
 
