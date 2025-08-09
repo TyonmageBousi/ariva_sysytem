@@ -23,6 +23,8 @@ const layout: string[][] = [
   ],
 ]
 
+// クライアントコンポーネント：UIの処理に専念
+// propsでサーバーコンポーネントからフェッチしたデータを貰う
 export default function OurProductThoughts({ titleCss, data: ourThoughts }: Props) {
   return (
     <div>
