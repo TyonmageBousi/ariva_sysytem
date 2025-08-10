@@ -29,7 +29,7 @@ const slideImages: SlideImage[] = [
     { src: slide5, alt: "" },
 ];
 
-const radius: number = 400; // レイアウトで使用している円の半径:400px
+const radius: number = 380; // レイアウトで使用している円の半径:400px
 
 export default function TopMainSlide() {
 
@@ -47,7 +47,7 @@ export default function TopMainSlide() {
 
     return (
         <div className={
-            'flex h-[93vh] mt-[7vh] w-full transition-all duration-500 ' +
+            'flex h-[93vh] mx-3 w-full transition-all duration-500 ' +
             (isVisible
                 ? 'opacity-100 translate-y-0'
                 : 'opacity-0 -translate-y-8'

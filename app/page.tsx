@@ -14,7 +14,7 @@ const titleCss = 'text-center text-[2.5rem] mx-auto w-fit mb-8 mt-48'
 export default function Index() {
   return (
     <div className='w-full'>
-
+      <Header />
       <MainSlide />
       <OurProductThoughts titleCss={titleCss} />
       <ProductLineUp titleCss={titleCss} />

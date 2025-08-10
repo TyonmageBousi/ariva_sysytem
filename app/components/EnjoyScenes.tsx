@@ -42,6 +42,7 @@ export default function EnjoyScenes({ titleCss }: Props) {
                 {enjoyIdeas.map((enjoyIdea, index) => (
                     <div className='w-[90%] rounded-lg border-2 border-gray-300 shadow-md p-5'>
                         <Image
+                            key={index}
                             src={enjoyIdea.src}
                             alt={`image ${index + 1}`}
                             className="w-full h-auto aspect-[4/5] object-cover"
