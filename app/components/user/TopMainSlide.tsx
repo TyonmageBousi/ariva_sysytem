@@ -29,14 +29,18 @@ const slideImages: SlideImage[] = [
     { src: slide5, alt: "" },
 ];
 
-const radius: number = 400; // レイアウトで使用している円の半径:400px
+const radius: number = 380; // レイアウトで使用している円の半径:400px
 
 export default function TopMainSlide() {
 
     const characters: string = "Velour Cacao – Treat Yourself – "; //回転の文字の内容
     const charArray: string[] = characters.split(''); //上記の文字を一文字づつ配列に格納
     const [isVisible, setIsVisible] = useState<boolean>(true);
+    const [isMounted, setIsMounted] = useState<boolean>(false);
     useEffect(() => {
+
+        setIsMounted(true);
+
         const handleScroll = () => {
             const scrollY = window.scrollY;
             setIsVisible(scrollY < 1000);
@@ -47,7 +51,7 @@ export default function TopMainSlide() {
 
     return (
         <div className={
-            'flex h-[93vh] mt-[7vh] w-full transition-all duration-500 ' +
+            'flex h-[90vh] mt-[1vh] w-full transition-all duration-500 ' +
             (isVisible
                 ? 'opacity-100 translate-y-0'
                 : 'opacity-0 -translate-y-8'
