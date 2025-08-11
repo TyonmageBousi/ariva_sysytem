@@ -9,11 +9,11 @@ import { motion } from "framer-motion";
 import 'swiper/css/effect-flip';
 import React, { useState, useEffect } from 'react';
 //DBに置き換える予定
-import slide1 from '../assets/main-slide/slide1.png';
-import slide2 from '../assets/main-slide/slide2.png';
-import slide3 from '../assets/main-slide/slide3.png';
-import slide4 from '../assets/main-slide/slide4.png';
-import slide5 from '../assets/main-slide/slide5.png';
+import slide1 from '../../assets/main-slide/slide1.png';
+import slide2 from '../../assets/main-slide/slide2.png';
+import slide3 from '../../assets/main-slide/slide3.png';
+import slide4 from '../../assets/main-slide/slide4.png';
+import slide5 from '../../assets/main-slide/slide5.png';
 
 
 type SlideImage = {

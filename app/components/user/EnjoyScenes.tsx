@@ -1,9 +1,10 @@
 'use client';
-import enjoy1 from '../assets/enjoy/enjoy1.png';
-import enjoy2 from '../assets/enjoy/enjoy2.png';
-import enjoy3 from '../assets/enjoy/enjoy3.png';
+import enjoy1 from '../../assets/enjoy/enjoy1.png';
+import enjoy2 from '../../assets/enjoy/enjoy2.png';
+import enjoy3 from '../../assets/enjoy/enjoy3.png';
 import type { StaticImageData } from 'next/image';
 import Image from 'next/image';
+
 
 type Props = {
     titleCss: string;

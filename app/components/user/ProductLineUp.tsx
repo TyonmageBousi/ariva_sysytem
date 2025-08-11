@@ -7,10 +7,10 @@ import 'swiper/css';
 import Image from 'next/image';
 
 //DBに格納予定
-import image1 from '../assets/line-up/image1.png';
-import image2 from '../assets/line-up/image2.png';
-import image3 from '../assets/line-up/image3.png';
-import image4 from '../assets/line-up/image4.png';
+import image1 from '../../assets/line-up/image1.png';
+import image2 from '../../assets/line-up/image2.png';
+import image3 from '../../assets/line-up/image3.png';
+import image4 from '../../assets/line-up/image4.png';
 
 type Props = {
     titleCss: string;
