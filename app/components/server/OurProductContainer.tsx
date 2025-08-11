@@ -1,6 +1,5 @@
 import React from "react"
 import OurProductThoughts from ".././user/OurProductThoughts"
-import { StaticImageData } from "next/image"
 
 export type OurThought = {
   title: string;

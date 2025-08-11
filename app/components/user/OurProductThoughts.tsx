@@ -19,7 +19,7 @@ const layout: [string, string][] = [
   ["absolute z-10 right-10 top-10 rotate-[2deg]", "absolute z-0 left-6 bottom-6 rotate-[-2deg]"],
 ];
 
-export default function OurProductThoughts({ titleCss, data: ourThoughts }: Props) {
+export default function OurProductThoughts({ titleCss:titleCss, data: ourThoughts }: Props) {
   return (
     <div>
       <p className={titleCss}>作り手の想い</p>

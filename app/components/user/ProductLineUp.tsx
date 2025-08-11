@@ -1,66 +1,17 @@
 'use client';
 
-import type { StaticImageData } from 'next/image';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import Image from 'next/image';
-
-//DBに格納予定
-import image1 from '../../assets/line-up/image1.png';
-import image2 from '../../assets/line-up/image2.png';
-import image3 from '../../assets/line-up/image3.png';
-import image4 from '../../assets/line-up/image4.png';
+import { ProductsInfo } from '@/app/api/mock/line_up/route';
 
 type Props = {
-    titleCss: string;
+    titleCss: string
+    data: ProductsInfo[]
 };
 
-
-type ProductsInfo = {  //修正箇所
-    src: StaticImageData;
-    tagLabel: boolean;
-    name: string;
-    price: number;
-    description: string;
-};
-
-const productsInfo: ProductsInfo[] = [{
-    src: image1,
-    tagLabel: true,
-    name: "はじまりのレシピ",
-    price: 2000,
-    description: "理由もなく、ただ、つくりたかった。まだ白紙のレシピに熱だけが確かにあった。"
-}, {
-    src: image2,
-    tagLabel: true,
-    name: "はじまりのレシピ",
-    price: 2000,
-    description: "理由もなく、ただ、つくりたかった。まだ白紙のレシピに熱だけが確かにあった。"
-},
-{
-    src: image3,
-    tagLabel: false,
-    name: "はじまりのレシピ",
-    price: 2000,
-    description: "理由もなく、ただ、つくりたかった。まだ白紙のレシピに熱だけが確かにあった。"
-}, {
-    src: image4,
-    tagLabel: false,
-    name: "はじまりのレシピ",
-    price: 2000,
-    description: "理由もなく、ただ、つくりたかった。まだ白紙のレシピに熱だけが確かにあった。"
-},
-{
-    src: image2,
-    tagLabel: true,
-    name: "はじまりのレシピ",
-    price: 2000,
-    description: "理由もなく、ただ、つくりたかった。まだ白紙のレシピに熱だけが確かにあった。"
-}]
-
-
-export default function ProductLineUp({ titleCss }: Props) {
+export default function ProductLineUp({ titleCss: titleCss, data: productsInfo }: Props) {
     return (
         <div>
             <p className={titleCss}>Line Up</p>
@@ -78,6 +29,10 @@ export default function ProductLineUp({ titleCss }: Props) {
                             className="aspect-square"
                             src={productInfo.src}
                             alt={`Slide ${index + 1}`}
+                            width={0}
+                            height={0}
+                            sizes="60vw"
+                            style={{ width: '60%', height: 'auto' }}
                         />
                         <p
                             className={`inline-block px-2 py-1 text-sm font-semibold rounded-full mt-4 
