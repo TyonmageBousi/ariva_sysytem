@@ -89,7 +89,7 @@ export default function Login() {
                                 className="mt-1 w-[90%] rounded-xl border border-black/10 dark:border-white/15 bg-white dark:bg-neutral-900 px-3 py-2.5 text-[15px] outline-none focus:ring-4 ring-amber-500/20 focus:border-amber-500"
                                 placeholder="••••••••"
                             />
-
+                            {password && passwordError ? <p className="mt-1 text-xs text-red-600">{passwordError}</p> : null}
                             <button
                                 type="button"
                                 onClick={() => setShowPwd((v) => !v)}
