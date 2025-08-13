@@ -36,12 +36,12 @@ export default function Login() {
 
             <div className="hidden md:flex items-center justify-center p-12 bg-gradient-to-br from-black via-[#050505] to-[#0a255f]">
                 <div className="relative z-10 text-center">
-                    <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight text-brown-900 dark:text-white">
+                    <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight text-brown-900">
                         Velour Cacao
                         <span className="block text-amber-400 mt-2">Treat Yourself </span>
 
                     </h1>
-                    <p className="mt-4 text-brown-700/80 dark:text-neutral-300 max-w-md mx-auto">
+                    <p className="mt-4 text-brown-700/80  max-w-md mx-auto">
                         ログインして、あなたのとっておきのチョコをお届け。<br />会員限定の先行セールや、バレンタインのギフト予約も。
                     </p>
                 </div>
@@ -67,7 +67,7 @@ export default function Login() {
                                 required
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="mt-1 w-[90%] rounded-xl border border-black/10 dark:border-white/15 bg-white dark:bg-neutral-900 px-3 py-2.5 text-[15px] outline-none focus:ring-4 ring-amber-500/20 focus:border-amber-500"
+                                className="mt-1 w-[90%] rounded-xl border border-black/10  bg-white  px-3 py-2.5 text-[15px] outline-none focus:ring-4 ring-amber-500/20 focus:border-amber-500"
                                 placeholder="you@example.com"
                             />
 
@@ -86,14 +86,14 @@ export default function Login() {
                                 required
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="mt-1 w-[90%] rounded-xl border border-black/10 dark:border-white/15 bg-white dark:bg-neutral-900 px-3 py-2.5 text-[15px] outline-none focus:ring-4 ring-amber-500/20 focus:border-amber-500"
+                                className="mt-1 w-[90%] rounded-xl border border-black/10  bg-white  px-3 py-2.5 text-[15px] outline-none focus:ring-4 ring-amber-500/20 focus:border-amber-500"
                                 placeholder="••••••••"
                             />
                             {password && passwordError ? <p className="mt-1 text-xs text-red-600">{passwordError}</p> : null}
                             <button
                                 type="button"
                                 onClick={() => setShowPwd((v) => !v)}
-                                className="absolute right-15 top-[70%] -translate-y-1/2 p-2 rounded-lg text-brown-700/70 hover:bg-black/5 dark:text-neutral-400 dark:hover:bg-white/5"
+                                className="absolute right-15 top-[70%] -translate-y-1/2 p-2 rounded-lg text-brown-700/70 hover:bg-black/5 "
                                 aria-label={showPwd ? "パスワードを隠す" : "パスワードを表示"}
                             >
                                 {showPwd ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
@@ -103,13 +103,13 @@ export default function Login() {
                             <label>
                                 <input
                                     type="checkbox"
-                                    className="size-4 rounded border border-black/20 dark:border-white/20 accent-amber-600 mt-10"
+                                    className="size-4 rounded border border-black/20  accent-amber-600 mt-10"
                                     checked={remember}
                                     onChange={(e) => setRemember(e.target.checked)}
                                 />
                                 次回から自動的にログイン
                             </label>
-                            <a href="/account/reset" className="block text-sm font-medium text-amber-700 hover:underline dark:text-amber-400">
+                            <a href="/account/reset" className="block text-sm font-medium text-amber-400 hover:underline ">
                                 パスワードをお忘れですか？
                             </a>
                         </div>
@@ -152,9 +152,9 @@ export default function Login() {
                         </div>
                     </form>
                     <div>
-                        <p className="mt-6 text-center text-sm text-brown-700/80 dark:text-neutral-300">
+                        <p className="mt-6 text-center text-sm text-brown-700/80 text-neutral-300">
                             アカウントをお持ちでないですか？
-                            <a href="/account/register" className="ml-1 font-semibold text-amber-700 hover:underline dark:text-amber-400">
+                            <a href="/account/register" className="ml-1 font-semibold hover:underline text-amber-400">
                                 新規登録
                             </a>
                         </p>
