@@ -8,21 +8,21 @@ export default function Login() {
     //メールアドレスバリデーション
     const [email, setEmail] = useState<string>("");
 
-    const emailError = useMemo(() => {
+    const emailError = (() => {
         if (!email) return "メールアドレスを入力してください";
         const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
         return ok ? null : "メールアドレスの形式が正しくありません";
-    }, [email]);
+    })();
 
     //パスワードバリデーション
     const [password, setPassword] = useState<string>("");
     const [showPwd, setShowPwd] = useState(false);
 
-    const passwordError = useMemo(() => {
+    const passwordError = (() => {
         if (!password) return "パスワードを入力してください";
         if (password.length < 8) return "8文字以上で入力してください";
         return null;
-    }, [password]);
+    })();
     const formValid = !emailError && !passwordError;
 
     const [remember, setRemember] = useState<boolean>(false);
@@ -37,12 +37,12 @@ export default function Login() {
             <div className="hidden md:flex items-center justify-center p-12 bg-gradient-to-br from-black via-[#050505] to-[#0a255f]">
                 <div className="relative z-10 text-center">
                     <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight text-brown-900 dark:text-white">
-                        Velour Cacao 
-                        <span className="block text-amber-700 text-amber-400 mt-2">Treat Yourself </span>
-                        
+                        Velour Cacao
+                        <span className="block text-amber-400 mt-2">Treat Yourself </span>
+
                     </h1>
                     <p className="mt-4 text-brown-700/80 dark:text-neutral-300 max-w-md mx-auto">
-                        ログインして、あなたのとっておきのチョコをお届け。<br/>会員限定の先行セールや、バレンタインのギフト予約も。
+                        ログインして、あなたのとっておきのチョコをお届け。<br />会員限定の先行セールや、バレンタインのギフト予約も。
                     </p>
                 </div>
             </div>
@@ -69,9 +69,9 @@ export default function Login() {
                                 onChange={(e) => setEmail(e.target.value)}
                                 className="mt-1 w-[90%] rounded-xl border border-black/10 dark:border-white/15 bg-white dark:bg-neutral-900 px-3 py-2.5 text-[15px] outline-none focus:ring-4 ring-amber-500/20 focus:border-amber-500"
                                 placeholder="you@example.com"
-                            >
-                                {email && emailError ? <p className="mt-1 text-xs text-red-600">{emailError}</p> : null}
-                            </input>
+                            />
+
+                            {email && emailError ? <p className="mt-1 text-xs text-red-600">{emailError}</p> : null}
                         </div>
                         <div className="mt-1 relative">
                             <label className="inline-flex items-center gap-1.5">
@@ -88,8 +88,8 @@ export default function Login() {
                                 onChange={(e) => setPassword(e.target.value)}
                                 className="mt-1 w-[90%] rounded-xl border border-black/10 dark:border-white/15 bg-white dark:bg-neutral-900 px-3 py-2.5 text-[15px] outline-none focus:ring-4 ring-amber-500/20 focus:border-amber-500"
                                 placeholder="••••••••"
-                            >
-                            </input>
+                            />
+
                             <button
                                 type="button"
                                 onClick={() => setShowPwd((v) => !v)}
