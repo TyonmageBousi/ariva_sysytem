@@ -36,7 +36,7 @@ export default function TopMainSlide({ data }: Props) {
 
     return (
         <div className={
-            'flex h-[90vh] mt-[1vh] w-full transition-all duration-500 ' +
+            'flex h-[93vh] mt-[7vh] w-full transition-all duration-500 ' +
             (isVisible
                 ? 'opacity-100 translate-y-0'
                 : 'opacity-0 -translate-y-8'
