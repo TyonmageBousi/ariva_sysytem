@@ -1,42 +1,31 @@
 'use client';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
-import type { StaticImageData } from 'next/image';
 import { Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import Image from 'next/image';
 import { motion } from "framer-motion";
 import 'swiper/css/effect-flip';
 import React, { useState, useEffect } from 'react';
-//DBに置き換える予定
-import slide1 from '../assets/main-slide/slide1.png';
-import slide2 from '../assets/main-slide/slide2.png';
-import slide3 from '../assets/main-slide/slide3.png';
-import slide4 from '../assets/main-slide/slide4.png';
-import slide5 from '../assets/main-slide/slide5.png';
+import { SlideImage } from '@/app/api/mock/top_main_slide/route';
 
 
-type SlideImage = {
-    src: StaticImageData;
-    alt: string;
+type Props = {
+    data: SlideImage[];
 };
-
-const slideImages: SlideImage[] = [
-    { src: slide1, alt: "" },
-    { src: slide2, alt: "" },
-    { src: slide3, alt: "" },
-    { src: slide4, alt: "" },
-    { src: slide5, alt: "" },
-];
 
 const radius: number = 380; // レイアウトで使用している円の半径:400px
 
-export default function TopMainSlide() {
+export default function TopMainSlide({ data }: Props) {
 
     const characters: string = "Velour Cacao – Treat Yourself – "; //回転の文字の内容
     const charArray: string[] = characters.split(''); //上記の文字を一文字づつ配列に格納
     const [isVisible, setIsVisible] = useState<boolean>(true);
+    const [isMounted, setIsMounted] = useState<boolean>(false);
     useEffect(() => {
+
+        setIsMounted(true);
+
         const handleScroll = () => {
             const scrollY = window.scrollY;
             setIsVisible(scrollY < 1000);
@@ -47,7 +36,7 @@ export default function TopMainSlide() {
 
     return (
         <div className={
-            'flex h-[93vh] mx-3 w-full transition-all duration-500 ' +
+            'flex h-[90vh] mt-[1vh] w-full transition-all duration-500 ' +
             (isVisible
                 ? 'opacity-100 translate-y-0'
                 : 'opacity-0 -translate-y-8'
@@ -103,7 +92,7 @@ export default function TopMainSlide() {
                         autoplay={{ delay: 3000, disableOnInteraction: false }}
                         speed={800}
                     >
-                        {slideImages.map((slideImage, index) => (
+                        {data.map((slideImage, index) => (
                             <SwiperSlide
                                 key={index}
                                 style={{
@@ -117,6 +106,10 @@ export default function TopMainSlide() {
                                     className="w-[60%] aspect-square object-cover rounded-lg"
                                     src={slideImage.src}
                                     alt={slideImage.alt}
+                                    width={0}
+                                    height={0}
+                                    sizes="60vw"
+                                    style={{ width: '60%', height: 'auto' }}
                                 />
                             </SwiperSlide>
                         ))}
