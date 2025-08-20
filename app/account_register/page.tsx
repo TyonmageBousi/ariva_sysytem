@@ -4,9 +4,11 @@ import React, { useState } from 'react'
 export default function () {
 
     const [email, setEmail] = useState<string>("")
+
+    const validation = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     const emailError = (() => {
         if (!email) return "メールアドレスを入力してください";
-        const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        const ok = validation.test(email);
         return ok ? null : "メールアドレスの形式が正しくありません";
     })();
 
