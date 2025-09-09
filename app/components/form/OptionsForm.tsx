@@ -3,16 +3,17 @@ import type { UseFormRegister } from "react-hook-form";
 import { Control, useController, Path } from "react-hook-form";
 import type { FormValues } from "../../admin/products/page"
 
-
-export type Options = string[];
-
+export type FiledOptions = {
+    id: number
+    label: string
+}
 export type FiledOptionsProps = {
     label: string;
     labelStyle: string;
     name: keyof FormValues;
     register: UseFormRegister<FormValues>;
     inputStyle: string;
-    options: string[];
+    options: FiledOptions[];
 
 };
 
@@ -25,12 +26,12 @@ export default function NormalForm({ props }: Props) {
             <label className={labelStyle}>{label}</label>
             <select
                 id={name}
-                {...register(name)}
+                {...register(name, { valueAsNumber: true })}
                 className={inputStyle}
             >
                 {
                     options.map((option, index) => (
-                        < option value={index}>{option}</option>
+                        < option value={index}>{option.label}</option>
                     ))}
             </select>
         </div >

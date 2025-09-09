@@ -1,6 +1,6 @@
 import type { UseFormRegister } from "react-hook-form";
 import React, { useState } from 'react';
-import type { FormValues } from "../../admin/products/page"
+import type { FormValues } from "../../types/product"
 
 
 export type FiledCheckBoxLabels = {

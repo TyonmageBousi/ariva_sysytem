@@ -1,7 +1,7 @@
 import React from 'react'
 import CheckBoxForm, { type FiledCheckBoxLabels, type FiledCheckBoxProps } from "../../form/CheckBoxForm"
 import { UseFormRegister } from "react-hook-form";
-import type { FormValues } from "../../../admin/products/page"
+import type { FormValues } from '@/app/types/product';
 import { Save, Eye, Upload, Trash2, Send, Package } from "lucide-react";
 
 type Props = {
@@ -18,7 +18,7 @@ export default function ProductCategorySection({ register }: Props) {
 
     const searchLabelsCheckboxProps: FiledCheckBoxProps = {
         label: "検索・絞り込みに使用",
-        name: "searchLabels",
+        name: "categoryIds",
         labelStyle: "block text-sm font-medium mb-1",
         register,
         inputStyle: "block px-3 py-1",

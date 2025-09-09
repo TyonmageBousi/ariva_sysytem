@@ -2,7 +2,7 @@
 import type { UseFormRegister } from "react-hook-form";
 import type { FormValues } from "../../admin/products/page"
 
-export type FieldNormalProps = {
+export type FieldNumberProps = {
     label: string;
     labelStyle?: string;
     name: keyof FormValues;
@@ -11,19 +11,18 @@ export type FieldNormalProps = {
     placeholder?: string;
 };
 
-type Props = { props: FieldNormalProps };
+type Props = { props: FieldNumberProps };
 
 export default function NormalForm({ props }: Props) {
     const { label, name, register, labelStyle, inputStyle, placeholder } = props;
-    const isNumberField = name === "price";
     return (
         <div>
             <label className={labelStyle}>{label}</label>
             <input
                 id={name}
-                type={isNumberField ? "number" : "text"}
-                inputMode={isNumberField ? "numeric" : "text"}
-                {...register(name, isNumberField ? { valueAsNumber: true } : undefined)}
+                type="number"
+                inputMode="numeric"
+                {...register(name, { valueAsNumber: true })}
                 className={inputStyle}
                 placeholder={placeholder}
             />

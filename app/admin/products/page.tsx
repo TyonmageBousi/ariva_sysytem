@@ -1,40 +1,72 @@
 'use client';
 
-import { Save, Eye, Upload, Trash2, Send, Package } from "lucide-react";
-import { useForm, SubmitHandler, useWatch } from "react-hook-form"
-import ProductForm from "@/app/components/admin/product/ProductForm";
+import { Save } from "lucide-react";
+import { useForm } from "react-hook-form"
 import ProductInfoSection from "@/app/components/admin/product/ProductInfoSection";
 import ProductImageSection from "@/app/components/admin/product/ProductImageSection";
 import ProductCategorySection from "@/app/components/admin/product/ProductCategorySection";
 import ProductStockSection from "@/app/components/admin/product/ProductStockSection";
+import type { FormValues } from '@/app/types/product';
+import ProductForm from "@/app/components/admin/product/ProductForm";
+import { useState, useEffect } from 'react'
+import { type FiledCheckBoxLabels } from "../../components/form/CheckBoxForm"
+import { log } from "console";
 
-
-export type FormValues = {
-    name: string,
-    productCode: string,
-    price: number,
-    salePrice: number,
-    productPeriod: string,
-    productState: string,
-    description: string,
-    searchLabels: number,
-    colorCategory: number,
-    productTypes: string[],
-} & {
-    // 動的な在庫フィールド: stock1, stock2, ...
-    [K in `stock${number}`]?: number;
-};
 
 export default function Product() {
-    const { register, handleSubmit, control } = useForm<FormValues>();
+    const { register, handleSubmit, setValue } = useForm<FormValues>();
+
     // フォーム送信処理
-    const onSubmit = (data: FormValues) => {
-        console.log(data);
+    const onSubmit = async (data: FormValues) => {
+        const formData = new FormData();
+        formData.append("name", data.name)
+        formData.append("skuCode", data.skuCode)
+        formData.append("price", data.price.toString())
+        if (Number.isFinite(data.discountPrice)) formData.append("discountPrice", String(data.discountPrice))
+        formData.append("saleStartAt", data.saleStartAt.toISOString());
+        formData.append("saleEndAt", data.saleEndAt.toISOString());
+        formData.append("status", String(data.status));
+        if (data.description) formData.append("description", data.description);
+        formData.append("stock", String(data.stock));
+        data.categoryIds?.forEach((id) => formData.append("categoryIds[]", id));
+        data.colorCategoryIds?.forEach((id) => formData.append("colorCategoryIds[]", id));
+        data.images?.forEach((file) => formData.append("images", file));
+        
+        const response = await fetch("http://localhost:3000/api/products", {
+            method: 'POST',
+            body: formData,
+        });
+        const result = await response.json()
+        console.log(result);
     };
 
     const handleSave = () => {
         handleSubmit(onSubmit)();
     };
+
+
+
+    const [categories, setCategories] = useState<FiledCheckBoxLabels[]>([]);
+    const [colorCategories, setColorCategories] = useState<FiledCheckBoxLabels[]>([]);
+    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    useEffect(() => {
+        (async () => {
+            try {
+                const res = await fetch("http://localhost:3000/api/categories")
+                if (!res.ok) {
+                    throw new Error(`API Error :${res.status} ${res.statusText}`);
+                }
+                const data = await res.json();
+                setCategories(data.categories);
+                setColorCategories(data.colorCategories);
+            } catch (err) {
+                setError(err instanceof Error ? err.message : 'Unknown Error');
+            } finally {
+                setLoading(false);
+            }
+        })();
+    }, []);
 
     return (
         <div className="max-w-6xl w-full mx-auto py-8 border">
@@ -55,16 +87,16 @@ export default function Product() {
             <form onSubmit={handleSubmit(onSubmit)} className='grid grid-cols-12 gap-6 w-full border'>
                 {/* メインコンテンツエリア */}
                 <div className="col-span-8 grid gap-6">
-                    <ProductForm register={register} />
+                    <ProductForm categories={categories} colorCategories={colorCategories} register={register} />
                     <ProductInfoSection register={register} />
-                    <ProductImageSection register={register} />
+                    <ProductImageSection register={register} setValue={setValue} />
                 </div>
                 {/* サイドバーエリア */}
                 <div className="col-span-4 grid gap-6 self-start sticky top-6">
                     {/* カテゴリー＆タグセクション */}
                     <ProductCategorySection register={register} />
                     {/* 在庫管理セクション */}
-                    <ProductStockSection register={register} control={control} />
+                    <ProductStockSection register={register} />
                 </div>
             </form>
         </div>

@@ -1,15 +1,39 @@
-import React from 'react'
-import { UseFormRegister } from "react-hook-form";
-import type { FormValues } from "../../../admin/products/page"
+import { UseFormRegister, UseFormSetValue } from "react-hook-form";
+import type { FormValues } from '@/app/types/product';
 import { Save, Eye, Upload, Trash2, Send, Package } from "lucide-react";
+import React, { useState, useRef } from 'react'
 
 type Props = {
     register: UseFormRegister<FormValues>;
+    setValue: UseFormSetValue<FormValues>;
 };
 
-export default function ProductImageSection({ register }: Props) {
+export default function ProductImageSection({ register, setValue }: Props) {
+
+    const [selectedImages, setSelectedImages] = useState<File[]>([]);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const images = Array.from(e.target.files || [])
+        const updatedImages = [...selectedImages];
+        for (const image of images) {
+            if (updatedImages.length < 3) {
+                updatedImages.push(image)
+            } else {
+                break;
+            }
+        }
+        setSelectedImages(updatedImages);
+        setValue("images", updatedImages);
+        e.target.value = "";
+    }
+    const handleRemoveImage = (i: number) => {
+        const updatedImages = selectedImages.filter((_, index) => index !== i);
+        setSelectedImages(updatedImages);
+        setValue("images", updatedImages);
+    }
     return (
-        < section className="rounded-2xl border border-black/10 bg-neutral-800 p-6" >
+        <section className="rounded-2xl border border-black/10 bg-neutral-800 p-6" >
             <label
                 htmlFor="images"
                 className="flex flex-col items-center justify-center 
@@ -21,23 +45,39 @@ export default function ProductImageSection({ register }: Props) {
             >
                 <Upload className="size-5" />
                 <span className="text-sm">画像をアップロード（複数可）</span>
-                <input id="images" type="file" multiple className="sr-only" />
+                <input
+                    id="images"
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    className="sr-only"
+                    onChange={handleImageChange}
+                />
             </label>
             <div className='grid grid-cols-3 mt-4 gap-3'>
-                {[1, 2, 3].map((index) => (
-                    <div key={index} className="relative aspect-square rounded-xl overflow-hidden ring-1 ring-black/10 bg-neutral-100">
-                        <div className="absolute inset-0 grid place-items-center text-xs text-neutral-500">
-                            プレビュー {index}
+                {[0, 1, 2].map((index) => {
+                    const image = selectedImages[index];
+                    return (
+                        <div key={index} className="relative aspect-square rounded-xl overflow-hidden ring-1 ring-black/10 bg-neutral-100">
+                            {image ? (
+                                <img src={URL.createObjectURL(image)} alt="preview" className="w-full h-full object-cover" />
+                            ) : (
+                                <div className="absolute inset-0 grid place-items-center text-xs text-neutral-500">
+                                    プレビュー {index + 1}
+                                </div>
+                            )}
+                            {image && (
+                                <button
+                                    type="button"
+                                    className="absolute right-1 top-1 inline-flex items-center rounded-md bg-white/90 p-1.5 text-xs ring-1 ring-black/10 hover:bg-white"
+                                    onClick={() => handleRemoveImage(index)}
+                                >
+                                    <Trash2 className="size-3.5" />
+                                </button>
+                            )}
                         </div>
-                        <button
-                            type="button"
-                            className="absolute right-1 top-1 inline-flex items-center rounded-md bg-white/90 
-                                                    p-1.5 text-xs ring-1 ring-black/10 hover:bg-white"
-                        >
-                            <Trash2 className="size-3.5 bg-white" />
-                        </button>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
         </section >
     )
