@@ -10,11 +10,22 @@ import type { FormValues } from '@/app/types/product';
 import ProductForm from "@/app/components/admin/product/ProductForm";
 import { useState, useEffect } from 'react'
 import { type FiledCheckBoxLabels } from "../../components/form/CheckBoxForm"
-import { log } from "console";
+import { z } from 'zod';
+
 
 
 export default function Product() {
-    const { register, handleSubmit, setValue } = useForm<FormValues>();
+
+    const formSchema = z.object({
+        username: z.string().min(3, "ユーザー名は3文字以上必要です"),
+        email: z.string().email("有効なメールアドレスを入力してください"),
+        password: z.string().min(8, "パスワードは8文字以上必要です"),
+    });
+
+    // const { register, handleSubmit, setValue, formState: { errors } } = useForm<FormValues>({
+    //     resolver: zodResolver(formSchema),
+    //     mode:'all'
+    // });
 
     // フォーム送信処理
     const onSubmit = async (data: FormValues) => {
@@ -28,10 +39,10 @@ export default function Product() {
         formData.append("status", String(data.status));
         if (data.description) formData.append("description", data.description);
         formData.append("stock", String(data.stock));
-        data.categoryIds?.forEach((id) => formData.append("categoryIds[]", id));
-        data.colorCategoryIds?.forEach((id) => formData.append("colorCategoryIds[]", id));
+        data.categoryIds?.forEach((id) => formData.append("categoryIds", id));
+        data.colorCategoryIds?.forEach((id) => formData.append("colorCategoryIds", id));
         data.images?.forEach((file) => formData.append("images", file));
-        
+
         const response = await fetch("http://localhost:3000/api/products", {
             method: 'POST',
             body: formData,
@@ -43,8 +54,6 @@ export default function Product() {
     const handleSave = () => {
         handleSubmit(onSubmit)();
     };
-
-
 
     const [categories, setCategories] = useState<FiledCheckBoxLabels[]>([]);
     const [colorCategories, setColorCategories] = useState<FiledCheckBoxLabels[]>([]);

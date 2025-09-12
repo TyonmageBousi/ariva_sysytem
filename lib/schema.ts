@@ -27,7 +27,6 @@ export const products = pgTable('products', {
     id: serial('id').primaryKey(),
     skuCode: text('sku_code').unique(),
     name: text('name').notNull(),
-    imageUrl: text('image_url'),
     price: integer('price').notNull(),
     discountPrice: integer('discount_price'),
     status: integer('status').notNull(),
