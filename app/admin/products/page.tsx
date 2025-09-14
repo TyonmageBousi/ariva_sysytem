@@ -1,21 +1,19 @@
 'use client';
 
 import { Save } from "lucide-react";
-import { useForm } from "react-hook-form"
+import { useForm, Resolver } from "react-hook-form"
 import ProductInfoSection from "@/app/components/admin/product/ProductInfoSection";
 import ProductImageSection from "@/app/components/admin/product/ProductImageSection";
 import ProductCategorySection from "@/app/components/admin/product/ProductCategorySection";
 import ProductStockSection from "@/app/components/admin/product/ProductStockSection";
-import type { FormValues } from '@/app/types/product';
 import ProductForm from "@/app/components/admin/product/ProductForm";
 import { useState, useEffect } from 'react'
 import { type FiledCheckBoxLabels } from "../../components/form/CheckBoxForm"
-import { log } from "console";
-
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { CreateProductFrontSchema, FormValues } from "@/app/schemas/product"
 
 export default function Product() {
-    const { register, handleSubmit, setValue } = useForm<FormValues>();
-
     // フォーム送信処理
     const onSubmit = async (data: FormValues) => {
         const formData = new FormData();
@@ -31,7 +29,6 @@ export default function Product() {
         data.categoryIds?.forEach((id) => formData.append("categoryIds[]", id));
         data.colorCategoryIds?.forEach((id) => formData.append("colorCategoryIds[]", id));
         data.images?.forEach((file) => formData.append("images", file));
-        
         const response = await fetch("http://localhost:3000/api/products", {
             method: 'POST',
             body: formData,
@@ -39,13 +36,9 @@ export default function Product() {
         const result = await response.json()
         console.log(result);
     };
-
     const handleSave = () => {
         handleSubmit(onSubmit)();
     };
-
-
-
     const [categories, setCategories] = useState<FiledCheckBoxLabels[]>([]);
     const [colorCategories, setColorCategories] = useState<FiledCheckBoxLabels[]>([]);
     const [error, setError] = useState<string | null>(null);
@@ -67,7 +60,14 @@ export default function Product() {
             }
         })();
     }, []);
-
+    const formSchema = z.object({
+        name: z.string()
+    })
+    const methods = useForm<FormValues>({
+        resolver: zodResolver(CreateProductFrontSchema) as Resolver<FormValues>,
+        mode: "all"
+    })
+    const { register, setValue, handleSubmit, formState: { errors } } = methods
     return (
         <div className="max-w-6xl w-full mx-auto py-8 border">
             <header className="mb-6">
@@ -83,12 +83,11 @@ export default function Product() {
                     </div>
                 </div>
             </header>
-
             <form onSubmit={handleSubmit(onSubmit)} className='grid grid-cols-12 gap-6 w-full border'>
                 {/* メインコンテンツエリア */}
                 <div className="col-span-8 grid gap-6">
-                    <ProductForm categories={categories} colorCategories={colorCategories} register={register} />
-                    <ProductInfoSection register={register} />
+                    <ProductForm categories={categories} colorCategories={colorCategories} register={register} errors={errors} />
+                    <ProductInfoSection register={register} errors={errors} />
                     <ProductImageSection register={register} setValue={setValue} />
                 </div>
                 {/* サイドバーエリア */}
@@ -99,6 +98,6 @@ export default function Product() {
                     <ProductStockSection register={register} />
                 </div>
             </form>
-        </div>
+        </div >
     );
 }

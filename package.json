@@ -15,6 +15,7 @@
     "db:seed:dev": "cross-env NODE_ENV=development npx tsx scripts/seed.ts"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.2.1",
     "@supabase/supabase-js": "^2.57.0",
     "dotenv": "^17.2.1",
     "drizzle-orm": "^0.44.5",

@@ -7,21 +7,23 @@ import NumberForm, { type FieldNumberProps } from "../../form/NumberForm";
 import CheckBoxForm, { type FiledCheckBoxLabels, type FiledCheckBoxProps } from "../../form/CheckBoxForm"
 import OptionsForm, { type FiledOptionsProps } from "../../form/OptionsForm";
 import DateForm, { FieldDateProps } from "../../form/DateForm";
-import { UseFormRegister } from "react-hook-form";
-import type { FormValues } from '@/app/types/product';
+import { UseFormRegister, FieldErrors } from "react-hook-form";
+import { FormValues } from "@/app/schemas/product"
 type Props = {
     categories: FiledCheckBoxLabels[];
     colorCategories: FiledCheckBoxLabels[];
     register: UseFormRegister<FormValues>;
+    errors: FieldErrors<FormValues>;
 };
 
-export default function ProductForm({ categories, colorCategories, register }: Props) {
+export default function ProductForm({ categories, colorCategories, register, errors }: Props) {
     // 基本情報のフォーム設定
     const productNameFieldProps: FieldTextProps = {
         label: "商品名",
         labelStyle: "block text-sm font-medium mb-1",
         name: "name",
         register,
+        error: errors.name,
         inputStyle: "w-full rounded-xl border border-black/10 bg-neutral-700 px-3 py-2.5 text-[15px]",
         placeholder: "生チョコ・ビター 8粒"
     };
@@ -31,6 +33,7 @@ export default function ProductForm({ categories, colorCategories, register }: P
         labelStyle: "block text-sm font-medium mb-1",
         name: "skuCode",
         register,
+        error: errors.skuCode,
         inputStyle: "w-full rounded-xl border border-black/10 bg-neutral-700 px-3 py-2.5 text-[15px]",
         placeholder: "SKU-XXXX"
     };
@@ -40,6 +43,7 @@ export default function ProductForm({ categories, colorCategories, register }: P
         labelStyle: "block text-sm font-medium mb-1",
         name: "price",
         register,
+        error: errors.price,
         inputStyle: "w-full rounded-xl border border-black/10 bg-neutral-700 px-3 py-2.5 text-[15px]",
         placeholder: ""
     };
@@ -49,6 +53,7 @@ export default function ProductForm({ categories, colorCategories, register }: P
         labelStyle: "block text-sm font-medium mb-1",
         name: "discountPrice",
         register,
+        error: errors.discountPrice,
         inputStyle: "w-full rounded-xl border border-black/10 bg-neutral-700 px-3 py-2.5 text-[15px]",
         placeholder: ""
     };
@@ -58,6 +63,7 @@ export default function ProductForm({ categories, colorCategories, register }: P
         name: "saleStartAt",
         labelStyle: "block text-sm font-medium mb-1",
         register,
+        error: errors.saleStartAt,
         inputStyle: "w-full rounded-xl border border-black/10 bg-neutral-700 px-3 py-2.5 text-[15px]",
     };
 
@@ -66,6 +72,7 @@ export default function ProductForm({ categories, colorCategories, register }: P
         name: "saleEndAt",
         labelStyle: "block text-sm font-medium mb-1",
         register,
+        error: errors.saleEndAt,
         inputStyle: "w-full rounded-xl border border-black/10 bg-neutral-700 px-3 py-2.5 text-[15px]",
     };
     const colorCategoryCheckboxProps: FiledCheckBoxProps = {
@@ -95,7 +102,6 @@ export default function ProductForm({ categories, colorCategories, register }: P
                 <span>商品情報</span>
             </h1>
             <p className="mt-1 text-sm text-black/60">商品名、商品コード、価格など</p>
-
             <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-5">
                 <div>
                     <TextForm props={productNameFieldProps} />

@@ -1,7 +1,6 @@
 'use client';
-import { option } from "framer-motion/client";
-import type { UseFormRegister } from "react-hook-form";
-import type { FormValues } from "../../admin/products/page"
+import type { UseFormRegister, FieldError } from "react-hook-form";
+import { FormValues } from "@/app/schemas/product"
 
 export type Options = string[];
 
@@ -10,6 +9,7 @@ export type FiledTextAreaProps = {
     labelStyle: string;
     name: keyof FormValues;
     register: UseFormRegister<FormValues>;
+    error?: FieldError;
     inputStyle: string;
     rows: number
     placeholder?: string;
@@ -18,7 +18,7 @@ export type FiledTextAreaProps = {
 type Props = { props: FiledTextAreaProps };
 
 export default function TextAreaForm({ props }: Props) {
-    const { label, name, register, labelStyle, inputStyle, rows, placeholder } = props;
+    const { label, name, register, labelStyle, inputStyle, rows, placeholder, error } = props;
     return (
         <div>
             <label className={labelStyle}>{label}</label>
@@ -29,6 +29,9 @@ export default function TextAreaForm({ props }: Props) {
                 className={inputStyle}
                 placeholder={placeholder}
             >
+                {error && (
+                    <p className="text-red-500">{error.message}</p>
+                )}
             </textarea>
         </div >
     );

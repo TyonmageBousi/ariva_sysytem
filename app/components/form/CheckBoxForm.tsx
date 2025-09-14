@@ -1,6 +1,6 @@
-import type { UseFormRegister } from "react-hook-form";
+import type { FieldError, UseFormRegister } from "react-hook-form";
 import React, { useState } from 'react';
-import type { FormValues } from "../../types/product"
+import { FormValues } from "@/app/schemas/product"
 
 
 export type FiledCheckBoxLabels = {
@@ -16,13 +16,14 @@ export type FiledCheckBoxProps = {
     labelStyle: string;
     name: keyof FormValues;
     register: UseFormRegister<FormValues>;
+    error?: FieldError;
     inputStyle: string;
     labels: FiledCheckBoxLabels[];
 };
 
 
 export default function CheckBoxForm({ props }: Props) {
-    const { label, labelStyle, name, register, inputStyle, labels } = props;
+    const { label, labelStyle, name, register, inputStyle, labels, error } = props;
 
     return (
         <div>
@@ -34,6 +35,9 @@ export default function CheckBoxForm({ props }: Props) {
                         {...register(name)}
                         value={label.id}
                     />
+                    {error && (
+                        <p className="text-red-500">{error.message}</p>
+                    )}
                     {label.label}
                 </label>
             ))}

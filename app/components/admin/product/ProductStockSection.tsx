@@ -1,8 +1,9 @@
 import React from 'react'
 import { Save, Eye, Upload, Trash2, Send, Package } from "lucide-react";
-import type { FormValues } from '@/app/types/product';
 import NumberForm, { type FieldNumberProps } from "../../form/NumberForm";
 import { UseFormRegister } from "react-hook-form";
+import { FormValues } from "@/app/schemas/product"
+
 
 
 type Props = {

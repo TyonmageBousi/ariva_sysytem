@@ -1,6 +1,5 @@
 // app/api/products/route.ts
 import { db } from '@/lib/db';
-import { CreateProductSchema, CreateProductInput } from "../../schemas/product";
 import { products, productCategories } from './../../../lib/schema';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from "@supabase/supabase-js";
@@ -27,9 +26,7 @@ export async function POST(request: Request) {
                 throw error
             }
         })
-
         const uploadResults = await Promise.all(uploadImages)
-
         return NextResponse.json({ ok: true, formdata });
     }
     catch (err) {
