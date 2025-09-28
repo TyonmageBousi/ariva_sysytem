@@ -1,19 +1,16 @@
 'use client';
-import type { UseFormRegister } from "react-hook-form";
-import type { FormValues } from "../../admin/products/page";
+import type { UseFormRegister, FieldValues, Path } from "react-hook-form";
 
-export type FieldDateProps = {
+export type FieldDateProps<T extends FieldValues> = {
     label: string;
     labelStyle?: string;
-    name: keyof FormValues;                  // 例: "startDate" | "finishDate"
-    register: UseFormRegister<FormValues>;
+    name: Path<T>;                  
+    register: UseFormRegister<T>;
     inputStyle?: string;
 };
 
-type Props = { props: FieldDateProps };
-
-export default function NormalDateForm({ props }: Props) {
-    const { label, name, register, labelStyle, inputStyle} = props;
+export default function NormalDateForm<T extends FieldValues>(props: FieldDateProps<T>) {
+    const { label, name, register, labelStyle, inputStyle } = props;
 
     return (
         <div>
@@ -21,9 +18,9 @@ export default function NormalDateForm({ props }: Props) {
                 {label}
             </label>
             <input
-                id={String(name)}
+                id={name}
                 type="date"
-                {...register(name, { valueAsDate: true })}
+                {...register(name)}
                 className={inputStyle}
             />
         </div>

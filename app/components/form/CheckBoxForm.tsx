@@ -1,40 +1,33 @@
-import type { UseFormRegister } from "react-hook-form";
-import React, { useState } from 'react';
-import type { FormValues } from "../../types/product"
-
-
+import type { UseFormRegister, FieldValues, Path } from "react-hook-form";
 export type FiledCheckBoxLabels = {
     id: number
     label: string
 }
 
-type Props = { props: FiledCheckBoxProps };
-
-
-export type FiledCheckBoxProps = {
+export type FiledCheckBoxProps<T extends FieldValues> = {
     label: string;
     labelStyle: string;
-    name: keyof FormValues;
-    register: UseFormRegister<FormValues>;
+    name: Path<T>;
+    register: UseFormRegister<T>;
     inputStyle: string;
     labels: FiledCheckBoxLabels[];
 };
 
 
-export default function CheckBoxForm({ props }: Props) {
+export default function CheckBoxForm<T extends FieldValues>(props: FiledCheckBoxProps<T>) {
     const { label, labelStyle, name, register, inputStyle, labels } = props;
 
     return (
         <div>
             <label className={labelStyle}>{label}</label>
-            {labels.map((label, index) => (
-                <label key={index} className={inputStyle}>
+            {labels.map((item: FiledCheckBoxLabels) => (
+                <label key={item.id} className={inputStyle}>
                     <input
                         type="checkbox"
                         {...register(name)}
-                        value={label.id}
+                        value={item.id}
                     />
-                    {label.label}
+                    {item.label}
                 </label>
             ))}
         </div>

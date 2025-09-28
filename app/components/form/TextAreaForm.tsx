@@ -1,23 +1,19 @@
 'use client';
-import { option } from "framer-motion/client";
-import type { UseFormRegister } from "react-hook-form";
-import type { FormValues } from "../../admin/products/page"
+import type { UseFormRegister, FieldValues, Path } from "react-hook-form";
 
 export type Options = string[];
 
-export type FiledTextAreaProps = {
+export type FiledTextAreaProps<T extends FieldValues> = {
     label: string;
     labelStyle: string;
-    name: keyof FormValues;
-    register: UseFormRegister<FormValues>;
+    name: Path<T>;
+    register: UseFormRegister<T>;
     inputStyle: string;
     rows: number
     placeholder?: string;
 };
 
-type Props = { props: FiledTextAreaProps };
-
-export default function TextAreaForm({ props }: Props) {
+export default function TextAreaForm<T extends FieldValues>(props: FiledTextAreaProps<T>) {
     const { label, name, register, labelStyle, inputStyle, rows, placeholder } = props;
     return (
         <div>
@@ -33,3 +29,4 @@ export default function TextAreaForm({ props }: Props) {
         </div >
     );
 }
+d

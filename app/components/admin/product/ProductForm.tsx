@@ -5,7 +5,7 @@ import { Save, Eye, Upload, Trash2, Send, Package } from "lucide-react";
 import TextForm, { type FieldTextProps } from "../../form/TextForm";
 import NumberForm, { type FieldNumberProps } from "../../form/NumberForm";
 import CheckBoxForm, { type FiledCheckBoxLabels, type FiledCheckBoxProps } from "../../form/CheckBoxForm"
-import OptionsForm, { type FiledOptionsProps } from "../../form/OptionsForm";
+import OptionsForm, { type FieldOptionsProps } from "../../form/OptionsForm";
 import DateForm, { FieldDateProps } from "../../form/DateForm";
 import { UseFormRegister } from "react-hook-form";
 import type { FormValues } from '@/app/types/product';
@@ -17,7 +17,7 @@ type Props = {
 
 export default function ProductForm({ categories, colorCategories, register }: Props) {
     // 基本情報のフォーム設定
-    const productNameFieldProps: FieldTextProps = {
+    const productNameFieldProps: FieldTextProps<FormValues> = {
         label: "商品名",
         labelStyle: "block text-sm font-medium mb-1",
         name: "name",
@@ -26,7 +26,7 @@ export default function ProductForm({ categories, colorCategories, register }: P
         placeholder: "生チョコ・ビター 8粒"
     };
 
-    const productCodeFieldProps: FieldTextProps = {
+    const productCodeFieldProps: FieldTextProps<FormValues> = {
         label: "商品コード",
         labelStyle: "block text-sm font-medium mb-1",
         name: "skuCode",
@@ -35,7 +35,7 @@ export default function ProductForm({ categories, colorCategories, register }: P
         placeholder: "SKU-XXXX"
     };
 
-    const priceFieldProps: FieldNumberProps = {
+    const priceFieldProps: FieldNumberProps<FormValues> = {
         label: "価格",
         labelStyle: "block text-sm font-medium mb-1",
         name: "price",
@@ -44,7 +44,7 @@ export default function ProductForm({ categories, colorCategories, register }: P
         placeholder: ""
     };
 
-    const salePriceFieldProps: FieldNumberProps = {
+    const salePriceFieldProps: FieldNumberProps<FormValues> = {
         label: "割引価格",
         labelStyle: "block text-sm font-medium mb-1",
         name: "discountPrice",
@@ -53,7 +53,7 @@ export default function ProductForm({ categories, colorCategories, register }: P
         placeholder: ""
     };
 
-    const salesStartDateProps: FieldDateProps = {
+    const salesStartDateProps: FieldDateProps<FormValues> = {
         label: "販売期間",
         name: "saleStartAt",
         labelStyle: "block text-sm font-medium mb-1",
@@ -61,14 +61,14 @@ export default function ProductForm({ categories, colorCategories, register }: P
         inputStyle: "w-full rounded-xl border border-black/10 bg-neutral-700 px-3 py-2.5 text-[15px]",
     };
 
-    const salesEndDateProps: FieldDateProps = {
+    const salesEndDateProps: FieldDateProps<FormValues> = {
         label: "販売期間",
         name: "saleEndAt",
         labelStyle: "block text-sm font-medium mb-1",
         register,
         inputStyle: "w-full rounded-xl border border-black/10 bg-neutral-700 px-3 py-2.5 text-[15px]",
     };
-    const colorCategoryCheckboxProps: FiledCheckBoxProps = {
+    const colorCategoryCheckboxProps: FiledCheckBoxProps<FormValues> = {
         label: "色分け",
         name: "colorCategoryIds",
         labelStyle: "block text-sm font-medium mb-4",
@@ -78,7 +78,7 @@ export default function ProductForm({ categories, colorCategories, register }: P
     };
 
     const PRODUCT_STATUS_OPTIONS = ["下書き", "公開", "販売中止"];
-    const productStatusSelectProps: FiledOptionsProps = {
+    const productStatusSelectProps: FieldOptionsProps<FormValues> = {
         label: "状態",
         name: "status",
         labelStyle: "block text-sm font-medium mb-1",
@@ -98,28 +98,28 @@ export default function ProductForm({ categories, colorCategories, register }: P
 
             <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-5">
                 <div>
-                    <TextForm props={productNameFieldProps} />
+                    <TextForm {...productNameFieldProps} />
                 </div>
                 <div>
-                    <TextForm props={productCodeFieldProps} />
+                    <TextForm {...productCodeFieldProps} />
                 </div>
                 <div>
-                    <NumberForm props={priceFieldProps} />
+                    <NumberForm {...priceFieldProps} />
                 </div>
                 <div>
-                    <NumberForm props={salePriceFieldProps} />
+                    <NumberForm {...salePriceFieldProps} />
                 </div>
                 <div>
-                    <DateForm props={salesStartDateProps} />
+                    <DateForm {...salesStartDateProps} />
                 </div>
                 <div>
-                    <DateForm props={salesEndDateProps} />
+                    <DateForm {...salesEndDateProps} />
                 </div>
                 <div>
-                    <CheckBoxForm props={colorCategoryCheckboxProps} />
+                    <CheckBoxForm {...colorCategoryCheckboxProps} />
                 </div>
                 <div>
-                    <OptionsForm props={productStatusSelectProps} />
+                    <OptionsForm {...productStatusSelectProps} />
                 </div>
             </div>
         </section>

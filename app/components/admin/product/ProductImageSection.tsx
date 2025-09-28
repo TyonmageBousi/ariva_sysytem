@@ -8,7 +8,7 @@ type Props = {
     setValue: UseFormSetValue<FormValues>;
 };
 
-export default function ProductImageSection({ register, setValue }: Props) {
+export default function ProductImageSection({ setValue }: Props) {
 
     const [selectedImages, setSelectedImages] = useState<File[]>([]);
     const fileInputRef = useRef<HTMLInputElement | null>(null);

@@ -34,6 +34,7 @@ export const products = pgTable('products', {
     saleStartAt: timestamp('sale_start_at', { withTimezone: true }),
     saleEndAt: timestamp('sale_end_at', { withTimezone: true }),
     description: text('description'),
+    stock: integer('stock').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });
@@ -57,17 +58,17 @@ export const productCategories = pgTable('product_categories', {
 
 export const productCategoriesUnique = unique("product_categories_unique").on(
     productCategories.productId,
-    productCategories.categoryId    
+    productCategories.categoryId
 )
 
 // 商品とカラーカテゴリの中間テーブル（多対多）
-export const productColors = pgTable('product_colors', {
+export const productColorCategories = pgTable('product_color_categories', {
     id: serial('id').primaryKey(),
     productId: integer('product_id').references(() => products.id).notNull(),
     colorId: integer('color_id').references(() => colorCategories.id).notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 });
-export const productColorsUnique = unique("product_colors_unique").on(productColors.productId, productColors.colorId);
+export const productColorsUnique = unique("product_colors_unique").on(productColorCategories.productId, productColorCategories.colorId);
 
 // リレーション定義
 export const categoriesRelations = relations(categories, ({ many }) => ({
@@ -75,12 +76,12 @@ export const categoriesRelations = relations(categories, ({ many }) => ({
 }));
 
 export const colorCategoriesRelations = relations(colorCategories, ({ many }) => ({
-    productColors: many(productColors),
+    productColors: many(productColorCategories),
 }));
 
 export const productsRelations = relations(products, ({ many }) => ({
     productCategories: many(productCategories),
-    productColors: many(productColors),
+    productColors: many(productColorCategories),
     productImages: many(productImages)
 }));
 
@@ -95,13 +96,13 @@ export const productCategoriesRelations = relations(productCategories, ({ one })
     }),
 }));
 
-export const productColorsRelations = relations(productColors, ({ one }) => ({
+export const productColorsRelations = relations(productColorCategories, ({ one }) => ({
     product: one(products, {
-        fields: [productColors.productId],
+        fields: [productColorCategories.productId],
         references: [products.id],
     }),
     colorCategory: one(colorCategories, {
-        fields: [productColors.colorId],
+        fields: [productColorCategories.colorId],
         references: [colorCategories.id],
     }),
 }));

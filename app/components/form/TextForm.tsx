@@ -1,19 +1,16 @@
 'use client';
-import type { UseFormRegister } from "react-hook-form";
-import type { FormValues } from "../../admin/products/page"
+import type { UseFormRegister, FieldValues, Path } from "react-hook-form";
 
-export type FieldTextProps = {
+export type FieldTextProps<T extends FieldValues> = {
     label: string;
     labelStyle?: string;
-    name: keyof FormValues;
-    register: UseFormRegister<FormValues>;
+    name: Path<T>;
+    register: UseFormRegister<T>;
     inputStyle?: string;
     placeholder?: string;
 };
 
-type Props = { props: FieldTextProps };
-
-export default function NormalForm({ props }: Props) {
+export default function NormalForm<T extends FieldValues>(props: FieldTextProps<T>) {
     const { label, name, register, labelStyle, inputStyle, placeholder } = props;
     return (
         <div>

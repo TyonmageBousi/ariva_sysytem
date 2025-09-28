@@ -43,9 +43,6 @@ export default function Product() {
     const handleSave = () => {
         handleSubmit(onSubmit)();
     };
-
-
-
     const [categories, setCategories] = useState<FiledCheckBoxLabels[]>([]);
     const [colorCategories, setColorCategories] = useState<FiledCheckBoxLabels[]>([]);
     const [error, setError] = useState<string | null>(null);

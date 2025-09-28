@@ -12,7 +12,7 @@ type Props = {
 export default function ProductInfoSection({ register }: Props) {
 
     // テキストエリア設定
-    const descriptionTextAreaProps: FiledTextAreaProps = {
+    const descriptionTextAreaProps: FiledTextAreaProps<FormValues> = {
         label: "説明",
         name: "description",
         labelStyle: "block text-sm font-medium mb-1",
@@ -25,7 +25,7 @@ export default function ProductInfoSection({ register }: Props) {
     return (
         < section className="rounded-2xl border border-black/10 bg-neutral-800 p-6" >
             <div className="md:col-span-2">
-                <TextAreaForm props={descriptionTextAreaProps} />
+                <TextAreaForm {...descriptionTextAreaProps} />
             </div>
         </section >
     )

@@ -1,5 +1,5 @@
 {
-  "id": "336f68f1-1f18-45d2-a5b5-084b99eeb502",
+  "id": "8bf944a6-6dba-48b2-ac5e-75b236120417",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -10,10 +10,9 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "uuid",
+          "type": "serial",
           "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
+          "notNull": true
         },
         "name": {
           "name": "name",
@@ -29,9 +28,10 @@
         },
         "is_active": {
           "name": "is_active",
-          "type": "integer",
+          "type": "boolean",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": true
         },
         "created_at": {
           "name": "created_at",
@@ -62,10 +62,9 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "uuid",
+          "type": "serial",
           "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
+          "notNull": true
         },
         "name": {
           "name": "name",
@@ -81,9 +80,10 @@
         },
         "is_active": {
           "name": "is_active",
-          "type": "integer",
+          "type": "boolean",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": true
         },
         "created_at": {
           "name": "created_at",
@@ -114,20 +114,19 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "uuid",
+          "type": "serial",
           "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
+          "notNull": true
         },
         "product_id": {
           "name": "product_id",
-          "type": "uuid",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
         "category_id": {
           "name": "category_id",
-          "type": "uuid",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -169,40 +168,30 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "product_categories_product_id_category_id_unique": {
-          "name": "product_categories_product_id_category_id_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "product_id",
-            "category_id"
-          ]
-        }
-      },
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.product_colors": {
-      "name": "product_colors",
+    "public.product_color_categories": {
+      "name": "product_color_categories",
       "schema": "",
       "columns": {
         "id": {
           "name": "id",
-          "type": "uuid",
+          "type": "serial",
           "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
+          "notNull": true
         },
         "product_id": {
           "name": "product_id",
-          "type": "uuid",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
         "color_id": {
           "name": "color_id",
-          "type": "uuid",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -216,9 +205,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "product_colors_product_id_products_id_fk": {
-          "name": "product_colors_product_id_products_id_fk",
-          "tableFrom": "product_colors",
+        "product_color_categories_product_id_products_id_fk": {
+          "name": "product_color_categories_product_id_products_id_fk",
+          "tableFrom": "product_color_categories",
           "tableTo": "products",
           "columnsFrom": [
             "product_id"
@@ -229,9 +218,9 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "product_colors_color_id_color_categories_id_fk": {
-          "name": "product_colors_color_id_color_categories_id_fk",
-          "tableFrom": "product_colors",
+        "product_color_categories_color_id_color_categories_id_fk": {
+          "name": "product_color_categories_color_id_color_categories_id_fk",
+          "tableFrom": "product_color_categories",
           "tableTo": "color_categories",
           "columnsFrom": [
             "color_id"
@@ -244,16 +233,66 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "product_colors_product_id_color_id_unique": {
-          "name": "product_colors_product_id_color_id_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "product_id",
-            "color_id"
-          ]
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.product_images": {
+      "name": "product_images",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "product_id": {
+          "name": "product_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "file_path": {
+          "name": "file_path",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
+      "indexes": {},
+      "foreignKeys": {
+        "product_images_product_id_products_id_fk": {
+          "name": "product_images_product_id_products_id_fk",
+          "tableFrom": "product_images",
+          "tableTo": "products",
+          "columnsFrom": [
+            "product_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -264,10 +303,9 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "uuid",
+          "type": "serial",
           "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
+          "notNull": true
         },
         "sku_code": {
           "name": "sku_code",
@@ -322,6 +360,12 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "stock": {
+          "name": "stock",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
         },
         "created_at": {
           "name": "created_at",

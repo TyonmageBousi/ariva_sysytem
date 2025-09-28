@@ -11,7 +11,7 @@ type Props = {
 
 
 export default function ProductStockSection({ register }: Props) {
-    const priceFieldProps: FieldNumberProps = {
+    const priceFieldProps: FieldNumberProps<FormValues> = {
         label: "在庫数",
         labelStyle: "block text-sm font-medium mb-1",
         name: "stock",
@@ -27,7 +27,7 @@ export default function ProductStockSection({ register }: Props) {
             </h1>
             <p className="mt-1 text-sm text-black/60">在庫を管理する</p>
             <div className='grid grid-cols-2 gap-x-6 gap-y-5 mt-6'>
-                <NumberForm props={priceFieldProps} />
+                <NumberForm {...priceFieldProps} />
             </div>
         </section>
 
