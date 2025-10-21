@@ -1,8 +1,6 @@
 import React from 'react'
 import { Save, Eye, Upload, Trash2, Send, Package } from "lucide-react";
 
-
-
 // export default function ProductHeader() {
 //     return (
 //         <header className="mb-6">

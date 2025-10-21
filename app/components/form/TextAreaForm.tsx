@@ -1,7 +1,7 @@
 'use client';
 import { option } from "framer-motion/client";
 import type { UseFormRegister } from "react-hook-form";
-import type { FormValues } from "../../admin/products/page"
+import type { FormValues } from "../../types/product"
 
 export type Options = string[];
 

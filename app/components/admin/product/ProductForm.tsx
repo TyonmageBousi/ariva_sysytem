@@ -43,7 +43,6 @@ export default function ProductForm({ categories, colorCategories, register }: P
         inputStyle: "w-full rounded-xl border border-black/10 bg-neutral-700 px-3 py-2.5 text-[15px]",
         placeholder: ""
     };
-
     const salePriceFieldProps: FieldNumberProps = {
         label: "割引価格",
         labelStyle: "block text-sm font-medium mb-1",
@@ -99,7 +98,7 @@ export default function ProductForm({ categories, colorCategories, register }: P
             <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-5">
                 <div>
                     <TextForm props={productNameFieldProps} />
-                </div>
+                </div >
                 <div>
                     <TextForm props={productCodeFieldProps} />
                 </div>
@@ -121,7 +120,7 @@ export default function ProductForm({ categories, colorCategories, register }: P
                 <div>
                     <OptionsForm props={productStatusSelectProps} />
                 </div>
-            </div>
-        </section>
+            </div >
+        </section >
     );
 }

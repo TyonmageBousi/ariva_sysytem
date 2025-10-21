@@ -1,6 +1,8 @@
 import React from 'react'
 import { UseFormRegister } from "react-hook-form";
+
 import type { FormValues } from '@/app/types/product';
+
 import TextAreaForm, { type FiledTextAreaProps } from "../../form/TextAreaForm";
 
 type Props = {
