@@ -57,7 +57,7 @@ export const productCategories = pgTable('product_categories', {
 
 export const productCategoriesUnique = unique("product_categories_unique").on(
     productCategories.productId,
-    productCategories.categoryId    
+    productCategories.categoryId
 )
 
 // 商品とカラーカテゴリの中間テーブル（多対多）
@@ -112,3 +112,16 @@ export const productImagesRelations = relations(productImages, ({ one }) => ({
         references: [products.id]
     })
 }));
+
+export const users = pgTable('users', {
+    id: serial('id').primaryKey(),
+    name: text('name').notNull(),
+    email: text('email').notNull().unique(),
+    passWord: text('passWord').notNull(),
+    birthday: timestamp('birthday').notNull(),
+    phone: text('phone').notNull(),
+    postalCode: text('postalCode').notNull(),
+    address: text('address').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+});

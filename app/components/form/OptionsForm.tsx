@@ -1,26 +1,25 @@
 'use client';
-import type { UseFormRegister } from "react-hook-form";
+import type { FieldValues, UseFormRegister, FieldErrors } from "react-hook-form";
 import { Control, useController, Path } from "react-hook-form";
-import type { FormValues } from "../../admin/products/page"
 
 export type FiledOptions = {
     id: number
     label: string
 }
-export type FiledOptionsProps = {
+export type FiledOptionsProps<T extends FieldValues> = {
     label: string;
-    labelStyle: string;
-    name: keyof FormValues;
-    register: UseFormRegister<FormValues>;
-    inputStyle: string;
+    labelStyle?: string;
+    name: Path<T>;
+    register: UseFormRegister<T>;
+    inputStyle?: string;
     options: FiledOptions[];
-
+    errors: FieldErrors<T>
 };
 
-type Props = { props: FiledOptionsProps };
+type Props<T extends FieldValues> = { props: FiledOptionsProps<T> };
 
-export default function NormalForm({ props }: Props) {
-    const { label, name, register, labelStyle, inputStyle, options } = props;
+export default function NormalForm<T extends FieldValues>({ props }: Props<T>) {
+    const { label, name, register, labelStyle, inputStyle, options,errors } = props;
     return (
         <div>
             <label className={labelStyle}>{label}</label>
@@ -34,6 +33,8 @@ export default function NormalForm({ props }: Props) {
                         < option value={index}>{option.label}</option>
                     ))}
             </select>
+            {errors[name] && <p className="error">{String(errors[name]?.message)}</p>}
+
         </div >
     );
 }
