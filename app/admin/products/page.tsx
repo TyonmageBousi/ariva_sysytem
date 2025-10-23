@@ -1,4 +1,4 @@
-'use client';
+    'use client';
 
 import { Save } from "lucide-react";
 import { useForm } from "react-hook-form"
@@ -10,7 +10,6 @@ import type { FormValues } from '@/app/types/product';
 import ProductForm from "@/app/components/admin/product/ProductForm";
 import { useState, useEffect } from 'react'
 import { type FiledCheckBoxLabels } from "../../components/form/CheckBoxForm"
-import { log } from "console";
 
 
 export default function Product() {

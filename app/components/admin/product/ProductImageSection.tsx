@@ -1,3 +1,4 @@
+
 import { UseFormRegister, UseFormSetValue } from "react-hook-form";
 import type { FormValues } from '@/app/types/product';
 import { Save, Eye, Upload, Trash2, Send, Package } from "lucide-react";
