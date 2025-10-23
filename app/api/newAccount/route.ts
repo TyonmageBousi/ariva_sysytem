@@ -18,12 +18,22 @@ export async function POST(request: Request) {
                 { status: 400 });
         }
         const { name, email, password, birthday, phone, postalCode, prefecture, city, address1, address2 } = result.data;
+
+        const exitingUser = await db.query.users.findFirst({
+            where: (u, { eq }) => eq(u.email, email)
+        })
+        if (exitingUser) {
+            return Response.json(
+                { error: "このメールアドレスはすでに登録されています。" },
+                { status: 400 }
+            );
+        }
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = {
             name,
             email,
             passWord: hashedPassword,
-            birthday:  new Date(birthday)   ,
+            birthday: new Date(birthday),
             phone,
             postalCode,
             address: [prefecture, city, address1, address2 || ""].join(""),

@@ -1,4 +1,5 @@
 'use client';
+
 import type { FieldValues, UseFormRegister, Path ,FieldErrors} from "react-hook-form";
 
 export type FieldTextProps<T extends FieldValues> = {
