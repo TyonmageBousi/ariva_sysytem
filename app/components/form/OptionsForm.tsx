@@ -1,12 +1,13 @@
 'use client';
 import type { UseFormRegister } from "react-hook-form";
 import { Control, useController, Path } from "react-hook-form";
-import type { FormValues } from "../../admin/products/page"
+import type { FormValues } from "../../types/product"
 
 export type FiledOptions = {
     id: number
     label: string
 }
+
 export type FiledOptionsProps = {
     label: string;
     labelStyle: string;

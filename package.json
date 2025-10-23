@@ -26,8 +26,12 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.62.0",
+<<<<<<< HEAD
     "swiper": "^11.2.10",
     "zod": "^4.1.3"
+=======
+    "swiper": "^11.2.10"
+>>>>>>> feature/admin-products
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -35,7 +39,10 @@
     "@types/pg": "^8.15.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+<<<<<<< HEAD
     "cross-env": "^10.0.0",
+=======
+>>>>>>> feature/admin-products
     "drizzle-kit": "^0.31.4",
     "tailwindcss": "^4",
     "tsx": "^4.20.5",
