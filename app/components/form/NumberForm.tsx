@@ -1,20 +1,21 @@
 'use client';
-import type { UseFormRegister } from "react-hook-form";
-import type { FormValues } from "../../admin/products/page"
+import type { FieldValues, UseFormRegister, Path ,FieldErrors} from "react-hook-form";
 
-export type FieldNumberProps = {
+export type FieldNumberProps<T extends FieldValues> = {
     label: string;
     labelStyle?: string;
-    name: keyof FormValues;
-    register: UseFormRegister<FormValues>;
+    name: Path<T>;
+    register: UseFormRegister<T>;
     inputStyle?: string;
     placeholder?: string;
+    errors: FieldErrors<T>;
 };
 
-type Props = { props: FieldNumberProps };
+type Props<T extends FieldValues> = { props: FieldNumberProps<T> };
 
-export default function NormalForm({ props }: Props) {
-    const { label, name, register, labelStyle, inputStyle, placeholder } = props;
+export default function NormalForm<T extends FieldValues>({ props }: Props<T>) {
+
+    const { label, name, register, labelStyle, inputStyle, placeholder,errors } = props;
     return (
         <div>
             <label className={labelStyle}>{label}</label>
@@ -26,6 +27,7 @@ export default function NormalForm({ props }: Props) {
                 className={inputStyle}
                 placeholder={placeholder}
             />
+            {errors[name] && <p className="error">{String(errors[name]?.message)}</p>}
         </div>
     );
 }
