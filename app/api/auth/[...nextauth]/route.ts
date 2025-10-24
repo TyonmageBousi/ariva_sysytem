@@ -2,20 +2,18 @@ import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import bcrypt from 'bcrypt'
 import { db } from '@/lib/db'
-import { users } from '@/lib/schema';
+import { users } from '@/lib/schema'
 import { eq } from 'drizzle-orm'
 
 const handler = NextAuth({
-
     providers: [
         CredentialsProvider({
             name: 'Credentials',
             credentials: {
                 email: { label: 'Email', type: 'email' },
-                password: { label: 'password', type: 'password' },
+                password: { label: 'Password', type: 'password' },
             },
-
-            async authorize(credentials) { //ユーザー情報が入る
+            async authorize(credentials) {
                 try {
                     const email = credentials?.email
                     const password = credentials?.password
@@ -24,13 +22,18 @@ const handler = NextAuth({
                         console.log('フォームから値は文字列ではありません')
                         return null
                     }
+
                     const result = await db.select().from(users).where(eq(users.email, email))
-                    const user = result[0];
+                    const user = result[0]
+
                     if (!user) {
-                        return null;
+                        return null
                     }
+
                     const isValid = await bcrypt.compare(password, user.passWord)
-                    if (!isValid) throw new Error('invalid credentials')
+                    if (!isValid) {
+                        return null
+                    }
 
                     return {
                         id: user.id.toString(),
@@ -38,13 +41,12 @@ const handler = NextAuth({
                         name: user.name
                     }
                 } catch (error) {
-                    console.error('Auth error:', error);
-                    return null; // エラー時はnullを返す
+                    console.error('Auth error:', error)
+                    return null
                 }
             }
         })
     ],
-
     pages: {
         signIn: '/login',
     },
@@ -54,18 +56,5 @@ const handler = NextAuth({
     },
     secret: process.env.NEXTAUTH_SECRET,
 })
+
 export { handler as GET, handler as POST }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

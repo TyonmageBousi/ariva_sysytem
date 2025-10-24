@@ -1,6 +1,6 @@
 "use client"
 
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import { Mail, LockKeyhole, Eye, EyeOff, Loader2, ArrowRight } from "lucide-react";
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
@@ -9,13 +9,15 @@ import TextForm, { FieldTextProps } from '@/app/components/form/TextForm';
 import PasswordForm, { FieldPasswordProps } from '@/app/components/form/PassWordForm';
 import { LoginSchema, LoginValues } from '@/app/schemas/login'
 import { zodResolver } from "@hookform/resolvers/zod";
+import toast, { Toaster } from 'react-hot-toast';
+
 
 export default function Login() {
 
     const { handleSubmit, register, formState: { errors } } = useForm<LoginValues>({
         resolver: zodResolver(LoginSchema)
     });
-        const [submitting, setSubmitting] = useState<boolean>(false);
+    const [submitting, setSubmitting] = useState<boolean>(false);
 
     const router = useRouter();
 
@@ -27,14 +29,16 @@ export default function Login() {
                 password: data.password,
                 redirect: false,
             });
-            if (result?.error) {
-                alert('ログインに失敗しました');
-            } else {
+            console.log(result)
+            if (result?.ok) {
+                toast.success('ログインに成功しました');
                 router.push('/dashboard')
+            } else {
+                toast.error('メールアドレスまたはパスワードが正しくありません');
             }
         } catch (error) {
             console.error('Login error:', error);
-            alert('エラーが発生しました');
+            toast.error('エラーが発生しました');
         } finally {
             setSubmitting(false);
         }
@@ -58,51 +62,53 @@ export default function Login() {
     }
 
     return (
-        <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
+        <>
+            <Toaster position="top-right" />
+            <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
 
-            <div className="hidden md:flex items-center justify-center p-12 bg-gradient-to-br from-black via-[#050505] to-[#0a255f]">
-                <div className="relative z-10 text-center">
-                    <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight text-brown-900 dark:text-white">
-                        Velour Cacao
-                        <span className="block text-amber-400 mt-2">Treat Yourself </span>
+                <div className="hidden md:flex items-center justify-center p-12 bg-gradient-to-br from-black via-[#050505] to-[#0a255f]">
+                    <div className="relative z-10 text-center">
+                        <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight text-brown-900 dark:text-white">
+                            Velour Cacao
+                            <span className="block text-amber-400 mt-2">Treat Yourself </span>
 
-                    </h1>
-                    <p className="mt-4 text-brown-700/80 dark:text-neutral-300 max-w-md mx-auto">
-                        ログインして、あなたのとっておきのチョコをお届け。<br />会員限定の先行セールや、バレンタインのギフト予約も。
-                    </p>
-                </div>
-            </div>
-            <div className="grid place-items-center p-6 sm:p-10 bg-black/80 backdrop-blur-xl border-black/5">
-                <div className="w-full max-w-md h-[75vh] border bg-black grid p-6 font-bold rounded-2xl">
-                    <div className="mt-5">
-                        <h1 className="text-3xl">ログイン</h1>
-                        <p className="mt-2">メールアドレスとパスワードを入力してください</p>
+                        </h1>
+                        <p className="mt-4 text-brown-700/80 dark:text-neutral-300 max-w-md mx-auto">
+                            ログインして、あなたのとっておきのチョコをお届け。<br />会員限定の先行セールや、バレンタインのギフト予約も。
+                        </p>
                     </div>
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                        <div>
+                </div>
+                <div className="grid place-items-center p-6 sm:p-10 bg-black/80 backdrop-blur-xl border-black/5">
+                    <div className="w-full max-w-md h-[75vh] border bg-black grid p-6 font-bold rounded-2xl">
+                        <div className="mt-5">
+                            <h1 className="text-3xl">ログイン</h1>
+                            <p className="mt-2">メールアドレスとパスワードを入力してください</p>
+                        </div>
+                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                            <div>
 
-                            <label className="inline-flex items-center gap-1.5">
-                                <Mail className="w-4 h-4" aria-hidden="true" />
-                                メールアドレス
-                            </label>
-                            <TextForm props={emailProps} />
-                        </div>
-                        <div className="mt-1 relative">
-                            <label className="inline-flex items-center gap-1.5">
-                                <LockKeyhole className="w-4 h-4" aria-hidden="true" />
-                                パスワード
-                            </label>
-                            <PasswordForm props={passwordProps} />
-                        </div>
-                        <div>
-                            <a href="/account/reset" className="block text-sm font-medium text-amber-700 hover:underline dark:text-amber-400">
-                                パスワードをお忘れですか？
-                            </a>
-                        </div>
-                        <div>
-                            <button
-                                type="submit"
-                                className="
+                                <label className="inline-flex items-center gap-1.5">
+                                    <Mail className="w-4 h-4" aria-hidden="true" />
+                                    メールアドレス
+                                </label>
+                                <TextForm props={emailProps} />
+                            </div>
+                            <div className="mt-1 relative">
+                                <label className="inline-flex items-center gap-1.5">
+                                    <LockKeyhole className="w-4 h-4" aria-hidden="true" />
+                                    パスワード
+                                </label>
+                                <PasswordForm props={passwordProps} />
+                            </div>
+                            <div>
+                                <a href="/account/reset" className="block text-sm font-medium text-amber-700 hover:underline dark:text-amber-400">
+                                    パスワードをお忘れですか？
+                                </a>
+                            </div>
+                            <div>
+                                <button
+                                    type="submit"
+                                    className="
                             group 
                             relative 
                             inline-flex 
@@ -119,33 +125,34 @@ export default function Login() {
                             hover:bg-neutral-200 
                             hover:disabled:opacity-60 
                             hover:disabled:cursor-not-allowed"
-                            >
-                                {submitting ? (
-                                    <>
-                                        <Loader2 className="size-4 animate-spin" />
-                                        ログインしています…
-                                    </>
-                                ) : (
-                                    <>
-                                        ログイン
-                                        <ArrowRight
-                                            className="size-4 transition-transform group-hover:translate-x-0.5" />
-                                    </>
-                                )
-                                }
-                            </button>
+                                >
+                                    {submitting ? (
+                                        <>
+                                            <Loader2 className="size-4 animate-spin" />
+                                            ログインしています…
+                                        </>
+                                    ) : (
+                                        <>
+                                            ログイン
+                                            <ArrowRight
+                                                className="size-4 transition-transform group-hover:translate-x-0.5" />
+                                        </>
+                                    )
+                                    }
+                                </button>
+                            </div>
+                        </form>
+                        <div>
+                            <p className="mt-6 text-center text-sm text-brown-700/80 dark:text-neutral-300">
+                                アカウントをお持ちでないですか？
+                                <a href="/account/register" className="ml-1 font-semibold text-amber-700 hover:underline dark:text-amber-400">
+                                    新規登録
+                                </a>
+                            </p>
                         </div>
-                    </form>
-                    <div>
-                        <p className="mt-6 text-center text-sm text-brown-700/80 dark:text-neutral-300">
-                            アカウントをお持ちでないですか？
-                            <a href="/account/register" className="ml-1 font-semibold text-amber-700 hover:underline dark:text-amber-400">
-                                新規登録
-                            </a>
-                        </p>
                     </div>
                 </div>
-            </div>
-        </div >
+            </div >
+        </>
     )
 }
