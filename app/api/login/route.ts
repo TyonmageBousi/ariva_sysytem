@@ -1,12 +1,11 @@
-import { NextAuthOptions } from 'next-auth'
+import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import bcrypt from 'bcrypt'
 import { db } from '@/lib/db'
 import { users } from '@/lib/schema';
 import { eq } from 'drizzle-orm'
-import { z } from 'zod'
 
-export const authOptions: NextAuthOptions = {
+const handler = NextAuth({
 
     providers: [
         CredentialsProvider({
@@ -16,17 +15,21 @@ export const authOptions: NextAuthOptions = {
                 password: { label: 'password', type: 'password' },
             },
 
-            async authorize(credentials) {
+            async authorize(credentials) { //ユーザー情報が入る
                 try {
-                    if (!credentials?.email || !credentials?.password) {
-                        throw new Error('invalid credentials')
+                    const email = credentials?.email
+                    const password = credentials?.password
+
+                    if (typeof email !== 'string' || typeof password !== 'string') {
+                        console.log('フォームから値は文字列ではありません')
+                        return null
                     }
-                    const result = await db.select().from(users).where(eq(users.email, credentials.email))
+                    const result = await db.select().from(users).where(eq(users.email, email))
                     const user = result[0];
                     if (!user) {
                         return null;
                     }
-                    const isValid = await bcrypt.compare(credentials.password, user.passWord)
+                    const isValid = await bcrypt.compare(password, user.passWord)
                     if (!isValid) throw new Error('invalid credentials')
 
                     return {
@@ -49,9 +52,8 @@ export const authOptions: NextAuthOptions = {
         strategy: 'jwt',
     },
     secret: process.env.NEXTAUTH_SECRET,
-
-}
-
+})
+export { handler as GET, handler as POST }
 
 
 
