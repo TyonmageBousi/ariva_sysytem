@@ -1,46 +1,30 @@
 "use client"
 
-import React, { useCallback, useMemo, useState } from "react";
+import React, {  useState } from "react";
 import { Mail, LockKeyhole, Eye, EyeOff, Loader2, ArrowRight } from "lucide-react";
 import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation'; 
-   
+import { useRouter } from 'next/navigation';
+import { useForm } from "react-hook-form";
+import TextForm, { FieldTextProps } from '@/app/components/form/TextForm';
+import PasswordForm, { FieldPasswordProps } from '@/app/components/form/PassWordForm';
+import { LoginSchema, LoginValues } from '@/app/schemas/login'
+import { zodResolver } from "@hookform/resolvers/zod";
+
 export default function Login() {
 
-    //メールアドレスバリデーション
-    const [email, setEmail] = useState<string>("");
-
-    const emailError = (() => {
-        if (!email) return "メールアドレスを入力してください";
-        const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-        return ok ? null : "メールアドレスの形式が正しくありません";
-    })();
-
-    //パスワードバリデーション
-    const [password, setPassword] = useState<string>("");
-    const [showPwd, setShowPwd] = useState(false);
-
-    const passwordError = (() => {
-        if (!password) return "パスワードを入力してください";
-        if (password.length < 8) return "8文字以上で入力してください";
-        return null;
-    })();
-    const formValid = !emailError && !passwordError;
-
-    const [remember, setRemember] = useState<boolean>(false);
-
-    const [submitting, setSubmitting] = useState<boolean>(false);
+    const { handleSubmit, register, formState: { errors } } = useForm<LoginValues>({
+        resolver: zodResolver(LoginSchema)
+    });
+        const [submitting, setSubmitting] = useState<boolean>(false);
 
     const router = useRouter();
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!formValid) return;
+    const onSubmit = async (data: LoginValues) => {
         setSubmitting(true);
         try {
             const result = await signIn('credentials', {
-                email,
-                password,
+                email: data.email,
+                password: data.password,
                 redirect: false,
             });
             if (result?.error) {
@@ -55,7 +39,23 @@ export default function Login() {
             setSubmitting(false);
         }
     };
+    const emailProps: FieldTextProps<LoginValues> = {
+        label: "メールアドレス",
+        name: "email",
+        register,
+        inputStyle: "mt-1 w-[90%] rounded-xl border border-black/10 dark:border-white/15 bg-white dark:bg-neutral-900 px-3 py-2.5 text-[15px] outline-none focus:ring-4 ring-amber-500/20 focus:border-amber-500",
+        placeholder: "you@example.com",
+        errors
+    }
 
+    const passwordProps: FieldPasswordProps<LoginValues> = {
+        label: "パスワード",
+        name: "password",
+        register,
+        inputStyle: "mt-1 w-[90%] rounded-xl border border-black/10 dark:border-white/15 bg-white dark:bg-neutral-900 px-3 py-2.5 text-[15px] outline-none focus:ring-4 ring-amber-500/20 focus:border-amber-500",
+        errors
+
+    }
 
     return (
         <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
@@ -78,63 +78,23 @@ export default function Login() {
                         <h1 className="text-3xl">ログイン</h1>
                         <p className="mt-2">メールアドレスとパスワードを入力してください</p>
                     </div>
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                         <div>
+
                             <label className="inline-flex items-center gap-1.5">
                                 <Mail className="w-4 h-4" aria-hidden="true" />
                                 メールアドレス
                             </label>
-                            <input
-                                id="email"
-                                name="email"
-                                type="email"
-                                inputMode="email"
-                                autoComplete="email"
-                                required
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className="mt-1 w-[90%] rounded-xl border border-black/10 dark:border-white/15 bg-white dark:bg-neutral-900 px-3 py-2.5 text-[15px] outline-none focus:ring-4 ring-amber-500/20 focus:border-amber-500"
-                                placeholder="you@example.com"
-                            />
-
-                            {email && emailError ? <p className="mt-1 text-xs text-red-600">{emailError}</p> : null}
+                            <TextForm props={emailProps} />
                         </div>
                         <div className="mt-1 relative">
                             <label className="inline-flex items-center gap-1.5">
                                 <LockKeyhole className="w-4 h-4" aria-hidden="true" />
                                 パスワード
                             </label>
-                            <input
-                                id="password"
-                                name="password"
-                                type={showPwd ? "text" : "password"}
-                                autoComplete="password"
-                                required
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                className="mt-1 w-[90%] rounded-xl border border-black/10 dark:border-white/15 bg-white dark:bg-neutral-900 px-3 py-2.5 text-[15px] outline-none focus:ring-4 ring-amber-500/20 focus:border-amber-500"
-                                placeholder="••••••••"
-                            />
-
-                            <button
-                                type="button"
-                                onClick={() => setShowPwd((v) => !v)}
-                                className="absolute right-15 top-[70%] -translate-y-1/2 p-2 rounded-lg text-brown-700/70 hover:bg-black/5 dark:text-neutral-400 dark:hover:bg-white/5"
-                                aria-label={showPwd ? "パスワードを隠す" : "パスワードを表示"}
-                            >
-                                {showPwd ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-                            </button>
+                            <PasswordForm props={passwordProps} />
                         </div>
                         <div>
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    className="size-4 rounded border border-black/20 dark:border-white/20 accent-amber-600 mt-10"
-                                    checked={remember}
-                                    onChange={(e) => setRemember(e.target.checked)}
-                                />
-                                次回から自動的にログイン
-                            </label>
                             <a href="/account/reset" className="block text-sm font-medium text-amber-700 hover:underline dark:text-amber-400">
                                 パスワードをお忘れですか？
                             </a>
@@ -142,7 +102,6 @@ export default function Login() {
                         <div>
                             <button
                                 type="submit"
-                                disabled={!formValid || submitting}
                                 className="
                             group 
                             relative 
