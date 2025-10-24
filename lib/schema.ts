@@ -113,16 +113,15 @@ export const productImagesRelations = relations(productImages, ({ one }) => ({
     })
 }));
 
-
-
 export const users = pgTable('users', {
     id: serial('id').primaryKey(),
     name: text('name').notNull(),
     email: text('email').notNull().unique(),
     passWord: text('passWord').notNull(),
-    birthday: integer('birthday').notNull(),
-    phone: integer('phone').notNull(),
+    birthday: timestamp('birthday').notNull(),
+    phone: text('phone').notNull(),
     postalCode: text('postalCode').notNull(),
+    address: text('address').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });

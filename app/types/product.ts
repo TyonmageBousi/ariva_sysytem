@@ -1,4 +1,3 @@
-
 export type FormValues = {
     name: string,
     skuCode: string,          // productCode → skuCode
@@ -9,8 +8,9 @@ export type FormValues = {
     status: number,           // productState → status
     description: string,
     categoryIds: string[],
-    colorCategoryIds:string[]    // searchLabels → categoryIds
+    colorCategoryIds: string[]    // searchLabels → categoryIds
     colorIds: string[],       // colorCategory → colorIds
     stock: number,
     images: File[]            // ここはサーバ側でURLに変換する
 }
+
