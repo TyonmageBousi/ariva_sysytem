@@ -1,32 +1,115 @@
-'use client';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from 'react';
 
-import type { StaticImageData } from 'next/image';
-import ProductDetail from './ProductDetail';
-
-type ProductImage = {
-    label: StaticImageData;
-    alt: string;
+type Product = {
+    id: number;
+    name: string;
+    price: string;
+    image: string;
 };
 
-type Props = {
-    productTitle: string[];
-    productImages: ProductImage[][];
-    productExplain: string[]
-    productPrice: string[]
-};
+const products: Product[] = [
+    { id: 1, name: 'クラシックチョコ', price: '¥1,480', image: 'https://images.unsplash.com/photo-1511381939415-e44015466834?w=900' },
+    { id: 2, name: 'ストロベリー', price: '¥1,680', image: 'https://images.unsplash.com/photo-1548907040-4baa42d10919?w=900' },
+    { id: 3, name: 'ミルク', price: '¥1,380', image: 'https://images.unsplash.com/photo-1481391319762-47dff72954d9?w=900' },
+    { id: 4, name: 'ダーク', price: '¥1,880', image: 'https://images.unsplash.com/photo-1515037893149-de7f840978e2?w=900' },
+    { id: 5, name: 'ホワイト', price: '¥1,580', image: 'https://images.unsplash.com/photo-1599599810694-c34cb9c24a37?w=900' },
+    { id: 6, name: 'アーモンド', price: '¥1,780', image: 'https://images.unsplash.com/photo-1606312619070-d48b4cde9a80?w=900' },
+];
 
-export default function ProductDetails({ productTitle, productImages, productExplain, productPrice }: Props) {
+const DURATION = 30; // スクロール速度（秒）
+
+export default function SimpleMarqueeWithHeading() {
+
+    const [selected, setSelected] = useState<Product | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [products, setProducts] = useState<Product[]>([]);
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                setLoading(true);
+                const response = await fetch("")
+                if (!response.ok) {
+                    throw new Error('データの取得に失敗しました')
+                }
+                const data = await response.json();
+                setProducts(data);
+            } catch (err) {
+            }
+            finally {
+                setLoading(false);
+            }
+        };
+        fetchProducts();
+    }, []);
     return (
-        <div className="flex justify-between w-[90%] mx-auto">
-            {productImages.map((productImages, index) => (
-                <ProductDetail
-                    key={index}
-                    productTitle={productTitle[index]}
-                    productImages={productImages}
-                    productExplain={productExplain[index]}
-                    productPrice={productPrice[index]}
-                />
-            ))}
+        <div className="min-h-screen bg-gradient-to-b from-gray-900 via-amber-950 to-black text-amber-50">
+            <header className="pt-14 pb-6 text-center">
+                <h1 className="text-5xl font-bold">白十字 商品ギャラリー</h1>
+                <p className="mt-2 text-amber-200/70">クリックで詳細表示</p>
+            </header>
+
+            <div className="relative h-80 overflow-hidden">
+                <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-gray-900 to-transparent z-10" />
+                <div className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-gray-900 to-transparent z-10" />
+
+                <motion.div
+                    className="flex h-80 items-center gap-8 absolute"
+                    animate={{ x: ['0%', '-50%'] }}
+                    transition={{ duration: DURATION, ease: 'linear', repeat: Infinity }}
+                >
+                    {products.map((product, i) => (
+                        <motion.div
+                            key={`${product.id}-${i}`}
+                            className="w-80 h-72 shrink-0 rounded-2xl overflow-hidden bg-neutral-900 cursor-pointer relative"
+                            whileHover={{ scale: 1.05, y: -4 }}
+                            onClick={() => setSelected(product)}
+                        >
+                            <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                            <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/70 to-transparent">
+                                <h3 className="text-lg font-semibold">{product.name}</h3>
+                                <span className="text-2xl font-bold text-amber-300">{product.price}</span>
+                            </div>
+                        </motion.div>
+                    ))}
+                </motion.div>
+            </div>
+            <AnimatePresence>{/* 消えるときもアニメーションを入れるため */}mo
+                {selected && (
+                    <motion.div
+                        className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-8"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setSelected(null)}
+                    >
+                        <motion.div
+                            className="bg-gradient-to-br from-amber-900 to-amber-950 rounded-3xl max-w-4xl w-full overflow-hidden"
+                            initial={{ scale: 0.8 }}
+                            animate={{ scale: 1 }}
+                            exit={{ scale: 0.8 }}
+                            onClick={(e) => e.stopPropagation()} // モーダル内をクリックしても閉じる 
+                        >
+                            <div className="grid md:grid-cols-2">
+                                <img src={selected.image} alt={selected.name} className="w-full h-96 md:h-auto object-cover" />
+                                <div className="p-8 flex flex-col justify-center">
+                                    <h2 className="text-5xl font-bold mb-4">{selected.name}</h2>
+                                    <p className="text-gray-300 mb-6">厳選されたカカオ豆を使用した、こだわりのチョコレート。</p>
+                                    <p className="text-6xl font-bold text-amber-300 mb-8">{selected.price}</p>
+                                    <div className="flex gap-4">
+                                        <button className="bg-amber-600 hover:bg-amber-700 font-bold py-4 px-8 rounded-full flex-1">
+                                            詳細へ
+                                        </button>
+                                        <button className="bg-white/20 hover:bg-white/30 font-bold py-4 px-8 rounded-full" onClick={() => setSelected(null)}>
+                                            ✕
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

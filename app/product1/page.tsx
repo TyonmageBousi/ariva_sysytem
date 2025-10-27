@@ -20,57 +20,6 @@ const productDescription = {
     salesPeriod: "通年販売(※数量限定あり)"
 };
 
-const dummyImage1: StaticImageData = {
-    src: "/images/chocolate-main.jpg",
-    height: 800,
-    width: 1200,
-    blurDataURL: "data:image/jpeg;base64,/9j/4AAQSkZJRg..."
-};
-
-const dummyImage2: StaticImageData = {
-    src: "/images/chocolate-detail.jpg",
-    height: 800,
-    width: 1200,
-    blurDataURL: "data:image/jpeg;base64,/9j/4AAQSkZJRg..."
-};
-
-const dummyImage3: StaticImageData = {
-    src: "/images/chocolate-package.jpg",
-    height: 800,
-    width: 1200,
-    blurDataURL: "data:image/jpeg;base64,/9j/4AAQSkZJRg..."
-};
-type Slide = {
-    label: StaticImageData;
-    alt: string;
-};
-type Props = {
-    productTitle: string;
-    productImages: Slide[];
-    productExplain: string;
-    productPrice: string;
-};
-
-const sampleProps: Props = {
-    productTitle: "プレミアムダークチョコレート",
-    productImages: [
-        {
-            label: dummyImage1,
-            alt: "ダークチョコレート全体"
-        },
-        {
-            label: dummyImage2,
-            alt: "チョコレートの断面"
-        },
-        {
-            label: dummyImage3,
-            alt: "チョコレートのパッケージ"
-        }
-    ],
-    productExplain: "カカオ分72%の濃厚な味わい。エクアドル産の厳選されたカカオ豆を使用し、職人が丁寧に仕上げました。ほろ苦さの中に広がる深いコクと、余韻に残る芳醇な香りが特徴です。",
-    productPrice: "税込 1,980円"
-};
-
 export default function Product() {
     const { scrollY } = useScroll(); //farmerモーションの関数 スクロールするたびに、縦のスクロール量が自動で、入る
     const [screenHeight, setScreenHeight] = useState(0); //現在の画面の高さを保持
