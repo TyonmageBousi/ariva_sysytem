@@ -2,8 +2,9 @@
 
 import { useScroll, useTransform, useSpring, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import ProductDetails from './../components/user/ProductDetails';
-import type { StaticImageData } from 'next/image';
+import { ShoppingCart } from 'lucide-react';
+import ProductDetails from '@/app/components/user/ProductDetails'
+
 
 const mainTitle = {
     title: 'Classic Chocolate',
@@ -21,14 +22,14 @@ const productDescription = {
 };
 
 export default function Product() {
-    const { scrollY } = useScroll(); //farmerモーションの関数 スクロールするたびに、縦のスクロール量が自動で、入る
-    const [screenHeight, setScreenHeight] = useState(0); //現在の画面の高さを保持
+    const { scrollY } = useScroll();
+    const [screenHeight, setScreenHeight] = useState(0);
 
     useEffect(() => {
         const updateHeight = () => {
             setScreenHeight(window.innerHeight);
         };
-        updateHeight(); //初期値の画面の高さを取得
+        updateHeight();
         window.addEventListener('resize', updateHeight);
         return () => window.removeEventListener('resize', updateHeight);
     }, []);
@@ -46,60 +47,69 @@ export default function Product() {
     // 最初のセクションの透明度
     const firstSectionOpacity = useTransform(scrollY, [screenHeight * 1.5, screenHeight * 2], [1, 0]);
 
+    // 背景色のグラデーション変化
+    const bgOpacity = useTransform(scrollY, [0, animationRange], [0, 1]);
+
     return (
         <div className="relative">
-            {/* 最初のセクション - スペースを追加 */}
+            {/* 最初のセクション */}
             <div className="h-[200vh]">
                 <motion.div
-                    className="sticky top-0 min-h-screen bg-gradient-to-b from-amber-50 to-white"
+                    className="sticky top-0 min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-orange-50/20"
                     style={{ opacity: firstSectionOpacity }}
                 >
+                    {/* 動的な背景オーバーレイ */}
+                    <motion.div
+                        className="absolute inset-0 bg-gradient-to-br from-amber-100/40 via-orange-50/30 to-stone-100/50"
+                        style={{ opacity: bgOpacity }}
+                    />
+
                     {/* 画像エリア */}
                     <motion.div
-                        className="fixed top-20 left-5 z-20 h-[85vh] overflow-hidden rounded-lg shadow-2xl"
+                        className="fixed top-20 left-5 h-[85vh] overflow-hidden rounded-2xl shadow-2xl"
                         style={{ width }}
                     >
                         <img
                             src="https://images.unsplash.com/photo-1511381939415-e44015466834?w=1200"
-                            alt="Classic Chocolate"
+                            alt="Classic Chocolate - 白十字の伝統的なチョコレート"
                             className="w-full h-full object-cover"
                         />
                     </motion.div>
 
                     {/* 商品説明エリア */}
                     <motion.div
-                        className="fixed top-[50%] -translate-y-1/2 left-[52%] z-10 max-w-xl pr-8"
+                        className="fixed top-1/2 -translate-y-1/2 left-[52%] max-w-xl pr-8"
                         style={{ y: descriptionY }}
                     >
-                        <h1 className="text-5xl font-bold mb-6 text-gray-900">
+                        <h1 className="text-5xl font-bold mb-6 text-stone-900">
                             {mainTitle.title}
                         </h1>
-                        <p className="text-2xl italic mb-8 text-gray-700">
+                        <p className="text-2xl italic mb-8 text-amber-900/80">
                             {mainTitle.subtitle}
                         </p>
-                        <p className="mb-8 text-gray-600 leading-relaxed text-sm">
+                        <p className="mb-8 text-stone-700 leading-relaxed text-sm">
                             {productDescription.explain}
                         </p>
 
-                        <hr className="my-6 border-gray-300" />
+                        <hr className="my-6 border-stone-300" />
 
-                        <div className="space-y-3 text-sm text-gray-700">
-                            <p><strong>消費期限:</strong> {productDescription.expirationPeriod}</p>
-                            <p><strong>保存方法:</strong> {productDescription.storageInstructions}</p>
-                            <p><strong>特定原材料等:</strong> {productDescription.allergens}</p>
-                            <p><strong>販売箇所:</strong> {productDescription.salesLocations}</p>
-                            <p><strong>値段:</strong> {productDescription.price}</p>
-                            <p><strong>販売期間:</strong> {productDescription.salesPeriod}</p>
+                        <div className="space-y-3 text-sm text-stone-700">
+                            <p><strong className="text-stone-900">消費期限:</strong> {productDescription.expirationPeriod}</p>
+                            <p><strong className="text-stone-900">保存方法:</strong> {productDescription.storageInstructions}</p>
+                            <p><strong className="text-stone-900">特定原材料等:</strong> {productDescription.allergens}</p>
+                            <p><strong className="text-stone-900">販売箇所:</strong> {productDescription.salesLocations}</p>
+                            <p><strong className="text-stone-900">値段:</strong> {productDescription.price}</p>
+                            <p><strong className="text-stone-900">販売期間:</strong> {productDescription.salesPeriod}</p>
                         </div>
 
                         <div className="mt-8 flex items-center gap-4">
                             <div className="flex items-center gap-2">
-                                <label htmlFor="quantity" className="text-sm font-medium">
+                                <label htmlFor="quantity" className="text-sm font-medium text-stone-900">
                                     個数
                                 </label>
                                 <select
                                     id="quantity"
-                                    className="border border-gray-300 rounded-md px-3 py-2 text-sm"
+                                    className="border border-stone-300 rounded-md px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-500"
                                     defaultValue={1}
                                 >
                                     {[...Array(10)].map((_, i) => (
@@ -108,22 +118,25 @@ export default function Product() {
                                 </select>
                             </div>
 
-                            <button className="bg-amber-800 hover:bg-amber-900 text-white text-sm font-semibold py-3 px-6 rounded-full shadow-md hover:shadow-lg transition-all">
-                                🛒 ご購入はこちら
+                            <button
+                                className="bg-amber-800 hover:bg-amber-900 text-white text-sm font-semibold py-3 px-6 rounded-full shadow-md hover:shadow-lg transition-all flex items-center gap-2"
+                                aria-label="商品を購入する"
+                            >
+                                <ShoppingCart size={18} />
+                                <span>ご購入はこちら</span>
                             </button>
                         </div>
                     </motion.div>
 
                     {/* スクロールを促すテキスト */}
-                    <div className="fixed bottom-10 left-1/2 -translate-x-1/2 text-gray-400 text-sm animate-bounce z-30">
+                    <div className="fixed bottom-10 left-1/2 -translate-x-1/2 text-stone-400 text-sm animate-bounce">
                         ↓ スクロールしてください
                     </div>
                 </motion.div>
             </div>
-            {/* <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-amber-950 to-black z-50">
-                <ProductDetails {...sampleProps} />
-            </div> */}
-            {/* 最終セクション */}
+            <div className='z-40'>
+                <ProductDetails />
+            </div>
             <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-amber-950 to-black z-50">
                 <div className="text-center text-amber-100">
                     <h2 className="text-7xl font-bold mb-6">白十字</h2>
@@ -131,5 +144,8 @@ export default function Product() {
                 </div>
             </div>
         </div>
+
     );
 }
+
+
