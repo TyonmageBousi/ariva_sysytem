@@ -8,18 +8,9 @@ type Product = {
     image: string;
 };
 
-const products: Product[] = [
-    { id: 1, name: 'クラシックチョコ', price: '¥1,480', image: 'https://images.unsplash.com/photo-1511381939415-e44015466834?w=900' },
-    { id: 2, name: 'ストロベリー', price: '¥1,680', image: 'https://images.unsplash.com/photo-1548907040-4baa42d10919?w=900' },
-    { id: 3, name: 'ミルク', price: '¥1,380', image: 'https://images.unsplash.com/photo-1481391319762-47dff72954d9?w=900' },
-    { id: 4, name: 'ダーク', price: '¥1,880', image: 'https://images.unsplash.com/photo-1515037893149-de7f840978e2?w=900' },
-    { id: 5, name: 'ホワイト', price: '¥1,580', image: 'https://images.unsplash.com/photo-1599599810694-c34cb9c24a37?w=900' },
-    { id: 6, name: 'アーモンド', price: '¥1,780', image: 'https://images.unsplash.com/photo-1606312619070-d48b4cde9a80?w=900' },
-];
+const DURATION = 30; 
 
-const DURATION = 30; // スクロール速度（秒）
-
-export default function SimpleMarqueeWithHeading() {
+export default function ProductDetails() {
 
     const [selected, setSelected] = useState<Product | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
