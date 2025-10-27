@@ -9,22 +9,22 @@ type ProductImage = {
 };
 
 type Props = {
-    productTitles: string[];
-    productImageGroups: ProductImage[][];
-    productExplains: string[]
-    productPrices: string[]
+    productTitle: string[];
+    productImages: ProductImage[][];
+    productExplain: string[]
+    productPrice: string[]
 };
 
-export default function ProductDetails({ productTitles, productImageGroups, productExplains, productPrices }: Props) {
+export default function ProductDetails({ productTitle, productImages, productExplain, productPrice }: Props) {
     return (
         <div className="flex justify-between w-[90%] mx-auto">
-            {productImageGroups.map((productImages, index) => (
+            {productImages.map((productImages, index) => (
                 <ProductDetail
                     key={index}
-                    productTitle={productTitles[index]}
+                    productTitle={productTitle[index]}
                     productImages={productImages}
-                    productExplain={productExplains[index]}
-                    productPrice={productPrices[index]}
+                    productExplain={productExplain[index]}
+                    productPrice={productPrice[index]}
                 />
             ))}
         </div>

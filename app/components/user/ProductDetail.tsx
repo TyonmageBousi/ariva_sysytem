@@ -16,8 +16,8 @@ type Props = {
     productPrice: string;
 };
 
-export default function ProductDetail({ productTitle, productImages, productExplain, productPrice }: Props) {
-
+export default function ProductDetail(props: Props) {
+    const { productTitle, productImages, productExplain, productPrice } = props
     const [mainIndex, setMainIndex] = useState(0);
 
     return (

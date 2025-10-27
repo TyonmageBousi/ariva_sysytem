@@ -25,9 +25,8 @@ export default function ToggleButton({
             <Link
                 href="/"
                 className="
-          hidden lg:flex items-center h-full px-2 transition duration-150 ease-in-out
-          text-gray-800 hover:text-gray-400 focus:text-gray-400
-        "
+        hidden lg:flex items-center h-full px-2 transition duration-150 ease-in-out
+        text-gray-800 hover:text-gray-400 focus:text-gray-400"
             >
                 {/* next/image を使う例（/public 配下想定） */}
                 <Image src="/img/header/icon.jpg" width={40} height={40} alt="ロゴマーク" className="h-10 w-10 object-contain" />
