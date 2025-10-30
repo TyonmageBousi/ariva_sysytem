@@ -2,7 +2,7 @@
 import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import * as schema from '@/lib/schema';
-import { eq, not, sql } from 'drizzle-orm';
+import { eq,  sql } from 'drizzle-orm';
 import { products, productImages, productCategories, productColors } from "@/lib/schema"
 import { NextResponse } from 'next/server';
 type Params = {
