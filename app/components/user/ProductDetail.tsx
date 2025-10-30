@@ -1,14 +1,8 @@
 'use client';
 
-import { useScroll, useTransform, useSpring, motion, color } from 'framer-motion';
+import { useScroll, useTransform, useSpring, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { ShoppingCart } from 'lucide-react';
-
-const mainTitle = {
-    title: 'Classic Chocolate',
-    subtitle: 'はじまりのレシピ、名前のない衝動',
-};
-
 
 export type ProductDetailData = {
     id: number;
@@ -21,11 +15,6 @@ export type ProductDetailData = {
     categoryId: string[]
     colorCategories: string[]
     ProductImages: string[]
-}
-
-type ProductImages = {
-    image: string;
-    alt: string
 }
 
 type Props = {

@@ -47,7 +47,7 @@ export default function ProductDetails({ productDetailsData}: Props) {
                     ))}
                 </motion.div>
             </div>
-            <AnimatePresence>{/* 消えるときもアニメーションを入れるため */}mo
+            <AnimatePresence>{/* 消えるときもアニメーションを入れるため */}
                 {selected && (
                     <motion.div
                         className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-8"
