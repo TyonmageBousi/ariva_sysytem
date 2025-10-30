@@ -4,8 +4,9 @@ import { Suspense } from 'react'
 import TopMainContainer from './components/server/TopMainContainer';
 import LineUpContainer from './components/server/LineUpContainer';
 
-const titleCss = 'text-center text-[2.5rem] mx-auto w-fit mb-8 mt-48'
 export default function Index() {
+const titleCss = 'text-center text-[2.5rem] mx-auto w-fit mb-8 mt-48'
+
   return (
     <div className='w-full'>
       <Header />

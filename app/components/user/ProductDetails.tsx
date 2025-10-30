@@ -1,38 +1,20 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 
-type Product = {
+export type ProductDetailsData = {
     id: number;
     name: string;
     price: string;
     image: string;
 };
+type Props = {
+    productDetailsData: ProductDetailsData[];
+}
+const DURATION = 30;
 
-const DURATION = 30; 
+export default function ProductDetails({ productDetailsData}: Props) {
 
-export default function ProductDetails() {
-
-    const [selected, setSelected] = useState<Product | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [products, setProducts] = useState<Product[]>([]);
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                setLoading(true);
-                const response = await fetch("")
-                if (!response.ok) {
-                    throw new Error('データの取得に失敗しました')
-                }
-                const data = await response.json();
-                setProducts(data);
-            } catch (err) {
-            }
-            finally {
-                setLoading(false);
-            }
-        };
-        fetchProducts();
-    }, []);
+    const [selected, setSelected] = useState<ProductDetailsData | null>(null); 
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-900 via-amber-950 to-black text-amber-50">
             <header className="pt-14 pb-6 text-center">
@@ -49,7 +31,7 @@ export default function ProductDetails() {
                     animate={{ x: ['0%', '-50%'] }}
                     transition={{ duration: DURATION, ease: 'linear', repeat: Infinity }}
                 >
-                    {products.map((product, i) => (
+                    {productDetailsData.map((product, i) => (
                         <motion.div
                             key={`${product.id}-${i}`}
                             className="w-80 h-72 shrink-0 rounded-2xl overflow-hidden bg-neutral-900 cursor-pointer relative"
