@@ -23,7 +23,7 @@ async function main() {
             {
                 name: "山田太郎",
                 email: "taro@example.com",
-                passWord: hashedPassword1,
+                password: hashedPassword1,
                 birthday: new Date("1995-04-15"),
                 phone: "09012345678",
                 postalCode: "1000001",
@@ -32,7 +32,7 @@ async function main() {
             {
                 name: "佐藤花子",
                 email: "hanako@example.com",
-                passWord: hashedPassword2,
+                password: hashedPassword2,
                 birthday: new Date("1998-12-01"),
                 phone: "08098765432",
                 postalCode: "1500001",

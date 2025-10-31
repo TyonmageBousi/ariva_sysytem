@@ -30,7 +30,7 @@ const handler = NextAuth({
                         return null
                     }
 
-                    const isValid = await bcrypt.compare(password, user.passWord)
+                    const isValid = await bcrypt.compare(password, user.password)
                     if (!isValid) {
                         return null
                     }
