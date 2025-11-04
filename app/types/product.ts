@@ -1,16 +1,15 @@
 export type FormValues = {
     name: string,
-    skuCode: string,          // productCode → skuCode
+    skuCode: string,
     price: number,
-    discountPrice?: number,   // salePrice → discountPrice
-    saleStartAt: Date,        // productStarted → saleStartAt
-    saleEndAt: Date,          // productEnded → saleEndAt
-    status: number,           // productState → status
+    discountPrice?: number,
+    saleStartAt: Date,
+    saleEndAt: Date,
+    status: string,
     description: string,
-    categoryIds: string[],
-    colorCategoryIds: string[]    // searchLabels → categoryIds
-    colorIds: string[],       // colorCategory → colorIds
+    categoryIds: number[],
+    colorCategoryIds: number[]
     stock: number,
-    images: File[]            // ここはサーバ側でURLに変換する
+    images: File[]
 }
 

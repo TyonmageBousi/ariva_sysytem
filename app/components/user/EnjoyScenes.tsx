@@ -46,7 +46,7 @@ export default function EnjoyScenes({ titleCss }: Props) {
                             key={index}
                             src={enjoyIdea.src}
                             alt={`image ${index + 1}`}
-                            className="w-full h-auto aspect-[4/5] object-cover"
+                            className='w-full h-auto aspect-[4/5] object-cover'
                         />
                         <p className='text-[clamp(1rem,2vw,2rem)] mt-3 mb-5'>{enjoyIdea.title}</p>
                         <p>{enjoyIdea.text}</p>

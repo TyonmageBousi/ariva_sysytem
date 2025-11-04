@@ -1,6 +1,6 @@
 'use client';
 
-import Image from "next/image";
+import Image from 'next/image';
 
 type Thought = {        
   title: string;
@@ -15,8 +15,8 @@ type Props = {
 };
 
 const layout: [string, string][] = [
-  ["absolute z-10 left-8 top-16 rotate-[-4deg]", "absolute z-0 right-8 bottom-8 rotate-[3deg]"],
-  ["absolute z-10 right-10 top-10 rotate-[2deg]", "absolute z-0 left-6 bottom-6 rotate-[-2deg]"],
+  ['absolute z-10 left-8 top-16 rotate-[-4deg]', 'absolute z-0 right-8 bottom-8 rotate-[3deg]'],
+  ['absolute z-10 right-10 top-10 rotate-[2deg]', 'absolute z-0 left-6 bottom-6 rotate-[-2deg]'],
 ];
 
 export default function OurProductThoughts({ titleCss:titleCss, data: ourThoughts }: Props) {
@@ -27,11 +27,11 @@ export default function OurProductThoughts({ titleCss:titleCss, data: ourThought
       {ourThoughts.map((thought, index) => {
         const [cls1, cls2] = layout[index % layout.length];
         return (
-          <div className="relative w-[80%] min-h-[60vh] mx-auto">
-            <p className="relative z-20 text-[1.5rem] text-center mx-auto w-fit mb-6">
+          <div className='relative w-[80%] min-h-[60vh] mx-auto'>
+            <p className='relative z-20 text-[1.5rem] text-center mx-auto w-fit mb-6'>
               {thought.title}
             </p>
-            <p className="relative z-20 text-[1rem] text-center mx-auto w-[min(50ch,90%)] mb-12">
+            <p className='relative z-20 text-[1rem] text-center mx-auto w-[min(50ch,90%)] mb-12'>
               {thought.text.split(/\r?\n/).map((line, i) => (
                 <span key={i}>
                   {line}

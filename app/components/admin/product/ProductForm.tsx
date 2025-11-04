@@ -1,101 +1,111 @@
 'use client';
 
 import React from 'react'
-import { Save, Eye, Upload, Trash2, Send, Package } from "lucide-react";
-import TextForm, { type FieldTextProps } from "../../form/TextForm";
-import NumberForm, { type FieldNumberProps } from "../../form/NumberForm";
-import CheckBoxForm, { type FiledCheckBoxLabels, type FiledCheckBoxProps } from "../../form/CheckBoxForm"
-import OptionsForm, { type FiledOptionsProps } from "../../form/OptionsForm";
-import DateForm, { FieldDateProps } from "../../form/DateForm";
-import { UseFormRegister } from "react-hook-form";
-import type { FormValues } from '@/app/types/product';
-type Props = {
+import { Package } from 'lucide-react';
+import TextForm, { type FieldTextProps } from '@/app/components/public/form/TextForm';
+import NumberForm, { type FieldNumberProps } from '@/app/components/public/form/NumberForm';
+import CheckBoxForm, { type FiledCheckBoxLabels, type FiledCheckBoxProps } from '@/app/components/public/form/CheckBoxForm'
+import DateForm, { FieldDateProps } from '@/app/components/public/form/DateForm';
+import { UseFormRegister, FieldErrors, FieldValues } from 'react-hook-form';
+import { NewProductValues } from '@/app/schemas/product'
+
+
+type Props<T extends FieldValues> = {
     categories: FiledCheckBoxLabels[];
     colorCategories: FiledCheckBoxLabels[];
-    register: UseFormRegister<FormValues>;
+    register: UseFormRegister<T>;
+    errors: FieldErrors<T>;
+
 };
 
-export default function ProductForm({ categories, colorCategories, register }: Props) {
+export default function ProductForm({ categories, colorCategories, register, errors }: Props<NewProductValues>) {
     // 基本情報のフォーム設定
-    const productNameFieldProps: FieldTextProps = {
-        label: "商品名",
-        labelStyle: "block text-sm font-medium mb-1",
-        name: "name",
+    const productNameFieldProps: FieldTextProps<NewProductValues> = {
+        label: '商品名',
+        labelStyle: 'block text-sm font-medium mb-1',
+        name: 'name',
         register,
-        inputStyle: "w-full rounded-xl border border-black/10 bg-neutral-700 px-3 py-2.5 text-[15px]",
-        placeholder: "生チョコ・ビター 8粒"
+        inputStyle: 'w-full rounded-xl border border-black/10 bg-neutral-700 px-3 py-2.5 text-[15px]',
+        placeholder: '生チョコ・ビター 8粒',
+        errors
     };
 
-    const productCodeFieldProps: FieldTextProps = {
-        label: "商品コード",
-        labelStyle: "block text-sm font-medium mb-1",
-        name: "skuCode",
+    const productCodeFieldProps: FieldTextProps<NewProductValues> = {
+        label: '商品コード',
+        labelStyle: 'block text-sm font-medium mb-1',
+        name: 'skuCode',
         register,
-        inputStyle: "w-full rounded-xl border border-black/10 bg-neutral-700 px-3 py-2.5 text-[15px]",
-        placeholder: "SKU-XXXX"
+        inputStyle: 'w-full rounded-xl border border-black/10 bg-neutral-700 px-3 py-2.5 text-[15px]',
+        placeholder: 'SKU-XXXX',
+        errors
     };
 
-    const priceFieldProps: FieldNumberProps = {
-        label: "価格",
-        labelStyle: "block text-sm font-medium mb-1",
-        name: "price",
+    const priceFieldProps: FieldNumberProps<NewProductValues> = {
+        label: '価格',
+        labelStyle: 'block text-sm font-medium mb-1',
+        name: 'price',
         register,
-        inputStyle: "w-full rounded-xl border border-black/10 bg-neutral-700 px-3 py-2.5 text-[15px]",
-        placeholder: ""
+        inputStyle: 'w-full rounded-xl border border-black/10 bg-neutral-700 px-3 py-2.5 text-[15px]',
+        placeholder: '',
+        errors
     };
-    const salePriceFieldProps: FieldNumberProps = {
-        label: "割引価格",
-        labelStyle: "block text-sm font-medium mb-1",
-        name: "discountPrice",
+    const salePriceFieldProps: FieldNumberProps<NewProductValues> = {
+        label: '割引価格',
+        labelStyle: 'block text-sm font-medium mb-1',
+        name: 'discountPrice',
         register,
-        inputStyle: "w-full rounded-xl border border-black/10 bg-neutral-700 px-3 py-2.5 text-[15px]",
-        placeholder: ""
-    };
-
-    const salesStartDateProps: FieldDateProps = {
-        label: "販売期間",
-        name: "saleStartAt",
-        labelStyle: "block text-sm font-medium mb-1",
-        register,
-        inputStyle: "w-full rounded-xl border border-black/10 bg-neutral-700 px-3 py-2.5 text-[15px]",
+        inputStyle: 'w-full rounded-xl border border-black/10 bg-neutral-700 px-3 py-2.5 text-[15px]',
+        placeholder: '',
+        errors
     };
 
-    const salesEndDateProps: FieldDateProps = {
-        label: "販売期間",
-        name: "saleEndAt",
-        labelStyle: "block text-sm font-medium mb-1",
+    const salesStartDateProps: FieldDateProps<NewProductValues> = {
+        label: '販売期間',
+        name: 'saleStartAt',
+        labelStyle: 'block text-sm font-medium mb-1',
         register,
-        inputStyle: "w-full rounded-xl border border-black/10 bg-neutral-700 px-3 py-2.5 text-[15px]",
+        inputStyle: 'w-full rounded-xl border border-black/10 bg-neutral-700 px-3 py-2.5 text-[15px]',
+        errors
     };
-    const colorCategoryCheckboxProps: FiledCheckBoxProps = {
-        label: "色分け",
-        name: "colorCategoryIds",
-        labelStyle: "block text-sm font-medium mb-4",
+
+    const salesEndDateProps: FieldDateProps<NewProductValues> = {
+        label: '販売期間',
+        name: 'saleEndAt',
+        labelStyle: 'block text-sm font-medium mb-1',
         register,
-        inputStyle: "w-full rounded-xl border border-black/10 bg-neutral-700 px-3 py-2.5 text-[15px]",
+        inputStyle: 'w-full rounded-xl border border-black/10 bg-neutral-700 px-3 py-2.5 text-[15px]',
+        errors
+    };
+    const colorCategoryCheckboxProps: FiledCheckBoxProps<NewProductValues> = {
+        label: 'タグ',
+        name: 'categoryIds',
+        labelStyle: 'block text-sm font-medium mb-4',
+        register,
+        inputStyle: 'w-full rounded-xl border border-black/10 bg-neutral-700 px-3 py-2.5 text-[15px]',
+        labels: categories,
+        errors
+    };
+
+    const categoryCheckboxProps: FiledCheckBoxProps<NewProductValues> = {
+        label: '色分け',
+        name: 'colorIds',
+        labelStyle: 'block text-sm font-medium mb-4',
+        register,
+        inputStyle: 'w-full rounded-xl border border-black/10 bg-neutral-700 px-3 py-2.5 text-[15px]',
         labels: colorCategories,
-    };
-
-    const PRODUCT_STATUS_OPTIONS = ["下書き", "公開", "販売中止"];
-    const productStatusSelectProps: FiledOptionsProps = {
-        label: "状態",
-        name: "status",
-        labelStyle: "block text-sm font-medium mb-1",
-        register,
-        inputStyle: "w-full rounded-xl border border-black/10 bg-neutral-700 px-3 py-2.5 text-[15px]",
-        options: categories,
+        errors
     };
 
     return (
         // 商品情報セクション
-        <section className="rounded-2xl border border-black/10 bg-neutral-800 p-6">
-            <h1 className="flex items-center gap-2 text-lg font-semibold">
-                <Package className="size-4" />
+        <section className='rounded-2xl border border-black/10 bg-neutral-800 p-6'>
+            <h1 className='flex items-center gap-2 text-lg font-semibold'>
+                <Package className='size-4' />
                 <span>商品情報</span>
             </h1>
-            <p className="mt-1 text-sm text-black/60">商品名、商品コード、価格など</p>
+            <p className='mt-1 text-sm text-black/60'>商品名、商品コード、価格など</p>
 
-            <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-5">
+            <div className='mt-6 grid grid-cols-2 gap-x-6 gap-y-5'>
                 <div>
                     <TextForm props={productNameFieldProps} />
                 </div >
@@ -118,7 +128,7 @@ export default function ProductForm({ categories, colorCategories, register }: P
                     <CheckBoxForm props={colorCategoryCheckboxProps} />
                 </div>
                 <div>
-                    <OptionsForm props={productStatusSelectProps} />
+                    <CheckBoxForm props={categoryCheckboxProps} />
                 </div>
             </div >
         </section >

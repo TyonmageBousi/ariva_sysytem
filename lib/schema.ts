@@ -1,4 +1,4 @@
-import { pgTable, text, integer, timestamp, uuid, serial, unique, boolean } from 'drizzle-orm/pg-core';
+import { pgTable, text, integer, timestamp, serial, unique, boolean } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
 // カテゴリテーブル
@@ -6,7 +6,6 @@ export const categories = pgTable('categories', {
     id: serial('id').primaryKey(),
     name: text('name').notNull(),
     sortOrder: integer('sort_order').notNull(),
-    isActive: boolean("is_active").notNull().default(true),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });
@@ -16,7 +15,6 @@ export const colorCategories = pgTable('color_categories', {
     id: serial('id').primaryKey(),
     name: text('name').notNull(),
     sortOrder: integer('sort_order').notNull(),
-    isActive: boolean("is_active").notNull().default(true),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });
@@ -26,10 +24,10 @@ export const products = pgTable('products', {
     id: serial('id').primaryKey(),
     skuCode: text('sku_code').unique(),
     name: text('name').notNull(),
-    imageUrl: text('image_url'),
     price: integer('price').notNull(),
     discountPrice: integer('discount_price'),
-    status: integer('status').notNull(),
+    status: text('status').notNull(),
+    stock: integer('stock').notNull(),
     saleStartAt: timestamp('sale_start_at', { withTimezone: true }),
     saleEndAt: timestamp('sale_end_at', { withTimezone: true }),
     description: text('description'),
