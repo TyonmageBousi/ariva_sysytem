@@ -22,6 +22,11 @@ type Props = {
 }
 
 export default function ProductDetail({ productDetailData }: Props) {
+
+    }
+
+
+
     const { scrollY } = useScroll();
     const [screenHeight, setScreenHeight] = useState<number>(0);
     const { skuCode, name, price, discountPrice, status, description, categoryId, colorCategories, ProductImages } = productDetailData
@@ -33,6 +38,8 @@ export default function ProductDetail({ productDetailData }: Props) {
         window.addEventListener('resize', updateHeight);
         return () => window.removeEventListener('resize', updateHeight);
     }, []);
+
+
 
     const animationRange = screenHeight * 0.5;
 
@@ -128,14 +135,15 @@ export default function ProductDetail({ productDetailData }: Props) {
                                             ))}
                                         </select>
                                     </div>
-
                                     <button
+                                        onClick={handleSaveProduct}
                                         className='bg-amber-800 hover:bg-amber-900 text-white text-sm font-semibold py-3 px-6 rounded-full shadow-md hover:shadow-lg transition-all flex items-center gap-2'
                                         aria-label='商品を購入する'
                                     >
                                         <ShoppingCart size={18} />
                                         <span>ご購入はこちら</span>
                                     </button>
+
                                 </div>
                             </motion.div>
 
