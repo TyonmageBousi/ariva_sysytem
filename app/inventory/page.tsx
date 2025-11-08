@@ -25,7 +25,9 @@ type Product = {
     thumbnail?: string;
 };
 
-const products: Product[] = [
+export default function AdminProductsPage() {
+   
+   const products: Product[] = [
     { id: "p001", name: "生チョコ・ビター 8粒", sku: "SKU-BTR-8", price: 1500, stock: 34, status: 1, labels: [1, 2, 3], updatedAt: "2025-08-15" },
     { id: "p002", name: "生チョコ・ミルク 8粒", sku: "SKU-MLK-8", price: 1480, stock: 0, status: 2, labels: [1, 2, 3], updatedAt: "2025-08-14" },
     { id: "p003", name: "トリュフ詰め合わせ 12粒", sku: "SKU-TRF-12", price: 2400, stock: 12, status: 1, labels: [2], updatedAt: "2025-08-13" },
@@ -33,41 +35,7 @@ const products: Product[] = [
     { id: "p005", name: "カカオ85% バー", sku: "SKU-C85", price: 480, stock: 64, status: 0, labels: [2, 3], updatedAt: "2025-08-10" },
     { id: "p006", name: "アソート 24粒", sku: "SKU-AST-24", price: 3980, stock: 5, status: 1, labels: [1], updatedAt: "2025-08-09" },
 ];
-
-const labels = [
-    { id: 1, label: "NEW" },
-    { id: 2, label: "ギフト" },
-    { id: 3, label: "季節限定" },
-];
-
-const title: string[] = [
-    "画像", "商品名", "商品コード", "価格", "在庫", "状態", "ラベル", "更新日", "操作"
-];
-
-const setStatusCss = ((s) => {
-    switch (s) {
-        case 1: // 公開
-            return "bg-emerald-600/15 text-emerald-400 ring-1 ring-emerald-500/20";
-        case 2: // 販売停止
-            return "bg-rose-600/15 text-rose-400 ring-1 ring-rose-500/20";
-        default: // 下書き
-            return "bg-neutral-600/20 text-neutral-300 ring-1 ring-white/10";
-    }
-});
-
-const getStatusText = ((s) => {
-    return s === 1 ? "公開" : s === 2 ? "販売停止" : "下書き";
-})
-
-const handleDuplicate = ((x) => {
-
-});
-
-const handleDelete = ((x) => {
-
-})
-
-export default function AdminProductsPage() {
+   
     function statusLabel(s: Product["status"]) {
         return s === 1 ? "公開" : s === 2 ? "販売停止" : "下書き";
     }
@@ -82,6 +50,41 @@ export default function AdminProductsPage() {
         (status === "" || p.status === status) &&
         (label === "" || p.labels.includes(label))
     );
+
+
+
+const labels = [
+    { id: 1, label: "NEW" },
+    { id: 2, label: "ギフト" },
+    { id: 3, label: "季節限定" },
+];
+
+const title: string[] = [
+    "画像", "商品名", "商品コード", "価格", "在庫", "状態", "ラベル", "更新日", "操作"
+];
+
+const setStatusCss = ((s: number) => {
+    switch (s) {
+        case 1: // 公開
+            return "bg-emerald-600/15 text-emerald-400 ring-1 ring-emerald-500/20";
+        case 2: // 販売停止
+            return "bg-rose-600/15 text-rose-400 ring-1 ring-rose-500/20";
+        default: // 下書き
+            return "bg-neutral-600/20 text-neutral-300 ring-1 ring-white/10";
+    }
+});
+
+const getStatusText = ((s: number) => {
+    return s === 1 ? "公開" : s === 2 ? "販売停止" : "下書き";
+})
+
+const handleDuplicate = ((x: number) => {
+
+});
+
+const handleDelete = ((x: number) => {
+
+})
 
 
     return (
