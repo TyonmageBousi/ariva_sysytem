@@ -2,8 +2,8 @@
 import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import * as schema from '@/lib/schema';
-import { eq, not, sql } from 'drizzle-orm';
-import { products, productImages } from '@/lib/schema'
+import { eq,  sql } from 'drizzle-orm';
+import { products, productImages, productCategories, productColors } from '@/lib/schema'
 import { NextResponse } from 'next/server';
 type Params = {
     params: { id: string }
@@ -24,23 +24,38 @@ export async function GET(request: Request, { params }: Params) {
             name: products.name,
             price: products.price,
             discountPrice: products.discountPrice,
-            image: sql<string | null>`(
-            SELECT ${productImages.filePath}
+            description: products.description,
+            image: sql<string[]>`(
+            SELECT json_agg(${productImages.filePath})
             FROM ${productImages}
             WHERE ${productImages.productId} = ${products.id} 
-            LIMIT 1
-            )`
+            )`,
+            categories: sql<string[]>`(
+            SELECT json_agg(${productCategories.categoryId})
+            FROM ${productCategories}
+            WHERE ${productCategories.productId} = ${products.id}
+            )`,
+            productColors: sql<string[]>`(
+            SELECT json_agg(${productColors.colorId})
+            FROM ${productColors}
+            WHERE ${productColors.productId} = ${products.id}
+            )`,
         }).from(products)
-            .where(not(eq(products.id, productId)))
-            .orderBy(sql`RANDOM()`)
-            .limit(20)
-        return NextResponse.json(result)
-    }
-    catch (error) {
+            .where(eq(products.id, productId))
+            .limit(1)
+        if (!result[0]) {
+            return NextResponse.json(
+                { error: '商品が見つかりません' },
+                { status: 404 }
+            );
+        }
+        return NextResponse.json(result[0])
+    } catch (error) {
         return NextResponse.json(
             { error: 'データ取得失敗' },
             { status: 500 }
         );
     }
+
 }
 

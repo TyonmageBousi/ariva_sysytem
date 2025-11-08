@@ -4,7 +4,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import Image from 'next/image';
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
 import 'swiper/css/effect-flip';
 import React, { useState, useEffect } from 'react';
 import { SlideImage } from '@/app/api/mock/top_main_slide/route';
@@ -18,7 +18,7 @@ const radius: number = 380; // レイアウトで使用している円の半径:
 
 export default function TopMainSlide({ data }: Props) {
 
-    const characters: string = "Velour Cacao – Treat Yourself – "; //回転の文字の内容
+    const characters: string = 'Velour Cacao – Treat Yourself – '; //回転の文字の内容
     const charArray: string[] = characters.split(''); //上記の文字を一文字づつ配列に格納
     const [isVisible, setIsVisible] = useState<boolean>(true);
     const [isMounted, setIsMounted] = useState<boolean>(false);
@@ -43,10 +43,10 @@ export default function TopMainSlide({ data }: Props) {
             )
         }>
             <div className='relative w-[50%] '>
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
-                    <div className="relative">
+                <div className='absolute inset-0 flex items-center justify-center pointer-events-none z-20'>
+                    <div className='relative'>
                         <div
-                            className="relative animate-spin"
+                            className='relative animate-spin'
                             style={{
                                 width: `${radius * 2}px`,
                                 height: `${radius * 2}px`,
@@ -60,7 +60,7 @@ export default function TopMainSlide({ data }: Props) {
                                 return (
                                     <span
                                         key={index}
-                                        className="absolute text-2xl font-bold text-yellow-300"
+                                        className='absolute text-2xl font-bold text-yellow-300'
                                         style={{
                                             left: '50%',
                                             top: '50%',
@@ -85,7 +85,7 @@ export default function TopMainSlide({ data }: Props) {
                 >
                     <Swiper
                         style={{ width: '100%', height: '100%' }}
-                        direction="vertical"
+                        direction='vertical'
                         modules={[Autoplay]}
                         slidesPerView={1}
                         loop={true}
@@ -103,12 +103,12 @@ export default function TopMainSlide({ data }: Props) {
                                 }}
                             >
                                 <Image
-                                    className="w-[60%] aspect-square object-cover rounded-lg"
+                                    className='w-[60%] aspect-square object-cover rounded-lg'
                                     src={slideImage.src}
                                     alt={slideImage.alt}
                                     width={0}
                                     height={0}
-                                    sizes="60vw"
+                                    sizes='60vw'
                                     style={{ width: '60%', height: 'auto' }}
                                 />
                             </SwiperSlide>
@@ -121,9 +121,9 @@ export default function TopMainSlide({ data }: Props) {
                     initial={{ y: +20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{
-                        type: "tween",
+                        type: 'tween',
                         duration: 0.8,
-                        ease: "easeInOut",
+                        ease: 'easeInOut',
                     }}
                     className='text-9xl mt-[25vh] underline decoration-3'>
                     Velour Cacao</motion.p>
@@ -132,20 +132,20 @@ export default function TopMainSlide({ data }: Props) {
                     initial={{ y: +20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{
-                        type: "tween",
+                        type: 'tween',
                         duration: 0.9,
-                        ease: "easeInOut",
+                        ease: 'easeInOut',
                     }}
-                    className="text-6xl mt-[10vh] underline decoration-3">自分へのご褒美に</motion.p>
+                    className='text-6xl mt-[10vh] underline decoration-3'>自分へのご褒美に</motion.p>
                 <motion.p
                     initial={{ y: +20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{
-                        type: "tween",
+                        type: 'tween',
                         duration: 1.0,
-                        ease: "easeInOut",
+                        ease: 'easeInOut',
                     }}
-                    className=" text-3xl mt-[5vh] underline decoration-3">
+                    className=' text-3xl mt-[5vh] underline decoration-3'>
                     日々の忙しさのなかでひとつくらいご褒美があってもいいじゃない
                     そんな思いで作りました</motion.p>
             </div>

@@ -8,6 +8,20 @@
       "when": 1761393283021,
       "tag": "0000_lush_wilson_fisk",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1761909845877,
+      "tag": "0001_high_ozymandias",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1762210260982,
+      "tag": "0002_useful_fabian_cortez",
+      "breakpoints": true
     }
   ]
 }

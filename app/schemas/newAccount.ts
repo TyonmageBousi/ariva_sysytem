@@ -48,7 +48,7 @@ export const NewAccountSchema = z
 export type NewAccountValues = z.infer<typeof NewAccountSchema>;
 export const NewAccountSchemaBackend = z
   .object({
-    email: z.string().email('有効なメールアドレスを入力してください'),
+    email: z.email('有効なメールアドレスを入力してください'),
     name: z
       .string()
       .min(2, "氏名は2文字以上で入力してください")

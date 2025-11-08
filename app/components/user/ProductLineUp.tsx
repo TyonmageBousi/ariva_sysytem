@@ -26,12 +26,12 @@ export default function ProductLineUp({ titleCss: titleCss, data: productsInfo }
                 {productsInfo.map((productInfo, index) => (
                     <SwiperSlide key={index}>
                         <Image
-                            className="aspect-square"
+                            className='aspect-square'
                             src={productInfo.src}
                             alt={`Slide ${index + 1}`}
                             width={0}
                             height={0}
-                            sizes="60vw"
+                            sizes='60vw'
                             style={{ width: '60%', height: 'auto' }}
                         />
                         <p
@@ -40,12 +40,12 @@ export default function ProductLineUp({ titleCss: titleCss, data: productsInfo }
                         >
                             {productInfo.tagLabel ? '期間限定' : '通年販売'}
                         </p>
-                        <div className="flex justify-between items-center px-4 mt-4">
-                            <p className="text-lg font-bold">{productInfo.name}</p>
-                            <p className="text-base font-semibold">¥{productInfo.price}円</p>
+                        <div className='flex justify-between items-center px-4 mt-4'>
+                            <p className='text-lg font-bold'>{productInfo.name}</p>
+                            <p className='text-base font-semibold'>¥{productInfo.price}円</p>
                         </div>
 
-                        <p className="mt-4 text-sm">{productInfo.description}</p>
+                        <p className='mt-4 text-sm'>{productInfo.description}</p>
 
                     </SwiperSlide>
                 ))}
