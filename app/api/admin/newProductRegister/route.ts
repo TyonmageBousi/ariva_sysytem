@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { products, productImages, productCategories, productColors } from '@/lib/schema'
-import { db } from '@/lib/db' 
-import {NewProductSchema} from '@/app/schemas/product'
+import { db } from '@/lib/db'
+import { NewProductSchema } from '@/app/schemas/product'
 
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -36,15 +36,15 @@ export async function POST(request: Request) {
         })
         const uploadResults = await Promise.all(uploadImages)
         const insertProduct = await db.insert(products).values({
-            name: String(formdata.get('name')),
-            skuCode: String(formdata.get('skuCode')),
-            price: Number(formdata.get('price')),
-            discountPrice: Number(formdata.get('discountPrice')),
-            saleStartAt: new Date(formdata.get('saleStartAt') as string),
-            saleEndAt: new Date(formdata.get('saleEndAt') as string),
-            status: String(formdata.get('status')),
-            stock: Number(formdata.get('stock')),
-            description: String(formdata.get('description')),
+            name: String(data.name),
+            skuCode: String(data.skuCode),
+            price: Number(data.price),
+            discountPrice: Number(data.discountPrice),
+            saleStartAt: new Date(String(data.saleStartAt)),
+            saleEndAt: new Date(String(data.saleEndAt)),
+            status: String(data.status),
+            stock: Number(data.stock),
+            description: String(data.description),
         }).returning({ productId: products.id });
 
         await Promise.all(

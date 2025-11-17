@@ -7,6 +7,7 @@ import ProductDetails, { ProductDetailsData } from '@/app/components/user/produc
 type Props = {
     id: string
 }
+
 async function fetchUrl<T>(url: string, errorMsg: string, options: RequestInit = {}): Promise<T> {
     const res = await fetch(url, options);
     if (!res.ok) throw new Error(errorMsg);
@@ -55,7 +56,6 @@ export default function Product({ id }: Props) {
 
     if (!productDetailData) {
         return <div>該当の商品が見つかりません。</div>
-
     }
 
     return (
