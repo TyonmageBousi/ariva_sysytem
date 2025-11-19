@@ -1,8 +1,15 @@
 'use client';
 
 import { useScroll, useTransform, useSpring, motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { ShoppingCart } from 'lucide-react';
+import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react';
+import { useForm } from 'react-hook-form';
+import OptionsForm, { FiledOptionsProps } from '@/app/components/public/form/OptionsForm';
+import toast from 'react-hot-toast';
+import { PurchaseValues } from '@/app/types/productPurchase'
+import { productPurchaseSchema } from '@/app/schemas/productPurchase'
 
 export type ProductDetailData = {
     id: number;
@@ -10,7 +17,7 @@ export type ProductDetailData = {
     name: string;
     price: number;
     discountPrice: number;
-    status: number;
+    stock: number;
     description: string
     categoryId: string[]
     colorCategories: string[]
@@ -24,7 +31,31 @@ type Props = {
 export default function ProductDetail({ productDetailData }: Props) {
     const { scrollY } = useScroll();
     const [screenHeight, setScreenHeight] = useState<number>(0);
-    const { skuCode, name, price, discountPrice, status, description, categoryId, colorCategories, ProductImages } = productDetailData
+    const { id, skuCode, name, price, discountPrice, stock, description, categoryId, colorCategories, ProductImages } = productDetailData
+    const { status } = useSession();
+    const router = useRouter()
+    const { register, getValues, handleSubmit, formState: { errors } } = useForm({
+        defaultValues: {
+            purchaseQuantity: 1
+        }
+    });
+    const controllerRef = useRef<AbortController | null>(null);
+
+    const stockOptions = Array.from({ length: stock }, (_, i) => ({
+        id: i + 1,
+        label: String(i + 1)
+    }));
+
+    const optionsProps: FiledOptionsProps<PurchaseValues> = {
+        label: '個数',
+        labelStyle: 'text-sm font-medium text-stone-900',
+        name: 'purchaseQuantity',
+        register: register,
+        inputStyle: 'border border-stone-300 rounded-md px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-500',
+        options: stockOptions,
+        errors: errors
+    }
+
     useEffect(() => {
         const updateHeight = () => {
             setScreenHeight(window.innerHeight);
@@ -50,12 +81,63 @@ export default function ProductDetail({ productDetailData }: Props) {
     // 背景色のグラデーション変化
     const bgOpacity = useTransform(scrollY, [0, animationRange], [0, 1]);
 
+
+    const onSubmit = async () => {
+        if (status === 'loading') {
+            toast('読み込み中です');
+            return;
+        }
+
+        if (controllerRef.current) {
+            controllerRef.current.abort();
+        }
+        controllerRef.current = new AbortController();
+
+        const cartItem = {
+            productId: id,
+            name: name,
+            price: (discountPrice > 0 && discountPrice < price) ? discountPrice : price,
+            quantity: getValues().purchaseQuantity,
+        }
+
+        const parseCartItem = productPurchaseSchema.parse(cartItem)
+
+        if (status === 'authenticated') {
+            try {
+                const res =
+                    await fetch('http://localhost:3000/api/user/insertCart', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(parseCartItem),
+                        signal: controllerRef.current.signal
+                    })
+                if (!res.ok) throw new Error('カートに入れるのを失敗しました');
+                toast.success('カートに追加しました！');
+            }
+            catch (error) {
+                console.error('カート情報の保存に失敗しました:', error);
+                toast.error('エラーが発生しました');
+            }
+            return;
+        }
+        try {
+            sessionStorage.setItem('pendingCartItem', JSON.stringify(cartItem));
+            sessionStorage.setItem('shopping', '1');
+            toast('ログインしてください');
+            router.push('/page/user/login')
+        } catch (error) {
+            console.error('カート情報の保存に失敗しました:', error);
+            toast.error('データの保存に失敗しました');
+        }
+    };
     return (
         <div className='relative'>
             {!productDetailData ? (
                 <p>該当の商品がありません。</p>
             ) : (
-                <>
+                <form onSubmit={handleSubmit(onSubmit)}>
                     <div className='h-[200vh]'>
                         <motion.div
                             className='sticky top-0 min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-orange-50/20'
@@ -100,7 +182,7 @@ export default function ProductDetail({ productDetailData }: Props) {
                                         {discountPrice > 0 && discountPrice < price ? (
                                             <>
                                                 <span className='text-sm text-stone-400 line-through'>¥{price.toLocaleString()}</span>
-                                                <span className='text-lg font-bold text-red-600'>¥discountPrice.toLocaleString()</span>
+                                                <span className='text-lg font-bold text-red-600'>¥{discountPrice.toLocaleString()}</span>
                                                 <span className='text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-semibold'>
                                                     {Math.round(((price - discountPrice) / price) * 100)}% OFF
                                                 </span>
@@ -114,28 +196,16 @@ export default function ProductDetail({ productDetailData }: Props) {
                                 </div>
 
                                 <div className='mt-8 flex items-center gap-4'>
-                                    <div className='flex items-center gap-2'>
-                                        <label htmlFor='quantity' className='text-sm font-medium text-stone-900'>
-                                            個数
-                                        </label>
-                                        <select
-                                            id='quantity'
-                                            className='border border-stone-300 rounded-md px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-500'
-                                            defaultValue={1}
-                                        >
-                                            {[status].map((_, i) => (
-                                                <option key={i} value={i + 1}>{i + 1}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-
+                                    <OptionsForm props={optionsProps} />
                                     <button
+                                        type="submit"
                                         className='bg-amber-800 hover:bg-amber-900 text-white text-sm font-semibold py-3 px-6 rounded-full shadow-md hover:shadow-lg transition-all flex items-center gap-2'
                                         aria-label='商品を購入する'
                                     >
                                         <ShoppingCart size={18} />
                                         <span>ご購入はこちら</span>
                                     </button>
+
                                 </div>
                             </motion.div>
 
@@ -152,7 +222,7 @@ export default function ProductDetail({ productDetailData }: Props) {
                             <p className='text-2xl opacity-80'>伝統と革新が織りなす、至福のひととき</p>
                         </div>
                     </div>
-                </>
+                </form>
             )}
         </div >
 

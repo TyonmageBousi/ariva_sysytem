@@ -82,6 +82,8 @@ export const cartItems = pgTable('cart_items', {
     id: serial('id').primaryKey(),
     userId: integer('user_id').notNull(),
     productId: integer('product_id').notNull(),
+    productName: text('product_name').notNull(),
+    price: integer('price').notNull(),
     quantity: integer('quantity').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),

@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react';
-import { Mail, LockKeyhole, Eye, EyeOff, Loader2, ArrowRight } from 'lucide-react';
+import { Mail, LockKeyhole, Eye, EyeOff, Loader2, ArrowRight, ShoppingBag } from 'lucide-react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -29,13 +29,16 @@ export default function Login() {
                 password: data.password,
                 redirect: false,
             });
-            console.log(result)
+
             if (result?.ok) {
                 toast.success('ログインに成功しました');
-                router.push('/dashboard')
             } else {
                 toast.error('メールアドレスまたはパスワードが正しくありません');
+                return;
             }
+            const shoppingFlg = sessionStorage.getItem('shopping');
+            router.push(shoppingFlg === '1' ? '/cart' : '/home')
+
         } catch (error) {
             console.error('Login error:', error);
             toast.error('エラーが発生しました');

@@ -7,7 +7,6 @@ export async function GET() {
             getAllCategories(),
             getAllColorCategories(),
         ]);
-
         return Response.json({
             categories,
             colorCategories
