@@ -26,7 +26,7 @@ export async function GET() {
             price: cartItems.price,
             quantity: cartItems.quantity
         }).from(cartItems)
-            .where(eq(cartItems.userId, user.id))
+            .where(eq(cartItems.userId, Number(user.id)))
 
         return NextResponse.json(
             {

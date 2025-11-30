@@ -1,10 +1,6 @@
 'use client';
 import type { FieldValues, UseFormRegister, FieldErrors, Path } from 'react-hook-form';
 
-export type FiledOptions = {
-    id: number
-    label: string
-}
 
 export type FiledOptionsProps<T extends FieldValues> = {
     label: string;
@@ -12,7 +8,7 @@ export type FiledOptionsProps<T extends FieldValues> = {
     name: Path<T>;
     register: UseFormRegister<T>;
     inputStyle?: string;
-    options: FiledOptions[];
+    options: readonly string[];
     errors: FieldErrors<T>
 };
 
@@ -30,7 +26,7 @@ export default function NormalForm<T extends FieldValues>({ props }: Props<T>) {
             >
                 {
                     options.map((option) => (
-                        < option value={option.id}>{option.label}</option>
+                        < option value={option}>{option}</option>
                     ))}
             </select>
             {errors[name] && <p className='error'>{String(errors[name]?.message)}</p>}

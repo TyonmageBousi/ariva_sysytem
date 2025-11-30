@@ -8,13 +8,8 @@ import { useRouter } from 'next/navigation'
 import { Minus, Plus, Trash2 } from 'lucide-react'
 import { cartSchema } from '@/app/schemas/cart'
 import { z } from 'zod';
-import { Errors, StockError, PriceError } from '@/app/api/user/settlement/route'
+import { Errors, StockError, PriceError,ProductErrors } from '@/app/api/user/settlement/route'
 
-
-type ProductErrors = {
-    productId: number,
-    errors: Errors[]
-}
 
 export default function Cart() {
     const { status } = useSession();
@@ -81,7 +76,6 @@ export default function Cart() {
     const settlement = (async () => {
         try {
             const formatCarts = carts.map((cart) => ({
-                id: cart.id,
                 productId: cart.productId,
                 name: cart.name,
                 price: cart.price,
@@ -112,16 +106,22 @@ export default function Cart() {
                         break;
                     case 'VALIDATION_ERROR':
                         toast('カート内に不正な商品があります。')
+                        break
                     case 'PRODUCT_ERROR':
                         const errorProduct: Record<number, Errors[]> = {};
                         (data.productErrors as ProductErrors[]).forEach(({ productId, errors }) => {
                             errorProduct[productId] = errors;
                         });
                         setProductError(errorProduct)
+                        break
                     case 'SERVER_ERROR':
                         toast('サーバー側でエラーが発生しました。')
                         break;
                 }
+            }
+            if (data.success) {
+                router.push('');  // 偏移先のパス
+
             }
 
         } catch (error) {

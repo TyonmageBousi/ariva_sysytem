@@ -7,6 +7,6 @@ export const productPurchaseSchema = z.object({
   price: z.coerce.number().int().min(0),
   quantity: z.coerce.number().int().min(0),
 })
-export type productPurchaseSchema = z.infer<typeof productPurchaseSchema>;
+export type ProductPurchaseSchema = z.infer<typeof productPurchaseSchema>;
 
 

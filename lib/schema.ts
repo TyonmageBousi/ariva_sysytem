@@ -31,6 +31,7 @@ export const products = pgTable('products', {
     saleStartAt: timestamp('sale_start_at', { withTimezone: true }),
     saleEndAt: timestamp('sale_end_at', { withTimezone: true }),
     description: text('description'),
+    version: integer('version').notNull().default(0), //楽観的ロックの要
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });
@@ -73,7 +74,10 @@ export const users = pgTable('users', {
     birthday: timestamp('birthday').notNull(),
     phone: text('phone').notNull(),
     postalCode: text('postal_code').notNull(),
-    address: text('address').notNull(),
+    prefecture: text('prefecture').notNull(),
+    city: text('city').notNull(),
+    address1: text('address1').notNull(),
+    address2: text('address2'),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });
@@ -104,10 +108,38 @@ export const orderItems = pgTable('order_items', {
     orderId: integer('order_id').notNull(),
     productId: integer('product_id').notNull(),
     quantity: integer('quantity').notNull(),
+    name: text('productName').notNull(),
     price: integer('price').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })
+
+export const temporaryOrders = pgTable('temporary_orders', {
+    id: serial('id').primaryKey(),
+    userId: integer('user_id').notNull(),
+    totalPrice: integer('total_price').notNull(),
+    status: text('status').notNull().default('pending'),
+    postalCode: text('postalCode').notNull().default(''),
+    prefecture: text('prefecture').notNull().default(''),
+    city: text('city').notNull().default(''),
+    address1: text('address1').notNull().default(''),
+    address2: text('address2'),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+});
+
+
+export const temporaryOrderItems = pgTable('temporary_order_items', {
+    id: serial('id').primaryKey(),
+    orderId: integer('order_id').notNull(),
+    productId: integer('product_id').notNull(),
+    quantity: integer('quantity').notNull(),
+    name: text('productName').notNull(),
+    price: integer('price').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+});
+
 
 export const productColorsUnique = unique("product_colors_unique").on(productColors.productId, productColors.colorId);
 
