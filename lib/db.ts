@@ -2,11 +2,15 @@
 import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import * as schema from './schema';
-import { categories, colorCategories, cartItems, temporaryOrders, temporaryOrderItems } from "./schema"
-import { eq } from 'drizzle-orm';
+import { categories, colorCategories, cartItems, temporaryOrders, temporaryOrderItems, orders, orderItems } from "./schema"
+import { eq, and } from 'drizzle-orm';
 import { ProductPurchaseSchema } from '@/app/schemas/productPurchase'
 import { CartError } from '@/app/api/user/settlement/route'
 import { auth } from "@/auth";
+import { cookies } from 'next/headers';
+import { randomUUID } from 'crypto';
+import { get } from 'http';
+import { log } from 'console';
 
 const client = postgres(process.env.DATABASE_URL!, { prepare: false });
 export const db = drizzle(client, { schema });
@@ -21,7 +25,6 @@ export async function getAllColorCategories() {
 
 export async function loginJudgment<T extends Error>(
   ErrorClass: new (statusCode: number, errorType: string, message: string) => T,
-
 ) {
   const session = await auth();
   if (!session?.user?.id) {
@@ -42,7 +45,7 @@ export async function getAllUserCart(userId: number) {
     .where(eq(cartItems.userId, userId));
 }
 
-export async function insertTemporaryOrder(carts: ProductPurchaseSchema[], userId: number) {
+export async function insertTemporaryOrder(carts: ProductPurchaseSchema[], userId: number, sessionId: string) {
 
   const totalPrice = carts.reduce((sum, cart) => sum + cart.price * cart.quantity, 0);
   try {
@@ -50,6 +53,8 @@ export async function insertTemporaryOrder(carts: ProductPurchaseSchema[], userI
       const [{ orderId }] = await tx.insert(temporaryOrders).values({
         userId: userId,
         totalPrice: totalPrice,
+        sessionId: sessionId,
+        status: 'address'
       }).returning({ orderId: temporaryOrders.id })
 
       await tx.insert(temporaryOrderItems).values(
@@ -67,4 +72,141 @@ export async function insertTemporaryOrder(carts: ProductPurchaseSchema[], userI
   }
 }
 
+// セッションIDを取得または作成する
+export async function getSessionId(): Promise<string> {
+  const cookieStore = await cookies();
 
+  let sessionId = cookieStore.get('session_id')?.value;
+
+  if (!sessionId) {
+    sessionId = randomUUID();
+    cookieStore.set('session_id', sessionId, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 15
+    });
+  }
+
+  return sessionId;
+}
+
+
+export async function finalStep(userId: number, sessionId: string) {
+
+  try {
+    await db.transaction(async (tx) => {
+      const [temporaryOrderList] = await tx.select({
+        id: temporaryOrders.id,
+        userId: temporaryOrders.userId,
+        totalPrice: temporaryOrders.totalPrice,
+        postalCode: temporaryOrders.postalCode,
+        prefecture: temporaryOrders.prefecture,
+        city: temporaryOrders.city,
+        address1: temporaryOrders.address1,
+        address2: temporaryOrders.address2,
+      }).from(temporaryOrders)
+        .where(
+          and(
+            (eq(temporaryOrders.userId, userId)),
+            (eq(temporaryOrders.sessionId, sessionId))
+          )
+        );
+
+      if (!temporaryOrderList) {
+        throw new Error('一時注文の取得に失敗しました。');
+      }
+
+      const [orderList] = await tx.insert(orders).values({
+        userId: temporaryOrderList.userId,
+        totalPrice: temporaryOrderList.totalPrice,
+        postalCode: temporaryOrderList.postalCode,
+        prefecture: temporaryOrderList.prefecture,
+        city: temporaryOrderList.city,
+        address1: temporaryOrderList.address1,
+        address2: temporaryOrderList.address2,
+      }).returning({ orderId: orders.id })
+
+      if (!orderList) {
+        throw new Error('注文の挿入に失敗しました。');
+      }
+
+      const temporaryOrderItemList = await tx.select({
+        orderId: temporaryOrderItems.orderId,
+        productId: temporaryOrderItems.productId,
+        quantity: temporaryOrderItems.quantity,
+        name: temporaryOrderItems.name,
+        price: temporaryOrderItems.price,
+      }).from(temporaryOrderItems)
+        .where(eq(temporaryOrderItems.orderId, temporaryOrderList.id))
+
+
+      if (!temporaryOrderItemList || temporaryOrderItemList.length === 0) {
+        throw new Error('一時注文商品リストの取得に失敗しました。');
+      }
+
+      await tx.insert(orderItems).values(
+        temporaryOrderItemList.map((temporaryOrderItem) => ({
+          orderId: orderList.orderId,
+          productId: temporaryOrderItem.productId,
+          quantity: temporaryOrderItem.quantity,
+          name: temporaryOrderItem.name,
+          price: temporaryOrderItem.price,
+        }))
+      );
+
+
+      await tx.delete(temporaryOrders)
+        .where(
+          and(
+            (eq(temporaryOrders.userId, userId)),
+            (eq(temporaryOrders.sessionId, sessionId))
+          )
+        );
+
+      const cartItemsList = await tx.select({
+        id: cartItems.id,
+        userId: cartItems.userId,
+        productId: cartItems.productId,
+        quantity: cartItems.quantity
+      }).from(cartItems)
+        .where(
+          eq(cartItems.userId, userId)
+        )
+
+      if (!cartItemsList || cartItemsList.length === 0) {
+        throw new Error('一時注文商品リストの取得に失敗しました。');
+      }
+
+      //一時注文数を取得
+      const tempOrderItems = new Map(temporaryOrderItemList.map((temporaryOrderItem) => (
+        [temporaryOrderItem.productId, temporaryOrderItem.quantity]
+      )));
+
+
+      //カート内の商品をループで回す
+      for (const cartItem of cartItemsList) {
+
+        //一時テーブル内のカートアイテムの商品Idが一致するものを取得
+        const orderQuantity = tempOrderItems.get(Number(cartItem.productId));
+        if (orderQuantity)
+          if (orderQuantity === cartItem.quantity) {
+            await tx.delete(cartItems).where(eq(cartItems.id, Number(cartItem.id)))
+          } else if (cartItem.quantity > orderQuantity) {
+            await tx.update(cartItems).set({ quantity: cartItem.quantity - orderQuantity })
+              .where(eq(cartItems.id, cartItem.id))
+          } return { success: true, message: '注文が完了しました' };
+
+      }
+    })
+
+
+  } catch (error) {
+    console.log('DBエラー', error)
+
+  }
+
+
+
+
+}

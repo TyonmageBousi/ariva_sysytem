@@ -1,16 +1,14 @@
-import postgres from 'postgres';
-import { drizzle } from 'drizzle-orm/postgres-js';
-import * as schema from '@/lib/schema';
 import { eq,  sql } from 'drizzle-orm';
 import { products, productImages, productCategories, productColors } from '@/lib/schema'
 import { NextResponse } from 'next/server';
+import { db } from '@/lib/db'
+
 type Params = {
     params: { id: string }
 }
 
 export async function GET(request: Request, { params }: Params) {
-    const client = postgres(process.env.DATABASE_URL!, { prepare: false });
-    const db = drizzle(client, { schema });
+
     const { id } = params
     const productId = parseInt(id);
     if (isNaN(productId)) {

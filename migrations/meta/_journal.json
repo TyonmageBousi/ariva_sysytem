@@ -57,6 +57,13 @@
       "when": 1764194758268,
       "tag": "0007_swift_smasher",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1764541163663,
+      "tag": "0008_swift_captain_america",
+      "breakpoints": true
     }
   ]
 }

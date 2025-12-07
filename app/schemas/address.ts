@@ -13,7 +13,8 @@ export const AddressSchema = z.object({
     }),
     city: z.string().min(1, "市区町村を入力してください").trim(),
     address1: z.string().min(1, "丁目・番地を入力してください").trim(),
-    address2: z.string().trim().optional(),
+        address2: z.string().trim().nullable().optional()
+
 })
 
 

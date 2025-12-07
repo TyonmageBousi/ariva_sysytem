@@ -1,14 +1,10 @@
-import postgres from 'postgres';
-import { drizzle } from 'drizzle-orm/postgres-js';
-import * as schema from '@/lib/schema';
 import { NextResponse } from 'next/server';
 import { auth } from "@/auth";
 import { cartItems } from '@/lib/schema';
 import { eq } from 'drizzle-orm';
+import { db } from '@/lib/db'
 
 export async function GET() {
-    const client = postgres(process.env.DATABASE_URL!, { prepare: false });
-    const db = drizzle(client, { schema });
 
     try {
         const session = await auth();
@@ -41,6 +37,6 @@ export async function GET() {
             { status: 500 }
         )
     } finally {
-        await client.end();
+        await db.$client.end();
     }
 }

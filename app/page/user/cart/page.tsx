@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation'
 import { Minus, Plus, Trash2 } from 'lucide-react'
 import { cartSchema } from '@/app/schemas/cart'
 import { z } from 'zod';
-import { Errors, StockError, PriceError,ProductErrors } from '@/app/api/user/settlement/route'
+import { Errors, StockError, PriceError, ProductErrors } from '@/app/api/user/settlement/route'
 
 
 export default function Cart() {
@@ -94,6 +94,12 @@ export default function Cart() {
                 },
                 body: JSON.stringify(result.data)
             });
+
+            if (!response.ok) {
+                toast.error('通信エラーが発生しました');
+                return;
+            }
+            
             const data = await response.json();
             if (!data.success) {
                 const errorType = data.errorType
@@ -120,7 +126,7 @@ export default function Cart() {
                 }
             }
             if (data.success) {
-                router.push('');  // 偏移先のパス
+                router.push('http://localhost:3000/page/user/addrss');  // 偏移先のパス
 
             }
 

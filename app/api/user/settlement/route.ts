@@ -1,14 +1,13 @@
 
-import postgres from 'postgres';
-import { drizzle } from 'drizzle-orm/postgres-js';
-import * as schema from '@/lib/schema';
 import { NextResponse } from 'next/server';
 import { products, cartItems } from '@/lib/schema';
 import { eq, sql } from 'drizzle-orm';
 import { auth } from "@/auth";
 import { productPurchaseSchema, ProductPurchaseSchema } from '@/app/schemas/productPurchase'
 import { z } from 'zod';
-import { insertTemporaryOrder } from '@/lib/db'
+import { insertTemporaryOrder, getSessionId } from '@/lib/db'
+import { db } from '@/lib/db'
+
 
 export type StockError = {
     message: string;
@@ -143,8 +142,6 @@ export async function POST(request: Request) {
 
     /* 関数定義 ここまで */
 
-    const client = postgres(process.env.DATABASE_URL!, { prepare: false });
-    const db = drizzle(client, { schema });
     const session = await auth();
     if (!session?.user?.id) {
         throw new CartError('USER_NOT_FOUND', 404)
@@ -171,7 +168,9 @@ export async function POST(request: Request) {
             }))
             throw new CartError('PRODUCT_ERROR', 404, productErrors)
         }
-        await insertTemporaryOrder(updateCarts, Number(user.id))
+        const sessionId = await getSessionId()
+        await insertTemporaryOrder(updateCarts, Number(user.id), sessionId)
+        
         return NextResponse.json({
             success: true,
         }, { status: 200 })
@@ -197,3 +196,4 @@ export async function POST(request: Request) {
         );
     }
 }
+

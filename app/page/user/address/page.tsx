@@ -28,7 +28,8 @@ export default function Address() {
                 setValue('prefecture', data.address.prefecture);
                 setValue('city', data.address.city);
                 setValue('address1', data.address.address1);
-                setValue('address2', data.address.address2);
+                setValue('address2', data.address.address2 ?? '');
+
             } catch (error) {
                 if (error instanceof Error && error.name !== 'AbortError') {
                     console.error(error);
@@ -54,14 +55,28 @@ export default function Address() {
 
     const onSubmit = async (data: AddressValues) => {
         try {
-            const response = await fetch('http://localhost:3000/api/user/', {
+            const response = await fetch('http://localhost:3000/api/user/shippingAddresses', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(data)
             });
-            if (!response.ok) {
+            const result = await response.json();
+            if (!result.success) {
+                const errorType = result.errorType
+                switch (errorType) {
+                    case 'VALIDATION_ERROR':
+                        toast('住所に不正な入力値がありました。お手数ですが、再度ご入力をお願いします。')
+                        break;
+                    case 'USER_NOT_FOUND':
+                        toast('ログイン情報が取得できませんでした。お手数ですが、再度ログインをお願いします。')
+                        break;
+                    case 'INTERNAL_ERROR':
+                        toast('システムエラーが発生しました。お手数ですが、再度送信をお願いします。')
+                        break;
+
+                }
                 throw new Error('送信に失敗しました。')
             }
 
