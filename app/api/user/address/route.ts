@@ -1,28 +1,13 @@
 import { NextResponse } from 'next/server';
-import postgres from 'postgres';
-import { drizzle } from 'drizzle-orm/postgres-js';
-import * as schema from '@/lib/schema';
 import { users } from '@/lib/schema';
 import { eq } from 'drizzle-orm';
-import { loginJudgment } from '@/lib/db'
-
-export class AddressError extends Error {
-    constructor(
-        public statusCode: number,
-        public errorType: string,
-        public message: string,
-    ) {
-        super(message)
-        this.name = 'AddressError';
-    }
-}
+import { db, client, loginJudgment } from '@/lib/db'
+import { AppError, handleError } from '@/lib/errors'
 
 export async function GET() {
-    const client = postgres(process.env.DATABASE_URL!, { prepare: false });
-    const db = drizzle(client, { schema });
-
     try {
-        const user = await loginJudgment(AddressError);
+        const user = await loginJudgment();
+        
         const result = await db.select({
             postalCode: users.postalCode,
             prefecture: users.prefecture,
@@ -33,20 +18,11 @@ export async function GET() {
             .where(eq(users.id, Number(user.id)))
 
         if ((!result) || result.length === 0) {
-            throw new AddressError(404, 'ADDRESS_NOT_FOUND', '住所が見つかりません');
+            throw new AppError({ message: '住所が見つかりません', statusCode: 404, errorType: 'ADDRESS_NOT_FOUND' });
         }
         return NextResponse.json({ success: true, address: result[0] }, { status: 200 })
     } catch (error) {
-        if (error instanceof AddressError) {
-            return NextResponse.json(
-                { success: false, errorType: error.errorType, message: error.message },
-                { status: error.statusCode }
-            );
-        }
-        return NextResponse.json(
-            { success: false, errorType: 'INTERNAL_ERROR', message: 'サーバーエラーが発生しました' },
-            { status: 500 }
-        );
+        return handleError(error)
     } finally {
         await client.end();
     }

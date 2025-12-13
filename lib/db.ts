@@ -5,14 +5,19 @@ import * as schema from './schema';
 import { categories, colorCategories, cartItems, temporaryOrders, temporaryOrderItems, orders, orderItems } from "./schema"
 import { eq, and } from 'drizzle-orm';
 import { ProductPurchaseSchema } from '@/app/schemas/productPurchase'
-import { CartError } from '@/app/api/user/settlement/route'
 import { auth } from "@/auth";
 import { cookies } from 'next/headers';
 import { randomUUID } from 'crypto';
-import { get } from 'http';
-import { log } from 'console';
+import { AuthError } from '@/lib/errors'
+import { createClient } from '@supabase/supabase-js';
 
-const client = postgres(process.env.DATABASE_URL!, { prepare: false });
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+
+
+export const client = postgres(process.env.DATABASE_URL!, { prepare: false });
 export const db = drizzle(client, { schema });
 
 export async function getAllCategories() {
@@ -23,12 +28,10 @@ export async function getAllColorCategories() {
   return await db.select({ id: colorCategories.id, label: colorCategories.name }).from(colorCategories)
 }
 
-export async function loginJudgment<T extends Error>(
-  ErrorClass: new (statusCode: number, errorType: string, message: string) => T,
-) {
+export async function loginJudgment() {
   const session = await auth();
   if (!session?.user?.id) {
-    throw new ErrorClass(401, 'Unauthorized', 'User not authenticated');
+    throw new AuthError();
   }
   return session.user;
 }
@@ -48,29 +51,27 @@ export async function getAllUserCart(userId: number) {
 export async function insertTemporaryOrder(carts: ProductPurchaseSchema[], userId: number, sessionId: string) {
 
   const totalPrice = carts.reduce((sum, cart) => sum + cart.price * cart.quantity, 0);
-  try {
-    await db.transaction(async (tx) => {
-      const [{ orderId }] = await tx.insert(temporaryOrders).values({
-        userId: userId,
-        totalPrice: totalPrice,
-        sessionId: sessionId,
-        status: 'address'
-      }).returning({ orderId: temporaryOrders.id })
 
-      await tx.insert(temporaryOrderItems).values(
-        carts.map(cart => ({
-          orderId: orderId,
-          productId: cart.productId,
-          quantity: cart.quantity,
-          name: cart.name,
-          price: cart.price,
-        })
-        ));
-    })
-  } catch (error) {
-    throw new CartError('ORDER_INSERT_FAILED', 500)
-  }
+  await db.transaction(async (tx) => {
+    const [{ orderId }] = await tx.insert(temporaryOrders).values({
+      userId: userId,
+      totalPrice: totalPrice,
+      sessionId: sessionId,
+      status: 'address'
+    }).returning({ orderId: temporaryOrders.id })
+
+    await tx.insert(temporaryOrderItems).values(
+      carts.map(cart => ({
+        orderId: orderId,
+        productId: cart.productId,
+        quantity: cart.quantity,
+        name: cart.name,
+        price: cart.price,
+      })
+      ));
+  })
 }
+
 
 // セッションIDを取得または作成する
 export async function getSessionId(): Promise<string> {
@@ -195,18 +196,30 @@ export async function finalStep(userId: number, sessionId: string) {
           } else if (cartItem.quantity > orderQuantity) {
             await tx.update(cartItems).set({ quantity: cartItem.quantity - orderQuantity })
               .where(eq(cartItems.id, cartItem.id))
-          } return { success: true, message: '注文が完了しました' };
-
+          }
       }
     })
+    return { success: true, message: '注文が完了しました' };
 
 
   } catch (error) {
     console.log('DBエラー', error)
-
+    return { success: false, error: '注文処理に失敗しました' };
   }
 
+}
 
-
-
+export async function insertStorage(imageEntries: FormDataEntryValue[]) {
+  const imagesFiles = imageEntries.filter(entry => entry instanceof File) as File[];
+  const uploadImages = imagesFiles.map(async (image) => {
+    const { data, error } = await supabase.storage
+      .from('images')
+      .upload(`images/${Date.now()}-${image.name}`, image);
+    if (error) {
+      console.error('upload error:', error);
+      throw error
+    }
+    return data.path;
+  })
+  return await Promise.all(uploadImages);
 }

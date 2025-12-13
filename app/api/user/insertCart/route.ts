@@ -5,19 +5,13 @@ import { getAllUserCart, } from '@/lib/db';
 import { eq } from 'drizzle-orm';
 import { productPurchaseSchema } from '@/app/schemas/productPurchase'
 import { ZodError } from 'zod';
-import { db } from '@/lib/db'
+import { db, loginJudgment, } from '@/lib/db'
+import { ValidationError, handleError } from '@/lib/errors'
 
 export async function POST(request: Request) {
 
     try {
-        const session = await auth();
-        if (!session?.user?.id) {
-            return NextResponse.json(
-                { error: 'Unauthorized' },
-                { status: 401 }
-            );
-        }
-        const { user } = session;
+        const user = await loginJudgment();
 
         const data = await request.json();
         const parseData = productPurchaseSchema.parse(data)
@@ -26,7 +20,7 @@ export async function POST(request: Request) {
 
         const sameProductItems = oldCart.filter(cart =>
             cart.productId === parseData.productId
-        )
+        );
 
         const matchProduct = sameProductItems.find(cart =>
             cart.productName === parseData.name &&
@@ -52,14 +46,8 @@ export async function POST(request: Request) {
         );
     } catch (error) {
         if (error instanceof ZodError) {
-            return NextResponse.json(
-                { error: 'バリデーションエラーです', details: error.issues },
-                { status: 400 }
-            )
+            return handleError(new ValidationError(error.issues));
         }
-        return NextResponse.json(
-            { error: '予期しないエラーが発生しました' },
-            { status: 500 }
-        )
+        return handleError(error)
     }
 }

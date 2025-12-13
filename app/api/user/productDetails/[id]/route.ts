@@ -1,21 +1,20 @@
-// app/api/categories/route.ts
-import postgres from 'postgres';
-import { drizzle } from 'drizzle-orm/postgres-js';
-import * as schema from '@/lib/schema';
+
 import { eq, not, sql } from 'drizzle-orm';
 import { products, productImages } from '@/lib/schema'
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/db'
+import { db, client } from '@/lib/db'
+import { AppError, handleError } from '@/lib/errors'
 
 type Params = {
     params: { id: string }
 }
 
 export async function GET(request: Request, { params }: Params) {
+
     const { id } = params
     const productId = parseInt(id);
     if (isNaN(productId)) {
-        return NextResponse.json({ error: '数字型のIDじゃありません' }, { status: 400 });
+        throw new AppError({ message: '数字型のIDじゃありません', statusCode: 420, errorType: 'PARAMS_NOT_NUMBER' })
     }
     try {
         const result = await db.select({
@@ -34,13 +33,17 @@ export async function GET(request: Request, { params }: Params) {
             .where(not(eq(products.id, productId)))
             .orderBy(sql`RANDOM()`)
             .limit(20)
-        return NextResponse.json(result)
+        
+            if ((!result) || result.length === 0) {
+            throw new AppError({ message: '商品が見つかりません', statusCode: 404, errorType: 'PRODUCTS_NOT_FOUND' })
+        }
+
+        return NextResponse.json({ success: true, result: result }, { status: 200 })
     }
     catch (error) {
-        return NextResponse.json(
-            { error: 'データ取得失敗' },
-            { status: 500 }
-        );
+        return handleError(error)
+    } finally {
+        await client.end();
     }
 }
 

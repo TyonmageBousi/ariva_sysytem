@@ -1,5 +1,7 @@
-// app/api/categories/route.ts
+import { AppError, handleError } from '@/lib/errors'
 import { getAllCategories, getAllColorCategories } from '@/lib/db';
+import { NextResponse } from 'next/server';
+
 
 export async function GET() {
     try {
@@ -7,15 +9,15 @@ export async function GET() {
             getAllCategories(),
             getAllColorCategories(),
         ]);
-        return Response.json({
-            categories,
-            colorCategories
-        });
-    } catch (error) {
-        console.error('Database error:', error);
-        return Response.json(
-            { error: 'Failed to fetch categories' },
-            { status: 500 }
+        return NextResponse.json(
+            {
+                success: true,
+                categories: categories,
+                colorCategories: colorCategories
+            },
+            { status: 200 }
         );
+    } catch (error) {
+        return handleError(error);
     }
 }

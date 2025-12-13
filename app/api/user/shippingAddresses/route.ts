@@ -1,30 +1,21 @@
 import { AddressValues, AddressSchema } from '@/app/schemas/address'
 import { temporaryOrders } from '@/lib/schema'
-import { getSessionId } from '@/lib/db'
 import { eq, and } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { loginJudgment } from '@/lib/db'
-import { db } from '@/lib/db'
+import { loginJudgment, db,getSessionId } from '@/lib/db'
+import { handleError, ValidationError } from '@/lib/errors'
 
-export class ShippingAddressError extends Error {
-    constructor(
-        public statusCode: number,
-        public errorType: string,
-        public message: string,
-    ) {
-        super(message);
-    }
-}
 
 export async function POST(request: Request) {
 
     try {
-
         const data = await request.json();
-        const validateData: AddressValues = AddressSchema.parse(data)
+        const validateData: AddressValues = AddressSchema.parse(data);
+
         const sessionId = await getSessionId();
-        const user = await loginJudgment(ShippingAddressError);
+        const user = await loginJudgment();
+
         const result = await db.update(temporaryOrders).set({
             postalCode: validateData.postalCode,
             prefecture: validateData.prefecture,
@@ -47,22 +38,9 @@ export async function POST(request: Request) {
 
     } catch (error) {
         if (error instanceof z.ZodError) {
-            return NextResponse.json(
-                { success: false, errorType: 'VALIDATION_ERROR', message: error.message },
-                { status: 400 }
-            );
+            return handleError(new ValidationError(error.issues));
         }
-
-        if (error instanceof ShippingAddressError) {
-            return NextResponse.json(
-                { success: false, errorType: error.errorType, message: error.message },
-                { status: error.statusCode }
-            );
-        }
-        return NextResponse.json(
-            { success: false, errorType: 'INTERNAL_ERROR' },
-            { status: 500 }
-        );
+        return handleError(error);
     }
     finally {
         await db.$client.end();

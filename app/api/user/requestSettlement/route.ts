@@ -1,22 +1,12 @@
-import { loginJudgment } from '@/lib/db'
 import { temporaryOrders } from '@/lib/schema'
 import { getSessionId, finalStep } from '@/lib/db'
 import { eq } from 'drizzle-orm';
 import { settlementSchema, SettlementSchema } from '@/app/schemas/settlement'
 import { success, z } from 'zod';
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/db'
-
-
-export class requestSettlementError extends Error {
-    constructor(
-        public statusCode: number,
-        public errorType: string,
-        public message: string,
-    ) {
-        super(message);
-    }
-}
+import { db, client, loginJudgment } from '@/lib/db'
+import { AppError, handleError, ValidationError } from '@/lib/errors'
+import { ZodError } from 'zod';
 
 
 export async function POST(request: Request) {
@@ -25,7 +15,7 @@ export async function POST(request: Request) {
         const data = await request.json();
         const validateData: SettlementSchema = settlementSchema.parse(data);
 
-        const user = await loginJudgment(requestSettlementError);
+        const user = await loginJudgment();
         const sessionId = await getSessionId(); //これはちょっと考える　必要かどうか
         const getTotalPrice = await db.select({
             totalPrice: temporaryOrders.totalPrice,
@@ -36,7 +26,11 @@ export async function POST(request: Request) {
             ).limit(1);
 
         if (!(getTotalPrice)) {
-            throw new requestSettlementError(404, '', '対象の商品')
+            throw new AppError({
+                message: '',
+                statusCode: 407,
+                errorType: 'TOTAL_PRICE_CAN,T_GET'
+            });
         }
 
         const sendData = {
@@ -54,40 +48,39 @@ export async function POST(request: Request) {
             }),
         });
 
-        await response.json();
+
         if (!(response.ok)) {
-            throw new requestSettlementError(404, '決済エラー', 'クレジット会社がえラーです')
+            throw new AppError({
+                message: '決済処理に失敗しました。クレジットカード会社でエラーが発生しています。',
+                statusCode: 502,
+                errorType: 'PAYMENT_GATEWAY_ERROR',
+                details: ''
+            });
         }
 
         const result = await finalStep(Number(user.id), sessionId)
 
         if (!result.success) {
-
+            throw new AppError({
+                message: '購入履歴の更新に失敗しました。',
+                statusCode: 503,
+                errorType: ''
+            })
         }
-
         return NextResponse.json(
             { success: true },
             { status: 200 }
         )
 
+    }
 
-    } catch (error) {
-        if (error instanceof z.ZodError) {
-            return NextResponse.json(
-                { success: false, errorType: 'VALIDATION_ERROR', message: error.issues },
-                { status: 400 }
-            );
+    catch (error) {
+        if (error instanceof ZodError) {
+            return handleError(new ValidationError(error.issues));
         }
-
-        if (error instanceof requestSettlementError) {
-            return NextResponse.json(
-                { success: false, errorType: error.errorType, message: error.message },
-                { status: error.statusCode }
-            );
-        }
+        handleError(error);
     } finally {
-        await db.$client.end();
-
+        await client.end();
     }
 }
 

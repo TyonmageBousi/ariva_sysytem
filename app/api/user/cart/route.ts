@@ -1,20 +1,13 @@
 import { NextResponse } from 'next/server';
-import { auth } from "@/auth";
 import { cartItems } from '@/lib/schema';
 import { eq } from 'drizzle-orm';
-import { db } from '@/lib/db'
+import { db, client, loginJudgment } from '@/lib/db'
+import {  AppError, handleError } from '@/lib/errors'
 
 export async function GET() {
 
     try {
-        const session = await auth();
-        if (!session?.user?.id) {
-            return NextResponse.json(
-                { error: 'Unauthorized' },
-                { status: 401 }
-            );
-        }
-        const { user } = session;
+        const user = await loginJudgment();
         const result = await db.select({
             id: cartItems.id,
             productId: cartItems.productId,
@@ -24,6 +17,9 @@ export async function GET() {
         }).from(cartItems)
             .where(eq(cartItems.userId, Number(user.id)))
 
+        if ((!result) || result.length === 0) {
+            throw new AppError({ message: 'カート内は空です。', statusCode: 404, errorType: 'CART_NOT_FOUND' });
+        }
         return NextResponse.json(
             {
                 success: true,
@@ -32,11 +28,8 @@ export async function GET() {
             { status: 200 }
         );
     } catch (error) {
-        return NextResponse.json(
-            { error: '予期しないエラーが発生しました' },
-            { status: 500 }
-        )
+        handleError(error);
     } finally {
-        await db.$client.end();
+        await client.end();
     }
 }
