@@ -1,14 +1,9 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 import { products, productImages, productCategories, productColors } from '@/lib/schema'
-import { db, insertStorage } from '@/lib/db'
+import { db, insertStorage, client } from '@/lib/db'
 import { NewProductSchema } from '@/app/schemas/product'
-
-
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import {  handleError, ValidationError } from '@/lib/errors'
+import { ZodError } from 'zod';
 
 export async function POST(request: Request) {
 
@@ -26,15 +21,15 @@ export async function POST(request: Request) {
 
         await db.transaction(async (tx) => {
             const insertProduct = await tx.insert(products).values({
-                name: String(result.name),
-                skuCode: String(result.skuCode),
-                price: Number(result.price),
-                discountPrice: Number(result.discountPrice),
-                saleStartAt: new Date(String(result.saleStartAt)),
-                saleEndAt: new Date(String(result.saleEndAt)),
-                status: String(result.status),
-                stock: Number(result.stock),
-                description: String(result.description),
+                name: result.name,
+                skuCode: result.skuCode,
+                price: result.price,
+                discountPrice: result.discountPrice,
+                saleStartAt: result.saleStartAt,
+                saleEndAt: result.saleEndAt,
+                status: result.status,
+                stock: result.stock,
+                description: result.description,
             }).returning({ productId: products.id });
 
             await Promise.all([
@@ -47,22 +42,31 @@ export async function POST(request: Request) {
 
                 ...(result.categoryIds?.map((categoryId) => (
                     tx.insert(productCategories).values({
-                        productId: Number(insertProduct[0].productId),
+                        productId: insertProduct[0].productId,
                         categoryId: Number(categoryId)
                     })
                 )) ?? []),
 
                 ...(result.colorIds?.map((colorId) => (
                     tx.insert(productColors).values({
-                        productId: Number(insertProduct[0].productId),
+                        productId: insertProduct[0].productId,
                         colorId: Number(colorId)
                     })
                 )) ?? [])
             ])
-            return NextResponse.json({ ok: true, formdata });
+            return NextResponse.json(
+                {
+                    success: true,
+                },
+                { status: 200 }
+            );
         })
-    } catch (err) {
-        console.error('エラー:', err);
-        return NextResponse.json({ error: 'Failed' }, { status: 500 });
+    } catch (error) {
+        if (error instanceof ZodError) {
+            return handleError(new ValidationError(error.issues));
+        }
+        return handleError(error);
+    } finally {
+        await client.end();
     }
 }
