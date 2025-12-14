@@ -1,14 +1,12 @@
-import postgres from 'postgres';
-import { drizzle } from 'drizzle-orm/postgres-js';
-import * as schema from '@/lib/schema';
-import { eq, sql } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
 import { products, productImages, productCategories, productColors } from '@/lib/schema'
 import { NextResponse } from 'next/server';
+import { db, client, } from '@/lib/db'
+import { AppError, handleError } from '@/lib/errors'
 
-export async function GET(request: Request) {
-        
-    const client = postgres(process.env.DATABASE_URL!, { prepare: false });
-    const db = drizzle(client, { schema });
+
+export async function GET() {
+
     try {
         const result = await db.select({
             id: products.id,
@@ -35,17 +33,15 @@ export async function GET(request: Request) {
                 WHERE ${productColors.productId} = ${products.id}
                 )`,
         }).from(products)
-        if (!result) {
-            return NextResponse.json(
-                { error: '商品が見つかりません' },
-                { status: 404 }
-            );
+
+        if ((!result) || result.length === 0) {
+            throw new AppError({ message: '商品が見つかりません', statusCode: 404, errorType: 'PRODUCTS_NOT_FOUND' });
         }
-        return NextResponse.json(result)
+        return NextResponse.json({ success: true, result: result }, { status: 200 })
     } catch (error) {
-        return NextResponse.json(
-            { error: 'データ取得失敗' },
-            { status: 500 }
-        );
+        return handleError(error)
+    } finally {
+        await client.end();
     }
+
 }

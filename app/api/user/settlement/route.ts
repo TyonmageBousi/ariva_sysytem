@@ -1,13 +1,13 @@
 
-import postgres from 'postgres';
-import { drizzle } from 'drizzle-orm/postgres-js';
-import * as schema from '@/lib/schema';
 import { NextResponse } from 'next/server';
 import { products, cartItems } from '@/lib/schema';
-import { eq, InferSelectModel, sql } from 'drizzle-orm';
-import { auth } from "@/auth";
-import { cartSchema, CartSchema } from '@/app/schemas/cart'
-import { z } from 'zod';
+import { eq, sql } from 'drizzle-orm';
+import { productPurchaseSchema, ProductPurchaseSchema } from '@/app/schemas/productPurchase'
+import { insertTemporaryOrder, getSessionId, loginJudgment, db,client } from '@/lib/db'
+import { ValidationError, handleError, AppError } from '@/lib/errors'
+import { ZodError } from 'zod';
+import Product from './../../../page/user/product1/page';
+
 
 export type StockError = {
     message: string;
@@ -25,167 +25,205 @@ export type PriceError = {
     productPrice: number;
 }
 
-export type notFindError = {
+export type NameError = {
+    message: string;
+    type: 'NAME_ERROR';
+    productId: number;
+    oldName: string;
+    nowName: string;
+}
+
+
+export type NotFindError = {
     message: string;
     type: string;
     productId: number;
 }
 
-export type Errors = (StockError | PriceError | notFindError);
+export type ProductErrors = (StockError | PriceError | NameError | NotFindError);
 
 export async function POST(request: Request) {
 
-    const client = postgres(process.env.DATABASE_URL!, { prepare: false });
-    const db = drizzle(client, { schema });
-
-    const session = await auth();
-    if (!session?.user?.id) {
-        return NextResponse.json(
-            { success: false, errorType: 'LOGIN_ERROR' },
-            { status: 401 }
-        );
-    }
-    const { user } = session;
-
     /* 関数定義 ここから*/
 
-    const validateSettlement = (async (cart: CartSchema) => {
+    const validateSettlement = (async (cart: ProductPurchaseSchema) => {
 
         //カート内の商品と一致する商品を商品テーブルから取得
-        const errors: Errors[] = [];
+        const productErrors: ProductErrors[] = [];
         let updateCart = { ...cart }
-        const result = await db.select({
+        const [currentProductState] = await db.select({
             id: products.id,
             price: sql<number>`COALESCE(${products.discountPrice}, ${products.price}, 0)`,
             name: products.name,
             status: products.status,
             stock: products.stock
         }).from(products)
-            .where(eq(products.id, cart.id))
+            .where(eq(products.id, cart.productId))
             .limit(1);
 
+        //なんかしらエラーハンドリング必要
+
+
         //カート内と商品テーブルの情報が一致するか確認
-        if (result.length > 0) {
-            const product = result[0];
+        if (currentProductState) {
 
             //在庫チェック
-            if (cart.quantity > product.stock) {
-
-                let message = product.stock === 0 ?
-                    (`${product.name}が在庫切れとなってしまいました。ご了承ください`)
+            if (cart.quantity > currentProductState.stock) {
+                let message = currentProductState.stock === 0 ?
+                    (`${currentProductState.name}が在庫切れとなってしまいました。ご了承ください`)
                     :
-                    (`${product.name}の在庫が注文数より少ないです。現状、${product.stock}までの購入となりますのでご了承ください`)
-
+                    (`${currentProductState.name}の在庫が注文数より少ないです。現状、${currentProductState.stock}までの購入となりますのでご了承ください`)
                 //在庫エラー作成
                 const err: StockError = {
                     message: message,
                     type: 'STOCK_ERROR',
-                    productId: cart.id,
+                    productId: cart.productId,
                     requested: cart.quantity,
-                    stock: product.stock,
+                    stock: currentProductState.stock,
                 }
-                errors.push(err)
+                productErrors.push(err)
                 updateCart = {
                     ...updateCart,
-                    quantity: product.stock
+                    quantity: currentProductState.stock
                 }
             }
 
             //価格の検証
-            if (cart.price !== Number(product.price)) {
+            if (cart.price !== Number(currentProductState.price)) {
                 //価格エラー作成
                 const err: PriceError = {
-                    message: `${product.name}の価格が変更されています。現状、${product.price}でのご案内となります。`,
+                    message: `${currentProductState.name}の価格が変更されています。現状、${currentProductState.price}でのご案内となります。`,
                     type: 'PRICE_ERROR',
-                    productId: cart.id,
+                    productId: cart.productId,
                     price: cart.price,
-                    productPrice: Number(product.price),
+                    productPrice: Number(currentProductState.price),
                 }
-                errors.push(err);
+                productErrors.push(err);
                 updateCart = {
                     ...updateCart,
-                    price: product.price
+                    price: currentProductState.price
+                }
+            }
+
+
+            if (cart.name !== currentProductState.name) {
+                //価格エラー作成
+                const err: NameError = {
+                    message: `${currentProductState.name}の名前が変更されています。${currentProductState.name}でお間違いないでしょうか。`,
+                    type: 'NAME_ERROR',
+                    productId: cart.productId,
+                    oldName: cart.name,
+                    nowName: currentProductState.name,
+                }
+                productErrors.push(err);
+                updateCart = {
+                    ...updateCart,
+                    price: currentProductState.price
                 }
             }
         } else {
-            const err: notFindError = {
+            const err: NotFindError = {
                 message: '商品が見つかりませんでした。',
                 type: 'PRODUCT_NOT_FOUND',
-                productId: cart.id,
+                productId: cart.productId,
             }
-            errors.push(err);
+            productErrors.push(err);
         }
-        return { errors, updateCart };
+        return { productErrors, updateCart };
     });
 
     //商品テーブル更新
-    const updateCartTable = async (updateCarts: CartSchema[], userId: number) => {
+    const updateCartTable = async (updateCarts: ProductPurchaseSchema[], userId: number) => {
         await db.delete(cartItems)
             .where(
                 eq(cartItems.userId, userId)
             );
-        if (updateCarts.length > 0) {
-            await db.insert(cartItems).values(
-                updateCarts.map((updateCart) => ({
-                    userId: user.id,
-                    productName: updateCart.name,
-                    productId: updateCart.productId,
-                    price: updateCart.price,
-                    quantity: updateCart.quantity
-                }))
-            );
-        }
+        await db.insert(cartItems).values(
+            updateCarts.map((updateCart) => ({
+                userId: userId,
+                productName: updateCart.name,
+                productId: updateCart.productId,
+                price: updateCart.price,
+                quantity: updateCart.quantity
+            }))
+        );
     }
 
+
     /* 関数定義 ここまで */
+
+
+    const user = await loginJudgment();
 
     try {
         const data = await request.json();
 
-        const validateData = z.array(cartSchema).safeParse(data)
-        if (!validateData.success) {
-            return NextResponse.json(
-                {
-                    success: false,
-                    errorType: 'VALIDATION_ERROR',
-                    details: validateData.error
-                },
-                { status: 400 }
-            );
+        if (data.length === 0 || !data) {
+            throw new AppError({
+                message: 'カート内が空です。',
+                statusCode: 407,
+                errorType: 'EMPTY_CART'
+            });
         }
-        const carts = validateData.data;
 
-        const results = await Promise.all(
-            carts.map((cart) => validateSettlement(cart)));
+        const validationErrors: { productId: number, error: ZodError }[] = [];
+        data.forEach((product: ProductPurchaseSchema) => {
+            const result = productPurchaseSchema.safeParse(product)
+            if (!result.success) {
+                validationErrors.push(
+                    {
+                        productId: product.productId,
+                        error: result.error
+                    })
+            }
+        });
 
-        const hasErrors = results.filter(result => result.errors.length > 0);
+        if (validationErrors.length !== 0) {
+            throw new AppError({
+                message: 'カート内に不正な商品があります。',
+                statusCode: 407,
+                errorType: '',
+                details: validationErrors
+            });
+        }
 
-        const updateCarts = results.map(result => result.updateCart);
+        const validateData: ProductPurchaseSchema[] = data;
 
-        await updateCartTable(updateCarts, user.id)
 
+        const checkCarts = await Promise.all(
+            validateData.map((cart) => validateSettlement(cart))
+        );
+
+        const hasErrors = checkCarts.filter(result => result.productErrors.length > 0);
+        const updateCarts = checkCarts.map(checkCart => checkCart.updateCart).filter((updateCart) => updateCart.quantity > 0)
         if (hasErrors.length > 0) {
+            await updateCartTable(updateCarts, Number(user.id))
             const productErrors = hasErrors.map(result => ({
-                productId: result.updateCart.id,
-                errors: result.errors
+                productId: result.updateCart.productId,
+                errors: result.productErrors
             }))
-            return NextResponse.json({
-                success: false,
+            throw new AppError({
+                message: 'カート内の商品情報が更新されています。',
+                statusCode: 404,
                 errorType: 'PRODUCT_ERROR',
-                productErrors,
-                updateCarts
-            }, { status: 400 })
+                details: productErrors
+            });
         }
+
+        const sessionId = await getSessionId()
+        await insertTemporaryOrder(updateCarts, Number(user.id), sessionId)
+
         return NextResponse.json({
             success: true,
-
         }, { status: 200 })
     }
     catch (error) {
-        return NextResponse.json(
-            { errorType: 'SERVER_ERROR' },
-            { status: 500 }
-        );
-
+        if (error instanceof ZodError) {
+            return handleError(new ValidationError(error.issues));
+        }
+        handleError(error);
+    } finally {
+        await client.end();
     }
 }
+

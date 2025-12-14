@@ -1,0 +1,1 @@
+ALTER TABLE "temporary_orders" ADD COLUMN "session_id" text NOT NULL;
