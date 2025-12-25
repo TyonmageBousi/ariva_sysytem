@@ -2,11 +2,10 @@
 import { NextResponse } from 'next/server';
 import { products, cartItems } from '@/lib/schema';
 import { eq, sql } from 'drizzle-orm';
-import { productPurchaseSchema, ProductPurchaseSchema } from '@/app/schemas/productPurchase'
-import { insertTemporaryOrder, getSessionId, loginJudgment, db,client } from '@/lib/db'
+import { productPurchaseSchema, ProductPurchaseValues } from '@/app/schemas/productPurchase'
+import { insertTemporaryOrder, getSessionId, loginJudgment, db, client } from '@/lib/db'
 import { ValidationError, handleError, AppError } from '@/lib/errors'
 import { ZodError } from 'zod';
-import Product from './../../../page/user/product1/page';
 
 
 export type StockError = {
@@ -42,11 +41,17 @@ export type NotFindError = {
 
 export type ProductErrors = (StockError | PriceError | NameError | NotFindError);
 
+export type Errors = {
+    productId: number;
+    errors: ProductErrors[]
+}
+
+
 export async function POST(request: Request) {
 
     /* 関数定義 ここから*/
 
-    const validateSettlement = (async (cart: ProductPurchaseSchema) => {
+    const validateSettlement = (async (cart: ProductPurchaseValues) => {
 
         //カート内の商品と一致する商品を商品テーブルから取得
         const productErrors: ProductErrors[] = [];
@@ -68,7 +73,7 @@ export async function POST(request: Request) {
         if (currentProductState) {
 
             //在庫チェック
-            if (cart.quantity > currentProductState.stock) {
+            if (cart.purchaseQuantity > currentProductState.stock) {
                 let message = currentProductState.stock === 0 ?
                     (`${currentProductState.name}が在庫切れとなってしまいました。ご了承ください`)
                     :
@@ -78,13 +83,13 @@ export async function POST(request: Request) {
                     message: message,
                     type: 'STOCK_ERROR',
                     productId: cart.productId,
-                    requested: cart.quantity,
+                    requested: cart.purchaseQuantity,
                     stock: currentProductState.stock,
                 }
                 productErrors.push(err)
                 updateCart = {
                     ...updateCart,
-                    quantity: currentProductState.stock
+                    purchaseQuantity: currentProductState.stock
                 }
             }
 
@@ -133,7 +138,7 @@ export async function POST(request: Request) {
     });
 
     //商品テーブル更新
-    const updateCartTable = async (updateCarts: ProductPurchaseSchema[], userId: number) => {
+    const updateCartTable = async (updateCarts: ProductPurchaseValues[], userId: number) => {
         await db.delete(cartItems)
             .where(
                 eq(cartItems.userId, userId)
@@ -144,7 +149,7 @@ export async function POST(request: Request) {
                 productName: updateCart.name,
                 productId: updateCart.productId,
                 price: updateCart.price,
-                quantity: updateCart.quantity
+                quantity: updateCart.purchaseQuantity
             }))
         );
     }
@@ -167,7 +172,7 @@ export async function POST(request: Request) {
         }
 
         const validationErrors: { productId: number, error: ZodError }[] = [];
-        data.forEach((product: ProductPurchaseSchema) => {
+        data.forEach((product: ProductPurchaseValues) => {
             const result = productPurchaseSchema.safeParse(product)
             if (!result.success) {
                 validationErrors.push(
@@ -187,7 +192,7 @@ export async function POST(request: Request) {
             });
         }
 
-        const validateData: ProductPurchaseSchema[] = data;
+        const validateData: ProductPurchaseValues[] = data;
 
 
         const checkCarts = await Promise.all(
@@ -195,10 +200,10 @@ export async function POST(request: Request) {
         );
 
         const hasErrors = checkCarts.filter(result => result.productErrors.length > 0);
-        const updateCarts = checkCarts.map(checkCart => checkCart.updateCart).filter((updateCart) => updateCart.quantity > 0)
+        const updateCarts = checkCarts.map(checkCart => checkCart.updateCart).filter((updateCart) => updateCart.purchaseQuantity > 0)
         if (hasErrors.length > 0) {
             await updateCartTable(updateCarts, Number(user.id))
-            const productErrors = hasErrors.map(result => ({
+            const productErrors:Errors[] = hasErrors.map(result => ({
                 productId: result.updateCart.productId,
                 errors: result.productErrors
             }))

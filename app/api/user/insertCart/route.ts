@@ -1,6 +1,5 @@
 import { cartItems } from '@/lib/schema'
 import { NextResponse } from 'next/server';
-import { auth } from "@/auth";
 import { getAllUserCart, } from '@/lib/db';
 import { eq } from 'drizzle-orm';
 import { productPurchaseSchema } from '@/app/schemas/productPurchase'
@@ -29,7 +28,7 @@ export async function POST(request: Request) {
 
         if (matchProduct) {
             await db.update(cartItems).set({
-                quantity: matchProduct.quantity + parseData.quantity
+                quantity: matchProduct.quantity + parseData.purchaseQuantity
             }).where(eq(cartItems.id, matchProduct.id))
         } else {
             await db.insert(cartItems).values({
@@ -37,7 +36,7 @@ export async function POST(request: Request) {
                 productId: parseData.productId,
                 productName: parseData.name,
                 price: parseData.price,
-                quantity: parseData.quantity,
+                quantity: parseData.purchaseQuantity,
             }).returning({ userId: cartItems.userId })
         }
         return NextResponse.json(

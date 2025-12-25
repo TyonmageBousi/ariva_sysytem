@@ -1,4 +1,7 @@
-//サンプル
+import { NextResponse } from 'next/server';
+
+
+export type AppErrorType = InstanceType<typeof AppError>;
 
 export class AppError extends Error {
     statusCode: number;
@@ -36,11 +39,10 @@ export class AuthError extends AppError {
 }
 
 
-export function handleError(e: unknown): Response {
+export function handleError(e: unknown): NextResponse {
     console.error(e);
-
     if (e instanceof AppError) {
-        return Response.json(
+        return NextResponse.json(
             {
                 success: false,
                 errorType: e.errorType,
@@ -50,8 +52,7 @@ export function handleError(e: unknown): Response {
             { status: e.statusCode },
         );
     }
-
-    return Response.json(
+    return NextResponse.json(
         {
             success: false,
             errorType: "INTERNAL_SERVER_ERROR",
@@ -60,3 +61,4 @@ export function handleError(e: unknown): Response {
         { status: 500 },
     );
 }
+

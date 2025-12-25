@@ -30,6 +30,7 @@ export const NewAccountSchema = z.object({
 
 })
   .extend(AddressSchema.shape)
+  
   .refine((v) => v.password === v.confirmPassword, {
     path: ["confirmPassword"],
     message: "パスワードが一致しません",

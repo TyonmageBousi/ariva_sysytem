@@ -34,9 +34,6 @@ export async function GET() {
                 )`,
         }).from(products)
 
-        if ((!result) || result.length === 0) {
-            throw new AppError({ message: '商品が見つかりません', statusCode: 404, errorType: 'PRODUCTS_NOT_FOUND' });
-        }
         return NextResponse.json({ success: true, result: result }, { status: 200 })
     } catch (error) {
         return handleError(error)

@@ -43,7 +43,11 @@ export async function GET(request: Request, { params }: Params) {
             .limit(1);
 
         if ((!result) || result.length === 0) {
-            throw new AppError({ message: '商品が見つかりません', statusCode: 404, errorType: 'PRODUCT_NOT_FOUND' })
+            throw new AppError({
+                message: '商品が見つかりません',
+                statusCode: 404,
+                errorType: 'PRODUCT_NOT_FOUND'
+            })
         }
 
         return NextResponse.json({ success: true, result: result[0] }, { status: 200 })

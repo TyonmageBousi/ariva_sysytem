@@ -1,4 +1,4 @@
-import { AppError, handleError } from '@/lib/errors'
+import {  handleError } from '@/lib/errors'
 import { getAllCategories, getAllColorCategories } from '@/lib/db';
 import { NextResponse } from 'next/server';
 
