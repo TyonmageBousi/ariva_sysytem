@@ -1,44 +1,25 @@
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { ProductList } from '@/app/types/productList'
 
-export type ProductDetailsData = {
-    id: number;
-    name: string;
-    price: string;
-    image: string;
-};
-type Props = {
-    productDetailsData: ProductDetailsData[];
-}
-const DURATION = 30;
+type Props = ProductList[];
 
 
-export default function ProductDetails({ productDetailsData }: Props) {
+export default function ProductListPage(productList: Props) {
 
-    const [selected, setSelected] = useState<ProductDetailsData | null>(null);
-    const router = useRouter();
+    const [selected, setSelected] = useState<ProductList | null>(null)
 
     return (
-        <div className='min-h-screen bg-gradient-to-b from-gray-900 via-amber-950 to-black text-amber-50'>
-            <header className='pt-14 pb-6 text-center'>
-                <h1 className='text-5xl font-bold'>白十字 商品ギャラリー</h1>
-                <p className='mt-2 text-amber-200/70'>クリックで詳細表示</p>
-            </header>
-
-            <div className='relative h-80 overflow-hidden'>
-                <div className='pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-gray-900 to-transparent z-10' />
-                <div className='pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-gray-900 to-transparent z-10' />
-
-                <motion.div
-                    className='flex h-80 items-center gap-8 absolute'
-                    animate={{ x: ['0%', '-50%'] }}
-                    transition={{ duration: DURATION, ease: 'linear', repeat: Infinity }}
-                >
-                    {productDetailsData.map((product, i) => (
+        <div className="min-h-screen bg-gray-50 py-8 px-4">
+            <div className="max-w-6xl mx-auto">
+                <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
+                    商品一覧
+                </h1>
+                <div className="grid grid-cols-4 gap-6">
+                    {productList.map((product, i) => (
                         <motion.div
                             key={`${product.id}-${i}`}
-                            className='w-80 h-72 shrink-0 rounded-2xl overflow-hidden bg-neutral-900 cursor-pointer relative'
+                            className='w-80 h-72 rounded-2xl overflow-hidden cursor-pointer relative'
                             whileHover={{ scale: 1.05, y: -4 }}
                             onClick={() => setSelected(product)}
                         >
@@ -49,9 +30,9 @@ export default function ProductDetails({ productDetailsData }: Props) {
                             </div>
                         </motion.div>
                     ))}
-                </motion.div>
+                </div>
             </div>
-            <AnimatePresence>{/* 消えるときもアニメーションを入れるため */}
+            <AnimatePresence>
                 {selected && (
                     <motion.div
                         className='fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-8'
@@ -61,11 +42,11 @@ export default function ProductDetails({ productDetailsData }: Props) {
                         onClick={() => setSelected(null)}
                     >
                         <motion.div
-                            className='bg-gradient-to-br from-amber-900 to-amber-950 rounded-3xl max-w-4xl w-full overflow-hidden'
+                            className='rounded-3xl max-w-4xl w-full overflow-hidden'
                             initial={{ scale: 0.8 }}
                             animate={{ scale: 1 }}
                             exit={{ scale: 0.8 }}
-                            onClick={(e) => e.stopPropagation()} // モーダル内をクリックしても閉じる 
+                            onClick={(e) => e.stopPropagation()}
                         >
                             <div className='grid md:grid-cols-2'>
                                 <img src={selected.image} alt={selected.name} className='w-full h-96 md:h-auto object-cover' />
@@ -74,9 +55,7 @@ export default function ProductDetails({ productDetailsData }: Props) {
                                     <p className='text-gray-300 mb-6'>厳選されたカカオ豆を使用した、こだわりのチョコレート。</p>
                                     <p className='text-6xl font-bold text-amber-300 mb-8'>{selected.price}</p>
                                     <div className='flex gap-4'>
-                                        <button className='bg-amber-600 hover:bg-amber-700 font-bold py-4 px-8 rounded-full flex-1'
-                                            onClick={() => router.push(`http://localhost:3000/page/user/product1?id=${selected.id}`)}
-                                        >
+                                        <button className='bg-amber-600 hover:bg-amber-700 font-bold py-4 px-8 rounded-full flex-1'>
                                             詳細へ
                                         </button>
                                         <button className='bg-white/20 hover:bg-white/30 font-bold py-4 px-8 rounded-full' onClick={() => setSelected(null)}>
@@ -90,5 +69,6 @@ export default function ProductDetails({ productDetailsData }: Props) {
                 )}
             </AnimatePresence>
         </div>
-    );
+
+    )
 }

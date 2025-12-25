@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { cartItems } from '@/lib/schema';
 import { eq } from 'drizzle-orm';
 import { db, client, loginJudgment } from '@/lib/db'
-import {  AppError, handleError } from '@/lib/errors'
+import { AppError, handleError } from '@/lib/errors'
 
 export async function GET() {
 
@@ -17,9 +17,6 @@ export async function GET() {
         }).from(cartItems)
             .where(eq(cartItems.userId, Number(user.id)))
 
-        if ((!result) || result.length === 0) {
-            throw new AppError({ message: 'カート内は空です。', statusCode: 404, errorType: 'CART_NOT_FOUND' });
-        }
         return NextResponse.json(
             {
                 success: true,

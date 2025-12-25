@@ -33,10 +33,8 @@ export async function GET(request: Request, { params }: Params) {
             .where(not(eq(products.id, productId)))
             .orderBy(sql`RANDOM()`)
             .limit(20)
-        
-            if ((!result) || result.length === 0) {
-            throw new AppError({ message: '商品が見つかりません', statusCode: 404, errorType: 'PRODUCTS_NOT_FOUND' })
-        }
+
+      
 
         return NextResponse.json({ success: true, result: result }, { status: 200 })
     }

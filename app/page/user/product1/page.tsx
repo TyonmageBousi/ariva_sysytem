@@ -1,76 +1,43 @@
-'use client';
-
-import { useEffect, useState } from 'react';
-import ProductDetail, { ProductDetailData } from '@/app/components/user/product/ProductDetail'
-import ProductDetails, { ProductDetailsData } from '@/app/components/user/product/ProductDetails'
+import { ProductDetailData } from '@/app/components/user/product/ProductDetail'
+import { ProductDetailsData } from '@/app/components/user/product/ProductDetails'
+import ProductPageC from '@/app/components/user/product/Product'
+import { handleFrontError } from '@/lib/front-error';
 
 type Props = {
     id: string
 }
 
-async function fetchUrl<T>(url: string, errorMsg: string, options: RequestInit = {}): Promise<T> {
+async function fetchUrl<T>(url: string, options: RequestInit = {}): Promise<T> {
     const res = await fetch(url, options);
-    if (!res.ok) throw new Error(errorMsg);
-    return res.json()
+    const result = await res.json();
+    if (!res.ok) throw new Error(result);
+    if (!result.success) throw new Error(result)
+    return result.data
 }
 
-export default function Product({ id }: Props) {
-    const [loading, setLoading] = useState<boolean>(true);
-    const [productDetailData, setProductDetailData] = useState<ProductDetailData>();
-    const [productDetailsData, setProductDetailsData] = useState<ProductDetailsData[]>([]);
+export default async function ProductPage({ id }: Props) {
+    const controller = new AbortController();
 
-    useEffect(() => {
-        const controller = new AbortController();
-        const fetchProduct = async () => {
-            try {
-                setLoading(true)
-                const [productDetail, productDetails] = await Promise.all([
-                    fetchUrl<ProductDetailData>
-                        (`http://localhost:3000/api/user/productDetail/id=${id}`,
-                            'メイン商品のデータの取得に失敗しました',
-                            { signal: controller.signal }),
-                    fetchUrl<ProductDetailsData[]>
-                        (`http://localhost:3000/api/user/productDetails?id=${id}`,
-                            'メイン商品以外のデータ取得に失敗しました',
-                            { signal: controller.signal })
-                ]);
-                setProductDetailData(productDetail);
-                setProductDetailsData(productDetails);
-            }
-            catch (err) {
-                console.error('データ取得エラー:', err);
-            } finally {
-                setLoading(false);
+    let productDetail: ProductDetailData | null = null;
+    let productDetails: ProductDetailsData[] | null = null;
 
-            }
-        }
-        fetchProduct();
-        return () => {
-            controller.abort();
-        };
-    }, [id]);
-
-    if (loading) {
-        return <div>読み込み中・・・・</div>
+    try {
+        [productDetail, productDetails] = await Promise.all([
+            fetchUrl<ProductDetailData>
+                (`http://localhost:3000/api/user/productDetail/id=${id}`,
+                    { signal: controller.signal }),
+            fetchUrl<ProductDetailsData[]>
+                (`http://localhost:3000/api/user/productDetails?id=${id}`,
+                    { signal: controller.signal })
+        ]);
+        return (
+            <ProductPageC productDetail={productDetail} productDetails={productDetails} />
+        );
     }
-
-    if (!productDetailData) {
-        return <div>該当の商品が見つかりません。</div>
+    catch (error) {
+        if (error instanceof Error)
+            return handleFrontError(error)
     }
-
-    return (
-        <div className='relative'>
-            <ProductDetail productDetailData={productDetailData} />
-            <ProductDetails productDetailsData={productDetailsData} />
-            <div className='relative min-h-screen flex items-center justify-center bg-gradient-to-b from-amber-950 to-black z-50'>
-                <div className='text-center text-amber-100'>
-                    <h2 className='text-7xl font-bold mb-6'>白十字</h2>
-                    <p className='text-2xl opacity-80'>伝統と革新が織りなす、至福のひととき</p>
-                </div>
-            </div>
-        </div>
-
-    );
 }
 
 

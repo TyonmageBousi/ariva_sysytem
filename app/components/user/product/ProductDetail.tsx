@@ -10,6 +10,7 @@ import OptionsForm, { FiledOptionsProps } from '@/app/components/public/form/Opt
 import toast from 'react-hot-toast';
 import { PurchaseValues } from '@/app/types/productPurchase'
 import { productPurchaseSchema } from '@/app/schemas/productPurchase'
+import { handleError } from '@/lib/errors';
 
 export type ProductDetailData = {
     id: number;
@@ -41,10 +42,9 @@ export default function ProductDetail({ productDetailData }: Props) {
     });
     const controllerRef = useRef<AbortController | null>(null);
 
-    const stockOptions = Array.from({ length: stock }, (_, i) => ({
-        id: i + 1,
-        label: String(i + 1)
-    }));
+    const stockOptions = Array.from({ length: stock }, (_, i) => (
+        String(i + 1)
+    ));
 
     const optionsProps: FiledOptionsProps<PurchaseValues> = {
         label: '個数',
@@ -104,23 +104,29 @@ export default function ProductDetail({ productDetailData }: Props) {
 
         if (status === 'authenticated') {
             try {
-                const res =
+                const response =
                     await fetch('http://localhost:3000/api/user/insertCart', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
                         body: JSON.stringify(parseCartItem),
                         signal: controllerRef.current.signal
                     })
-                if (!res.ok) throw new Error('カートに入れるのを失敗しました');
-                toast.success('カートに追加しました！');
+                const result = await response.json();
+                if (!response.ok) {
+                    handleError(result)
+                }
+                if (!result.success) {
+                    handleError(result);
+                    return;
+                }
+                if (result.success) {
+                    router.push('');
+                    return
+                }
+                throw new Error('予期しないエラーが発生しました')
             }
             catch (error) {
-                console.error('カート情報の保存に失敗しました:', error);
-                toast.error('エラーが発生しました');
+                throw error instanceof Error ? error : new Error('予期しないエラーが発生しました')
             }
-            return;
         }
         try {
             sessionStorage.setItem('pendingCartItem', JSON.stringify(cartItem));
