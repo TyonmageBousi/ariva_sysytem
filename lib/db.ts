@@ -2,14 +2,16 @@
 import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import * as schema from './schema';
-import { categories, colorCategories, cartItems, temporaryOrders, temporaryOrderItems, orders, orderItems } from "./schema"
+import { categories, colorCategories, cartItems, temporaryOrders, temporaryOrderItems, orders, orderItems, products } from "./schema"
 import { eq, and } from 'drizzle-orm';
-import { ProductPurchaseSchema } from '@/app/schemas/productPurchase'
+import { ProductPurchaseValues } from '@/app/schemas/productPurchase'
 import { auth } from "@/auth";
 import { cookies } from 'next/headers';
 import { randomUUID } from 'crypto';
 import { AuthError } from '@/lib/errors'
 import { createClient } from '@supabase/supabase-js';
+import { AppError } from '@/lib/errors'
+import { ProductErrors, StockError } from '@/app/api/user/settlement/route'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -57,11 +59,56 @@ export async function getAllUserCart(userId: number) {
     .where(eq(cartItems.userId, userId));
 }
 
-export async function insertTemporaryOrder(carts: ProductPurchaseSchema[], userId: number, sessionId: string) {
+export async function insertTemporaryOrder(carts: ProductPurchaseValues[], userId: number, sessionId: string) {
 
-  const totalPrice = carts.reduce((sum, cart) => sum + cart.price * cart.quantity, 0);
+  const totalPrice = carts.reduce((sum, cart) => sum + cart.price * cart.purchaseQuantity, 0);
+
 
   await db.transaction(async (tx) => {
+
+    await Promise.all(
+      carts.map(async (cart) => {
+        const [lock] = await tx.select({
+          stock: products.stock,
+          name: products.name,
+          version: products.version
+        }).from(products)
+          .where(eq(products.id, cart.productId))
+
+        const productErrors: ProductErrors[] = [];
+        if (cart.purchaseQuantity > lock.stock) {
+          let message = lock.stock === 0 ?
+            (`${lock.name}が在庫切れとなってしまいました。ご了承ください`)
+            :
+            (`${lock.name}の在庫が注文数より少ないです。現状、${lock.stock}までの購入となりますのでご了承ください`)
+
+          const err: StockError = {
+            message: message,
+            type: 'STOCK_ERROR',
+            productId: cart.productId,
+            requested: cart.purchaseQuantity,
+            stock: lock.stock,
+          }
+
+          productErrors.push(err)
+        }
+
+        if (productErrors.length > 0) {
+          throw new AppError({
+            message: 'カート内の商品情報が更新されています。',
+            statusCode: 404,
+            errorType: 'PRODUCT_ERROR',
+            details: productErrors
+          })
+        }
+        const updateStock = lock.stock - cart.purchaseQuantity
+        await tx.update(products).set({ stock: updateStock, version: lock.version + 1 })
+          .where(and(
+            eq(products.id, cart.productId),
+            eq(products.version, lock.version)
+          ))
+      })
+    )
     const [{ orderId }] = await tx.insert(temporaryOrders).values({
       userId: userId,
       totalPrice: totalPrice,
@@ -73,7 +120,7 @@ export async function insertTemporaryOrder(carts: ProductPurchaseSchema[], userI
       carts.map(cart => ({
         orderId: orderId,
         productId: cart.productId,
-        quantity: cart.quantity,
+        quantity: cart.purchaseQuantity,
         name: cart.name,
         price: cart.price,
       })
