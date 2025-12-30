@@ -21,11 +21,20 @@ export const client = postgres(process.env.DATABASE_URL!, { prepare: false });
 export const db = drizzle(client, { schema });
 
 export async function getAllCategories() {
-  return await db.select({ id: categories.id, label: categories.name }).from(categories);
+  try {
+    return await db.select({ id: categories.id, label: categories.name }).from(categories);
+  } catch (error) {
+    console.error("getAllCategories failed:", error);
+    return []
+  }
 }
-
 export async function getAllColorCategories() {
-  return await db.select({ id: colorCategories.id, label: colorCategories.name }).from(colorCategories)
+  try {
+    return await db.select({ id: colorCategories.id, label: colorCategories.name }).from(colorCategories)
+  } catch (error) {
+    console.error("getAllCategories failed:", error);
+    return [];
+  }
 }
 
 export async function loginJudgment() {

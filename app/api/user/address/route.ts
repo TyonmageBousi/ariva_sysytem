@@ -7,7 +7,6 @@ import { AppError, handleError } from '@/lib/errors'
 export async function GET() {
     try {
         const user = await loginJudgment();
-        
         const result = await db.select({
             postalCode: users.postalCode,
             prefecture: users.prefecture,
@@ -17,9 +16,6 @@ export async function GET() {
         }).from(users)
             .where(eq(users.id, Number(user.id)))
 
-        if ((!result) || result.length === 0) {
-            throw new AppError({ message: '住所が見つかりません', statusCode: 404, errorType: 'ADDRESS_NOT_FOUND' });
-        }
         return NextResponse.json({ success: true, address: result[0] }, { status: 200 })
     } catch (error) {
         return handleError(error)
