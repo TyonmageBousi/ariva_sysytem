@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { productPurchaseSchema } from '@/app/schemas/productPurchase'
+import { ProductPurchaseSchema } from '@/app/schemas/productPurchase'
 import { useRouter } from 'next/navigation'
 import { ProductCart } from '@/app/types/productCart'
 import { StockError, PriceError, ProductErrors, Errors } from '@/app/api/user/settlement/route'
@@ -52,7 +52,7 @@ export default function Cart(data: ProductCart[]) {
                 quantity: cart.quantity
             }));
 
-            const result = z.array(productPurchaseSchema).safeParse(formatCarts)
+            const result = z.array(ProductPurchaseSchema).safeParse(formatCarts)
 
             if (!result.success) {
                 const zodErrors: Record<number, string[]> = {};
