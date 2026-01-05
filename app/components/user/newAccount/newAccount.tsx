@@ -85,7 +85,7 @@ export default function NewAccount() {
 
     const onSubmit = async (data: NewAccountValues) => {
         try {
-            const response = await fetch('http://localhost:3000/api/newAccount', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/newAccount`, {
                 method: 'POST',
                 body: JSON.stringify(data)
             });

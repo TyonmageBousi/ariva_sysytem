@@ -8,7 +8,7 @@ export default async function AddressPage() {
     const controller = new AbortController();
     const timeOut = setTimeout(() => controller.abort(), TIMEOUT)
     try {
-        const res = await fetch('http://localhost:3000/api/user/address',
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/address`,
             { signal: controller.signal })
         const result = await res.json();
 

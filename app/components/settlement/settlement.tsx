@@ -54,7 +54,7 @@ export default function Settlement() {
 
     const onSubmit = async (data: SettlementSchema) => {
         try {
-            const response = await fetch('', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

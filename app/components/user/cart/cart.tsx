@@ -71,7 +71,7 @@ export default function Cart(data: ProductCart[]) {
                 return;
             };
 
-            const response = await fetch('http://localhost:3000/api/user/settlement', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/settlement`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

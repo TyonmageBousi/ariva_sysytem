@@ -53,7 +53,7 @@ export default function Address(data: AddressValues) {
 
     const onSubmit = async (data: AddressValues) => {
         try {
-            const response = await fetch('http://localhost:3000/api/user/shippingAddresses', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/shippingAddresses`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

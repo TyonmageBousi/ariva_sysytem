@@ -7,7 +7,7 @@ import { handleFrontError } from '@/lib/front-error';
 export default async function ProductListPagePage() {
     const controller = new AbortController();
     try {
-        const res = await fetch('http://localhost:3000/api/user/productList', {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/productList`, {
             signal: controller.signal
         });
         const result = await res.json();

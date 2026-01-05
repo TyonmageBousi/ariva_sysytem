@@ -50,7 +50,7 @@ export default function productForm({
             data.colorIds?.forEach((id) => formData.append("colorCategoryIds", String(id)));
             data.images?.forEach((file) => formData.append("images", file));
 
-            const response = await fetch("http://localhost:3000/api/admin/newProductRegister", {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/newProductRegister`, {
                 method: 'POST',
                 body: formData,
             });

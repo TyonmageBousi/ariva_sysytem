@@ -24,10 +24,10 @@ export default async function ProductPage({ id }: Props) {
     try {
         [productDetail, productDetails] = await Promise.all([
             fetchUrl<ProductDetailData>
-                (`http://localhost:3000/api/user/productDetail/id=${id}`,
+                (`${process.env.NEXT_PUBLIC_API_URL}/api/user/productDetail/id=${id}`,
                     { signal: controller.signal }),
             fetchUrl<ProductDetailsData[]>
-                (`http://localhost:3000/api/user/productDetails?id=${id}`,
+                (`${process.env.NEXT_PUBLIC_API_URL}/api/user/productDetails?id=${id}`,
                     { signal: controller.signal })
         ]);
         return (

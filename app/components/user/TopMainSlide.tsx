@@ -7,21 +7,21 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import 'swiper/css/effect-flip';
 import React, { useState, useEffect } from 'react';
-import { SlideImage } from '@/app/api/mock/top_main_slide/route';
+import { Images } from '@/lib/getPublicFiles'
 
+type props = {
+    data: Images[]
+}
 
-type Props = {
-    data: SlideImage[];
-};
+export default function TopMainSlide({ data }: props) {
 
-const radius: number = 380; // レイアウトで使用している円の半径:400px
-
-export default function TopMainSlide({ data }: Props) {
-
+    const radius: number = 380; // レイアウトで使用している円の半径:400px
     const characters: string = 'Velour Cacao – Treat Yourself – '; //回転の文字の内容
     const charArray: string[] = characters.split(''); //上記の文字を一文字づつ配列に格納
     const [isVisible, setIsVisible] = useState<boolean>(true);
     const [isMounted, setIsMounted] = useState<boolean>(false);
+
+
     useEffect(() => {
 
         setIsMounted(true);

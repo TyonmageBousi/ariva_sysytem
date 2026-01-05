@@ -8,7 +8,7 @@ export default async function UserCart() {
     const controller = new AbortController();
 
     try {
-        const res = await fetch('http://localhost:3000/api/user/cart',
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/cart`,
             { signal: controller.signal })
 
         const result = await res.json();

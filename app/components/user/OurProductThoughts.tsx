@@ -1,17 +1,11 @@
 'use client';
 
 import Image from 'next/image';
-
-type Thought = {        
-  title: string;
-  text: string;
-  src1: string;         
-  src2: string;
-};
+import { OurThought } from '@/app/components/user/main/OurProductContainer'
 
 type Props = {
   titleCss: string;
-  data: Thought[];     
+  data: OurThought[];
 };
 
 const layout: [string, string][] = [
@@ -19,7 +13,7 @@ const layout: [string, string][] = [
   ['absolute z-10 right-10 top-10 rotate-[2deg]', 'absolute z-0 left-6 bottom-6 rotate-[-2deg]'],
 ];
 
-export default function OurProductThoughts({ titleCss:titleCss, data: ourThoughts }: Props) {
+export default function OurProductThoughts({ titleCss: titleCss, data: ourThoughts }: Props) {
   return (
     <div>
       <p className={titleCss}>作り手の想い</p>
@@ -32,7 +26,7 @@ export default function OurProductThoughts({ titleCss:titleCss, data: ourThought
               {thought.title}
             </p>
             <p className='relative z-20 text-[1rem] text-center mx-auto w-[min(50ch,90%)] mb-12'>
-              {thought.text.split(/\r?\n/).map((line, i) => (
+              {(thought.text ?? "").split(/\r?\n/).map((line, i) => (
                 <span key={i}>
                   {line}
                   <br />
@@ -42,15 +36,8 @@ export default function OurProductThoughts({ titleCss:titleCss, data: ourThought
 
             <Image
               className={cls1}
-              src={thought.src1}
-              alt={`${thought.title} イメージ1`}
-              width={400}
-              height={300}
-            />
-            <Image
-              className={cls2}
-              src={thought.src2}
-              alt={`${thought.title} イメージ2`}
+              src={thought.src}
+              alt={thought.alt}
               width={400}
               height={300}
             />

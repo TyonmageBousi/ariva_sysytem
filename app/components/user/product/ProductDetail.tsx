@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 import OptionsForm, { FiledOptionsProps } from '@/app/components/public/form/OptionsForm';
 import toast from 'react-hot-toast';
 import { PurchaseValues } from '@/app/types/productPurchase'
-import { productPurchaseSchema } from '@/app/schemas/productPurchase'
+import { ProductPurchaseSchema } from '@/app/schemas/productPurchase'
 import { handleError } from '@/lib/errors';
 
 export type ProductDetailData = {
@@ -97,15 +97,15 @@ export default function ProductDetail({ productDetailData }: Props) {
             productId: id,
             name: name,
             price: (discountPrice > 0 && discountPrice < price) ? discountPrice : price,
-            quantity: getValues().purchaseQuantity,
+            purchaseQuantity: getValues().purchaseQuantity,
         }
 
-        const parseCartItem = productPurchaseSchema.parse(cartItem)
+        const parseCartItem = ProductPurchaseSchema.parse(cartItem)
 
         if (status === 'authenticated') {
             try {
                 const response =
-                    await fetch('http://localhost:3000/api/user/insertCart', {
+                    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/insertCart`, {
                         method: 'POST',
                         body: JSON.stringify(parseCartItem),
                         signal: controllerRef.current.signal

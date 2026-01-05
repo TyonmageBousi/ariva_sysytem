@@ -6,7 +6,7 @@ import { handleFrontError } from '@/lib/front-error';
 
 export default async function ProductList() {
     try {
-        const res = await fetch("http://localhost:3000/api/admin/productList")
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/productList`)
 
         const result = await res.json();
 
