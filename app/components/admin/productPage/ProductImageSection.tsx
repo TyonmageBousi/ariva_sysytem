@@ -1,18 +1,31 @@
 
 import { UseFormRegister, UseFormSetValue } from 'react-hook-form';
-import {  NewProductValues } from '@/app/schemas/product'
-import { Upload, Trash2} from 'lucide-react';
-import React, { useState, useRef } from 'react'
+import { NewProductValues } from '@/app/schemas/product'
+import { Upload, Trash2 } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react'
 
 type Props = {
     register: UseFormRegister<NewProductValues>;
     setValue: UseFormSetValue<NewProductValues>;
+    defaultsImage?: string[]
 };
 
-export default function ProductImageSection({ setValue }: Props) {
+export default function ProductImageSection({ setValue, defaultsImage }: Props) {
 
+    let images = defaultsImage ? [...defaultsImage] : [];
+    for (let i = images.length; i < 3; i++) {
+        images.push("/sample/sample.png")
+    }
+
+    const [defaultImages, setDefaultImages] = useState<string[]>(images);
     const [selectedImages, setSelectedImages] = useState<File[]>([]);
-    const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+    useEffect(() => {
+        const filteredImages = defaultImages.filter((defaultImage) => (defaultImage !== "/sample/sample.png"))
+        setValue('defaultImages', filteredImages);
+    }, [defaultImages]);
+
+
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const images = Array.from(e.target.files || [])
@@ -32,6 +45,10 @@ export default function ProductImageSection({ setValue }: Props) {
         const updatedImages = selectedImages.filter((_, index) => index !== i);
         setSelectedImages(updatedImages);
         setValue('images', updatedImages);
+
+    }
+    const handleRemoveDefaultImage = (i: number) => {
+        setDefaultImages(defaultImages.filter((_, index) => index !== i));
     }
     return (
         <section className='rounded-2xl border border-black/10 bg-neutral-800 p-6' >
@@ -79,6 +96,22 @@ export default function ProductImageSection({ setValue }: Props) {
                         </div>
                     );
                 })}
+            </div>
+            <div className='grid grid-cols-3 mt-4 gap-3'>
+                {defaultImages.map((image, index) => (
+                    <div key={index} className='relative aspect-square rounded-xl overflow-hidden ring-1 ring-black/10 bg-neutral-100'>
+                        <img key={index} src={image} alt={`image-${index}`} />
+                        <button
+                            type='button'
+                            className='absolute right-1 top-1 inline-flex items-center rounded-md bg-white/90 p-1.5 text-xs ring-1 ring-black/10 hover:bg-white'
+                            onClick={() => handleRemoveDefaultImage(index)}
+                        >
+                            <Trash2 className='size-3.5' />
+                        </button>
+                    </div>
+                )
+                )
+                }
             </div>
         </section >
     )

@@ -265,17 +265,34 @@ export async function finalStep(userId: number, sessionId: string) {
 
 }
 
+//エラーハンドリング用修正
+
 export async function insertStorage(imageEntries: FormDataEntryValue[]) {
   const imagesFiles = imageEntries.filter(entry => entry instanceof File) as File[];
   const uploadImages = imagesFiles.map(async (image) => {
+
+    const timestamp = Date.now();
+    const randomStr = Math.random().toString(36).substring(2, 10);
+    const extension = image.name.split('.').pop() || 'png';
+    const sanitizedFileName = `${timestamp}-${randomStr}.${extension}`;
+
     const { data, error } = await supabase.storage
       .from('images')
-      .upload(`images/${Date.now()}-${image.name}`, image);
+      .upload(`images/${sanitizedFileName}`, image);
     if (error) {
       console.error('upload error:', error);
-      throw error
+      throw new Error
     }
     return data.path;
   })
   return await Promise.all(uploadImages);
+}
+
+export async function deleteStorage(removeFiles: string[]) {
+  const { data, error } = await supabase.storage
+    .from('images')
+    .remove(removeFiles);
+  if (error) {
+    throw new Error(`画像の削除に失敗しました: ${error.message}`);
+  }
 }

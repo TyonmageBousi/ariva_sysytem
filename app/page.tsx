@@ -9,12 +9,11 @@ export default function Index() {
 
   return (
     <div className='w-full'>
-      <p>仮作成中</p>
       <Header />
       <TopMainContainer />
+      <LineUpContainer titleCss={titleCss} />
       <OurProductContainer titleCss={titleCss} />
-      {/* <LineUpContainer titleCss={titleCss} />
-      <Suspense fallback={<div>読み込み中...</div>}>
+      {/* <Suspense fallback={<div>読み込み中...</div>}>
         <OurProductContainer titleCss={titleCss} />
       </Suspense> */}
     </div>

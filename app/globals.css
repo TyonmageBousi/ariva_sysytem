@@ -3,7 +3,12 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --base: #011c3f;
+ --base: linear-gradient(
+  135deg,
+  #1a1d22 0%,
+  #0f1116 45%,
+  #05070c 100%
+);
   --footer: #000000;
   --custom-blue: #0a0a0a;
 }

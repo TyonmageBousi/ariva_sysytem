@@ -21,7 +21,7 @@ export default function NormalForm<T extends FieldValues>({ props }: Props<T>) {
             <label className={labelStyle}>{label}</label>
             <select
                 id={name}
-                {...register(name, { valueAsNumber: true })}
+                {...register(name)}
                 className={inputStyle}
             >
                 {

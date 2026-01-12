@@ -23,6 +23,5 @@ export function useErrorHandler() {
                 throw new Error('予期しないエラーが発生しました。')
         }
     };
-
     return handleError;
 }

@@ -5,13 +5,15 @@ import { db, client } from '@/lib/db'
 import { AppError, handleError } from '@/lib/errors'
 
 type Params = {
-    params: { id: string }
+    params: Promise<{ id: string }>
 }
 
 export async function GET(request: Request, { params }: Params) {
 
-    const { id } = params
+    const { id } = await params
+
     const productId = parseInt(id);
+
     if (isNaN(productId)) {
         throw new AppError({ message: '数字型のIDじゃありません', statusCode: 420, errorType: 'PARAMS_NOT_NUMBER' })
     }
@@ -24,21 +26,22 @@ export async function GET(request: Request, { params }: Params) {
             discountPrice: products.discountPrice,
             description: products.description,
             image: sql<string[]>`(
-            SELECT json_agg(${productImages.filePath})
-            FROM ${productImages}
-            WHERE ${productImages.productId} = ${products.id} 
-            )`,
-            categories: sql<string[]>`(
-            SELECT json_agg(${productCategories.categoryId})
-            FROM ${productCategories}
-            WHERE ${productCategories.productId} = ${products.id}
-            )`,
-            productColors: sql<string[]>`(
-            SELECT json_agg(${productColors.colorId})
-            FROM ${productColors}
-            WHERE ${productColors.productId} = ${products.id}
-            )`,
-        }).from(products)
+        SELECT json_agg(file_path)           
+        FROM product_images                  
+        WHERE product_id = ${products.id}    
+    )`,
+            categories: sql<number[]>`(
+        SELECT json_agg(category_id)         
+        FROM product_categories             
+        WHERE product_id = ${products.id}
+    )`,
+            productColors: sql<number[]>`(
+        SELECT json_agg(color_id)           
+        FROM product_colors                
+        WHERE product_id = ${products.id}
+    )`,
+        })
+            .from(products)
             .where(eq(products.id, productId))
             .limit(1);
 

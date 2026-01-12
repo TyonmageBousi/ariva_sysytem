@@ -1,8 +1,6 @@
 import { ProductList } from '@/app/types/productList'
 import ProductListPage from '@/app/components/user/productList/productList'
-import { handleFrontError } from '@/lib/front-error';
-
-
+import HandleFrontError from '@/app/components/error/error';
 
 export default async function ProductListPagePage() {
     const controller = new AbortController();
@@ -24,6 +22,8 @@ export default async function ProductListPagePage() {
     }
     catch (error) {
         if (error instanceof Error)
-            return handleFrontError(error)
+            return (
+                <HandleFrontError {...error} />
+            )
     }
 }

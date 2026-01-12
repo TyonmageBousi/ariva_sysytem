@@ -1,16 +1,19 @@
+'use client'
+
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ProductList } from '@/app/types/productList'
 
-type Props = ProductList[];
+type Props = {
+    productList: ProductList[];
+};
 
-
-export default function ProductListPage(productList: Props) {
+export default function ProductListPage({productList}: Props) {
 
     const [selected, setSelected] = useState<ProductList | null>(null)
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8 px-4">
+        <div className="min-h-screen  py-8 px-4 relative z-80">
             <div className="max-w-6xl mx-auto">
                 <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
                     商品一覧

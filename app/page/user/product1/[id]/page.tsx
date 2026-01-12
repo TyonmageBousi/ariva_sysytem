@@ -1,7 +1,7 @@
 import { ProductDetailData } from '@/app/components/user/product/ProductDetail'
 import { ProductDetailsData } from '@/app/components/user/product/ProductDetails'
 import ProductPageC from '@/app/components/user/product/Product'
-import { handleFrontError } from '@/lib/front-error';
+import HandleFrontError from '@/app/components/error/error';
 
 type Props = {
     id: string
@@ -15,19 +15,24 @@ async function fetchUrl<T>(url: string, options: RequestInit = {}): Promise<T> {
     return result.data
 }
 
-export default async function ProductPage({ id }: Props) {
+export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
+
+    const paramId = await params;
+    const id = paramId.id;
     const controller = new AbortController();
 
     let productDetail: ProductDetailData | null = null;
     let productDetails: ProductDetailsData[] | null = null;
 
+
     try {
+
         [productDetail, productDetails] = await Promise.all([
             fetchUrl<ProductDetailData>
-                (`${process.env.NEXT_PUBLIC_API_URL}/api/user/productDetail/id=${id}`,
+                (`${process.env.NEXT_PUBLIC_API_URL}/api/user/productDetail/${id}`,
                     { signal: controller.signal }),
             fetchUrl<ProductDetailsData[]>
-                (`${process.env.NEXT_PUBLIC_API_URL}/api/user/productDetails?id=${id}`,
+                (`${process.env.NEXT_PUBLIC_API_URL}/api/user/productDetails/${id}`,
                     { signal: controller.signal })
         ]);
         return (
@@ -36,7 +41,7 @@ export default async function ProductPage({ id }: Props) {
     }
     catch (error) {
         if (error instanceof Error)
-            return handleFrontError(error)
+            return <HandleFrontError {...error} />
     }
 }
 

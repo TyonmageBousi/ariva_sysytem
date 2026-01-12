@@ -1,17 +1,25 @@
-import { ProductsInfo } from '@/app/api/mock/line_up/route'
-import React from 'react'
-import ProductLineUp from '../user/ProductLineUp'
-import { notFound } from 'next/navigation';
+import { ProductList } from '@/app/types/productList';
+import ProductListPage from '@/app/components/user/productList/productList';
+import HandleFrontError from '@/app/components/error/error'
 
 export default async function TopMainContainer({ titleCss }: { titleCss: string }) {
+    try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/productList`)
 
-    const res = await fetch('http://localhost:3000/api/mock/line_up')
+        const result = await res.json();
 
-    if (res.status === 404) notFound();
+        if (!res.ok) throw new Error(result);
 
-    if (!res.ok) throw new Error(`/api/mock/line_up fetch failed: ${res.status} ${res.statusText}`);
+        if (!result.success) throw new Error(result)
 
-    const data: ProductsInfo[] = await res.json()
-
-    return <ProductLineUp titleCss={titleCss} data={data} />
+        const data: ProductList[] = result.data;
+        console.log("📦 result.data:", result.data);
+        if (data.length === 0) {
+            throw new Error(result);
+        }
+        return <ProductListPage productList={data} />
+    } catch (error) {
+        if (error instanceof Error)
+            return <HandleFrontError {...error} />
+    }
 }

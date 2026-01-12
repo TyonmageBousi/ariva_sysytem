@@ -6,12 +6,12 @@ import { db, client } from '@/lib/db'
 import { AppError, handleError } from '@/lib/errors'
 
 type Params = {
-    params: { id: string }
+    params: Promise<{ id: string }>
 }
 
 export async function GET(request: Request, { params }: Params) {
 
-    const { id } = params
+    const { id } = await params
     const productId = parseInt(id);
     if (isNaN(productId)) {
         throw new AppError({ message: '数字型のIDじゃありません', statusCode: 420, errorType: 'PARAMS_NOT_NUMBER' })
@@ -24,17 +24,15 @@ export async function GET(request: Request, { params }: Params) {
             price: products.price,
             discountPrice: products.discountPrice,
             image: sql<string | null>`(
-            SELECT ${productImages.filePath}
-            FROM ${productImages}
-            WHERE ${productImages.productId} = ${products.id} 
+            SELECT file_path
+            FROM product_images
+            WHERE product_id = ${products.id} 
             LIMIT 1
             )`
         }).from(products)
             .where(not(eq(products.id, productId)))
             .orderBy(sql`RANDOM()`)
             .limit(20)
-
-      
 
         return NextResponse.json({ success: true, result: result }, { status: 200 })
     }

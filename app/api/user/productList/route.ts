@@ -6,7 +6,6 @@ import { AppError, handleError } from '@/lib/errors'
 
 
 export async function GET() {
-
     try {
         const result = await db.select({
             id: products.id,

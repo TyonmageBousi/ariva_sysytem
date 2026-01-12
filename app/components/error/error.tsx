@@ -1,7 +1,9 @@
-import { AppError } from "./errors";
+'use client'
+import { AppError } from "@/lib/errors";
 import LoginError from '@/app/components/public/error/loginError';
 
-export function handleFrontError(error: Error) {
+
+export default function HandleFrontError(error: Error) {
     let errorMessage = '';
 
     if (error instanceof AppError) {
@@ -20,11 +22,16 @@ export function handleFrontError(error: Error) {
         errorMessage = '予期しないエラーが発生しました'
     }
     return (
-        <div>
-            <p>{errorMessage}</p>
-            <button onClick={() => window.location.reload()}>
-                再読み込み
-            </button>
+        <div className="my-[40px] inset-0 z-50 flex items-center justify-center relative z-100">
+            <div className="bg-white rounded-lg shadow-xl p-8 max-w-md mx-4 text-center">
+                <p className="text-gray-700 mb-6 text-lg">{errorMessage}</p>
+                <button
+                    onClick={() => window.location.reload()}
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+                >
+                    再読み込み
+                </button>
+            </div>
         </div>
     );
 }

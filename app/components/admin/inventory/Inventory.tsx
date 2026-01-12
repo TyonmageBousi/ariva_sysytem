@@ -1,4 +1,4 @@
-    'use client'
+'use client'
 
 import { useState } from "react"
 import { Plus, Search, Filter, Edit3, Eye, Copy, Trash2, Tag, Package } from "lucide-react";
@@ -175,7 +175,7 @@ export default function AdminProductsPage({
                                 <tr key={index} className="border-t border-white/5 hover:bg-white/5 transition-colors">
                                     <td className="px-4 py-3">
                                         <div className="size-10 rounded-md right-1 ring-black/10 bg-neutral-200 grid place-items-center text-[10px] text-neutral-500    ">
-                                            img
+                                            <img src={p.productImages?.[0] ?? '/placeholder.png'} alt="説明" />
                                         </div>
 
                                     </td>
@@ -233,7 +233,7 @@ export default function AdminProductsPage({
                                             <div className="flex flex-col gap-2">
                                                 {/* ページ遷移系は Link */}
                                                 <a
-                                                    href={`/products/${p.id}/edit`}
+                                                    href={`${process.env.NEXT_PUBLIC_API_URL}/page/admin/products?id=${p.id}`}
                                                     className="flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium 
                                                         ring-1 ring-black/10 dark:ring-white/15 
                                                         bg-white hover:bg-neutral-50 dark:bg-neutral-800"
@@ -242,7 +242,7 @@ export default function AdminProductsPage({
                                                     編集
                                                 </a>
                                                 <a
-                                                    href={`/products/${p.id}`}
+                                                    href={`${process.env.NEXT_PUBLIC_API_URL}/page/user/product1/${p.id}`}
                                                     className="flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium 
                                                         ring-1 ring-black/10 dark:ring-white/15 
                                                         bg-white hover:bg-neutral-50 dark:bg-neutral-800"

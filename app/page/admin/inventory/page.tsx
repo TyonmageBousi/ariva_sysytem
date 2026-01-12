@@ -2,13 +2,14 @@ import Inventory from "@/app/components/admin/inventory/Inventory";
 import { ProductFormatted } from "@/app/types/responseProduct";
 import { getAllCategories, getAllColorCategories } from '@/lib/db';
 import { type FiledCheckBoxLabels } from "@/app/components/public/form/CheckBoxForm"
-import { handleFrontError } from '@/lib/front-error';
+import HandleFrontError from '@/app/components/error/error';
 
 export default async function ProductList() {
     try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/productList`)
 
         const result = await res.json();
+
 
         if (!res.ok) throw new Error(result);
 
@@ -24,6 +25,7 @@ export default async function ProductList() {
 
         const colorCategoryLabel = colorCategories.map((colorCategory) => colorCategory.label)
 
+
         const props = {
             productList: data,
             categoryLabel,
@@ -32,6 +34,6 @@ export default async function ProductList() {
         return <Inventory {...props} />
     } catch (error) {
         if (error instanceof Error)
-            return handleFrontError(error)
+            return <HandleFrontError{...error} />
     }
 } 
