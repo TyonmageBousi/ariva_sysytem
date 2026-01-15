@@ -14,6 +14,7 @@ import toast from 'react-hot-toast';
 import { ProductFormatted } from "@/app/types/responseProduct";
 import { useForm, FormProvider } from "react-hook-form"
 import { AppError } from '@/lib/errors'
+import { useRouter } from "next/navigation";
 
 type Props = {
     categories: FiledCheckBoxLabels[];
@@ -39,14 +40,15 @@ export default function productForm({
                 status: defaultData?.status ?? '',
                 stock: defaultData?.stock ?? 0,
                 description: defaultData?.description ?? "",
-                categoryIds: defaultData?.productCategories.map(String) ?? [],
-                colorIds: defaultData?.productColors.map(String) ?? [],
+                categoryIds: defaultData?.productCategories?.map(String) ?? [],
+                colorIds: defaultData?.productColors?.map(String) ?? [],
             }
         });
     const { register, handleSubmit, setValue, formState: { errors } } = methods;
 
     const handleError = useErrorHandler();
 
+    const router = useRouter();
 
     const onSubmit = async (data: NewProductValues) => {
         try {
@@ -88,15 +90,22 @@ export default function productForm({
                 handleError(result);
                 return;
             }
+
+            router.push(`${process.env.NEXT_PUBLIC_API_URL}/page/admin/inventory?toast=product_created`);
+
             toast.success('商品登録に成功しました。')
+
         } catch (error) {
-            throw error instanceof Error ? error : new Error('予期しないエラーが発生しました')
+            if (error instanceof AppError) {
+                return handleError(error);
+            }
         }
     }
 
     const handleSave = () => {
         handleSubmit(onSubmit)();
     };
+
     return (
         <FormProvider {...methods}>
 
@@ -133,7 +142,5 @@ export default function productForm({
             </div>
         </FormProvider>
     );
-
-
 
 }

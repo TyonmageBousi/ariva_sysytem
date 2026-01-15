@@ -29,18 +29,22 @@ export default function ProductImageSection({ setValue, defaultsImage }: Props) 
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const images = Array.from(e.target.files || [])
-        const updatedImages = [...selectedImages];
-        for (const image of images) {
-            if (updatedImages.length < 3) {
-                updatedImages.push(image)
-            } else {
-                break;
+        e.currentTarget.value = ""; 
+
+        setSelectedImages((prev) => {
+            const merged = [...prev, ...images];
+
+            const map = new Map<string, File>();
+            for (const f of merged) {
+                const key = `${f.name}__${f.size}__${f.lastModified}`;
+                if (!map.has(key)) map.set(key, f);
             }
-        }
-        setSelectedImages(updatedImages);
-        setValue('images', updatedImages);
-        e.target.value = '';
-    }
+            const next = Array.from(map.values()).slice(0, 3);
+
+            setValue("images", next, { shouldDirty: true, shouldValidate: true });
+            return next
+        });
+    };
     const handleRemoveImage = (i: number) => {
         const updatedImages = selectedImages.filter((_, index) => index !== i);
         setSelectedImages(updatedImages);

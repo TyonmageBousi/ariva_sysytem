@@ -49,7 +49,7 @@ export async function GET(request: Request, { params }: Params) {
             productColors: colorName,
             productImages: imageUrl
         }
-        return NextResponse.json({ success: true, result: data }, { status: 200 })
+        return NextResponse.json({ success: true, data: data }, { status: 200 })
 
     } catch (error) {
         return handleError(error)

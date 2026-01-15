@@ -11,14 +11,14 @@ export default async function Product({ searchParams }: { searchParams: Promise<
         let data: ProductFormatted | undefined = undefined;
         let newSkuCode: string | undefined = undefined;
         if (id) {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/productList?id=${id}`)
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/productDetail/${id}`)
             const result = await res.json();
             if (!res.ok) throw new Error(result);
             if (!result.success) throw new Error(result)
             if ((result.length === 0)) {
                 throw new Error(result);
             }
-            data = result.data[0];
+            data = result.data;
         } else {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/product`)
             const result = await res.json();
@@ -36,6 +36,7 @@ export default async function Product({ searchParams }: { searchParams: Promise<
 
         const categories: FiledCheckBoxLabels[] = result.categories;
         const colorCategories: FiledCheckBoxLabels[] = result.colorCategories;
+
         return <ProductForm categories={categories} colorCategories={colorCategories} defaultData={data} newSkuCode={newSkuCode} />;
     } catch (error) {
         if (error instanceof Error)

@@ -3,7 +3,7 @@ import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import * as schema from './schema';
 import { categories, colorCategories, cartItems, temporaryOrders, temporaryOrderItems, orders, orderItems, products } from "./schema"
-import { eq, and } from 'drizzle-orm';
+import { eq, and, SQL } from 'drizzle-orm';
 import { ProductPurchaseValues } from '@/app/schemas/productPurchase'
 import { auth } from "@/auth";
 import { cookies } from 'next/headers';
@@ -296,3 +296,4 @@ export async function deleteStorage(removeFiles: string[]) {
     throw new Error(`画像の削除に失敗しました: ${error.message}`);
   }
 }
+

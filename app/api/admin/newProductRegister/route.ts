@@ -26,7 +26,9 @@ export async function POST(request: Request) {
             images: formdata.getAll('images'),
             defaultImages: formdata.getAll('defaultImages'),
         };
+
         const result = NewProductSchema.parse(data);
+
 
         const existingProduct =
             await db.select()
@@ -34,7 +36,7 @@ export async function POST(request: Request) {
                 .where(eq(products.skuCode, result.skuCode))
                 .limit(1);
 
-        if (existingProduct.length > 0) {
+        if (existingProduct.length > 0 && !(data.id)) {
             throw new AppError(
                 {
                     message: 'SKU_CODEが一意ではありません。',
@@ -50,20 +52,21 @@ export async function POST(request: Request) {
 
         await db.transaction(async (tx) => {
             if (data.id) {
-                const findData = await db.select().from(products).where(eq(products.id, data.id)).limit(1);
+                const findData = await tx.select().from(products).where(eq(products.id, data.id)).limit(1);
                 if (findData.length > 0) {
-                    const deleteImages = await tx.select({ "filePath": productImages.filePath }).from(productImages).where(eq(productImages.productId, data.id))
+                    const deleteImages = await tx.select({ "filePath": productImages.filePath }).from(productImages).where(eq(productImages.productId, data.id));
                     const filePaths = deleteImages.map((deleteImage) => deleteImage.filePath);
+
                     const deletePaths = filePaths.filter((filePath) => !data.defaultImages.includes(filePath))
+                    await tx.delete(productCategories).where(eq(productCategories.productId, data.id))
+                    await tx.delete(productColors).where(eq(productColors.productId, data.id))
+                    await tx.delete(productImages).where(eq(productImages.productId, data.id))
+                    await tx.delete(products).where(eq(products.id, data.id))
+
                     if (deletePaths.length) {
                         await deleteStorage(deletePaths);
                     }
-                    await Promise.all([
-                        tx.delete(products).where(eq(products.id, data.id)),
-                        tx.delete(productCategories).where(eq(productCategories.productId, data.id)),
-                        tx.delete(productColors).where(eq(productColors.productId, data.id)),
-                        tx.delete(productImages).where(eq(productImages.productId, data.id))
-                    ])
+
                     const defaultPaths = filePaths.filter((filePath) => data.defaultImages.includes(filePath))
                     if (defaultPaths.length !== 0) {
                         const parts = defaultPaths
@@ -72,6 +75,7 @@ export async function POST(request: Request) {
                         uploadResults.push(...parts)
                     }
                 }
+
                 const insertProduct = await tx.insert(products).values({
                     name: result.name,
                     skuCode: result.skuCode,

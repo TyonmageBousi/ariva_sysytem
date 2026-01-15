@@ -4,6 +4,8 @@ import HandleFrontError from '@/app/components/error/error'
 
 export default async function TopMainContainer({ titleCss }: { titleCss: string }) {
     try {
+
+        console.log('ここまできたよ！')
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/productList`)
 
         const result = await res.json();
@@ -13,7 +15,6 @@ export default async function TopMainContainer({ titleCss }: { titleCss: string 
         if (!result.success) throw new Error(result)
 
         const data: ProductList[] = result.data;
-        console.log("📦 result.data:", result.data);
         if (data.length === 0) {
             throw new Error(result);
         }

@@ -1,9 +1,11 @@
 'use client'
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Plus, Search, Filter, Edit3, Eye, Copy, Trash2, Tag, Package } from "lucide-react";
 import { ProductFormatted } from "@/app/types/responseProduct";
 import { AppErrorType } from '@/lib/errors'
+import { useRouter, useSearchParams } from "next/navigation";
+import toast from 'react-hot-toast';
 
 type Props = {
     productList: ProductFormatted[]
@@ -22,6 +24,9 @@ export default function AdminProductsPage({
     const [status, setStatus] = useState<"" | 1 | 2 | 3>("");
     const [categories, setCategory] = useState<string>("");
     const [colorCategories, setColorCategory] = useState<string>("");
+    const router = useRouter();
+    const sp = useSearchParams();
+    const toastKey = sp.get("toast");
 
     const q = query.trim().toLowerCase();
 
@@ -59,6 +64,12 @@ export default function AdminProductsPage({
 
     })
 
+    useEffect(() => {
+        if (toastKey === "product_created") {
+            toast.success("商品登録に成功しました。");
+            router.replace(`${process.env.NEXT_PUBLIC_API_URL}/page/admin/inventory`); 
+        }
+    }, [toastKey, router]);
 
     return (
 
