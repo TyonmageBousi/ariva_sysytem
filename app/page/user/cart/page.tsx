@@ -1,6 +1,7 @@
 import Cart from '@/app/components/user/cart/cart'
-import { handleFrontError } from '@/lib/front-error';
+import HandleFrontError from '@/app/components/error/error';
 import { ProductCart } from '@/app/types/productCart'
+import { AppError } from '@/lib/errors';
 
 
 export default async function UserCart() {
@@ -13,15 +14,27 @@ export default async function UserCart() {
 
         const result = await res.json();
 
-        if (!res.ok) throw new Error(result);
-        if (!result.success) throw new Error(result)
-
+        if (!res.ok || !result.success) {
+            throw new AppError({
+                message: result.message,
+                statusCode: res.status,
+                errorType: result.errorType,
+                details: result.details
+            });
+        }
         const data: ProductCart[] = result.data
         return (
             <Cart {...data} />
         )
     } catch (error) {
-        if (error instanceof Error)
-            return handleFrontError(error)
+        if (error instanceof AppError) {
+            const errorData = {
+                message: error.message,
+                statusCode: error.statusCode,
+                errorType: error.errorType,
+                details: error.details
+            };
+            return <HandleFrontError errorData={errorData} />;
+        }
     }
 }

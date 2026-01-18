@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect, useRef } from 'react'
 import { ProductPurchaseSchema } from '@/app/schemas/productPurchase'
 import { useRouter } from 'next/navigation'

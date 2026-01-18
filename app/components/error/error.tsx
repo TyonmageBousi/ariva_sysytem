@@ -1,25 +1,25 @@
 'use client'
 import { AppError } from "@/lib/errors";
-import LoginError from '@/app/components/public/error/loginError';
+import { redirect } from 'next/navigation'
 
+type ErrorData = {
+    message: string;
+    errorType: string;
+    statusCode: number;
+    details?: any;
+}
+export default function HandleFrontError({ errorData }: { errorData: ErrorData }) {
+    console.log("フロントの errorData:", errorData);
 
-export default function HandleFrontError(error: Error) {
     let errorMessage = '';
-
-    if (error instanceof AppError) {
-        switch (error.errorType) {
-            case 'UNAUTHORIZED':
-                errorMessage = '認証が必要です。ログインページに移動しますか？';
-                return <LoginError />
-            case 'INTERNAL_SERVER_ERROR':
-                errorMessage = error.message;
-            default:
-                errorMessage = error.message || '予期しないエラーが発生しました。';
-        }
-    } else if (error.name === 'AbortError') {
-        errorMessage = 'タイムアウトしました。';
-    } else {
-        errorMessage = '予期しないエラーが発生しました'
+    switch (errorData.errorType) {
+        case 'UNAUTHORIZED':
+            errorMessage = '認証が必要です。ログインページに移動しますか？';
+            break;
+        case 'INTERNAL_SERVER_ERROR':
+            errorMessage = errorData.message;
+        default:
+            errorMessage = errorData.message || '予期しないエラーが発生しました。';
     }
     return (
         <div className="my-[40px] inset-0 z-50 flex items-center justify-center relative z-100">

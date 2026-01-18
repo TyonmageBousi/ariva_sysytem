@@ -25,8 +25,6 @@ export async function GET() {
             { status: 200 }
         );
     } catch (error) {
-        handleError(error);
-    } finally {
-        await client.end();
+        return handleError(error);
     }
 }

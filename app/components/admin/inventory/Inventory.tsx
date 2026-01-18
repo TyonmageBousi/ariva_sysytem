@@ -25,8 +25,7 @@ export default function AdminProductsPage({
     const [categories, setCategory] = useState<string>("");
     const [colorCategories, setColorCategory] = useState<string>("");
     const router = useRouter();
-    const sp = useSearchParams();
-    const toastKey = sp.get("toast");
+    const toastKey = useSearchParams().get("toast");
 
     const q = query.trim().toLowerCase();
 
@@ -60,17 +59,37 @@ export default function AdminProductsPage({
 
     });
 
-    const handleDelete = ((x: number) => {
+    const handleDelete = async (x: number) => {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/productDetail/${x}`)
+        if ((!response.ok)) {
 
-    })
+        }
+        router.push('/page/admin/inventory?toast=product_deleted')
+    }
 
     useEffect(() => {
-        if (toastKey === "product_created") {
-            toast.success("商品登録に成功しました。");
-            router.replace(`${process.env.NEXT_PUBLIC_API_URL}/page/admin/inventory`); 
-        }
-    }, [toastKey, router]);
+        switch (toastKey) {
+            case "product_created":
+                toast.success("商品登録に成功しました。");
+                break;
 
+            case "product_deleted":
+                toast.success("商品を削除しました。");
+                break;
+
+            case "product_updated":
+                toast.success("商品を更新しました。");
+                break;
+
+            case "delete_failed":
+                toast.error("削除に失敗しました。");
+                break;
+
+            default:
+                break;
+        }
+        router.replace(`${process.env.NEXT_PUBLIC_API_URL}/page/admin/inventory`);
+    }, [toastKey, router]);
     return (
 
         <div className="max-w-6xl w-full mx-auto py-8">

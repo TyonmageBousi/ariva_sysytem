@@ -9,6 +9,8 @@ export type ProductDetailsData = {
     name: string;
     price: string;
     discountPrice: string;
+    status: string;
+    stock: number;
     description: string;
     productCategories: string[];
     productColors: string[]
@@ -26,9 +28,7 @@ export default function ProductDetails({ productDetailsData }: Props) {
     const router = useRouter();
 
     return (
-        <div className='min-h-screen flex flex-col justify-center text-amber-50 relative z-100'
-            style={{ background: 'radial-gradient(circle at 50% 50%, rgba(120, 120, 130, 1) 0%, rgba(70, 70, 80, 1) 12%, rgba(45, 45, 50, 1) 25%, rgba(25, 25, 30, 1) 45%, rgba(5, 5, 8, 1) 85%, rgba(0, 0, 0, 1) 100%)' }}>
-
+        <div className='min-h-screen bg-gradient-to-b from-gray-900 via-amber-950 to-black text-amber-50 relative z-40'>
             <header className='pt-14 pb-6 text-center'>
                 <h1 className='text-5xl font-bold'>白十字 商品ギャラリー</h1>
                 <p className='mt-2 text-amber-200/70'>クリックで詳細表示</p>

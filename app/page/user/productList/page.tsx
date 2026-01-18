@@ -5,7 +5,7 @@ import HandleFrontError from '@/app/components/error/error';
 export default async function ProductListPagePage() {
     const controller = new AbortController();
     try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/productList`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/productDetails`, {
             signal: controller.signal
         });
         const result = await res.json();
@@ -17,7 +17,7 @@ export default async function ProductListPagePage() {
         const data: ProductList[] = result.data;
 
         return (
-            <ProductListPage {...data} />
+            <ProductListPage productList={data} />
         )
     }
     catch (error) {

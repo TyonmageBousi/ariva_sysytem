@@ -10,9 +10,6 @@ async function fetchUrl<T>(url: string, options: RequestInit = {}): Promise<T> {
 
     if (!res.ok) throw new Error(result);
     if (!result.success) throw new Error(result)
-
-
-    console.log(result);
     return result.data
 }
 
@@ -33,7 +30,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                 (`${process.env.NEXT_PUBLIC_API_URL}/api/admin/productDetail/${id}`,
                     { signal: controller.signal }),
             fetchUrl<ProductDetailsData[]>
-                (`${process.env.NEXT_PUBLIC_API_URL}/api/user/productDetails/${id}`,
+                (`${process.env.NEXT_PUBLIC_API_URL}/api/user/productDetails?id=${id}`,
                     { signal: controller.signal })
         ]);
 

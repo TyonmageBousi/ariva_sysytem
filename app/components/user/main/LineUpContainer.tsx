@@ -1,12 +1,12 @@
 import { ProductList } from '@/app/types/productList';
 import ProductListPage from '@/app/components/user/productList/productList';
 import HandleFrontError from '@/app/components/error/error'
+import ProductDetails, { ProductDetailsData } from '@/app/components/user/product/ProductDetails'
 
 export default async function TopMainContainer({ titleCss }: { titleCss: string }) {
     try {
 
-        console.log('ここまできたよ！')
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/productList`)
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/productDetails`)
 
         const result = await res.json();
 
@@ -14,11 +14,11 @@ export default async function TopMainContainer({ titleCss }: { titleCss: string 
 
         if (!result.success) throw new Error(result)
 
-        const data: ProductList[] = result.data;
-        if (data.length === 0) {
+        const productDetails: ProductDetailsData[] = result.data;
+        if (productDetails.length === 0) {
             throw new Error(result);
         }
-        return <ProductListPage productList={data} />
+        return <ProductDetails productDetailsData={productDetails} />
     } catch (error) {
         if (error instanceof Error)
             return <HandleFrontError {...error} />

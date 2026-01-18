@@ -130,23 +130,23 @@ export async function insertTemporaryOrder(carts: ProductPurchaseValues[], userI
 
 
 // セッションIDを取得または作成する
-export async function getSessionId(): Promise<string> {
-  const cookieStore = await cookies();
+// export async function getSessionId(): Promise<string> {
+//   const cookieStore = await cookies();
 
-  let sessionId = cookieStore.get('session_id')?.value;
+//   let sessionId = cookieStore.get('session_id')?.value;
 
-  if (!sessionId) {
-    sessionId = randomUUID();
-    cookieStore.set('session_id', sessionId, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 15
-    });
-  }
+//   if (!sessionId) {
+//     sessionId = randomUUID();
+//     cookieStore.set('session_id', sessionId, {
+//       httpOnly: true,
+//       secure: process.env.NODE_ENV === 'production',
+//       sameSite: 'lax',
+//       maxAge: 60 * 15
+//     });
+//   }
 
-  return sessionId;
-}
+//   return sessionId;
+// }
 
 
 export async function finalStep(userId: number, sessionId: string) {
