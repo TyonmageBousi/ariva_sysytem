@@ -17,6 +17,9 @@ export async function POST(request: Request) {
 
         const user = await loginJudgment();
         const sessionId = await getSessionId(); //これはちょっと考える　必要かどうか
+
+        console.log(user, sessionId)
+
         const getTotalPrice = await db.select({
             totalPrice: temporaryOrders.totalPrice,
         })
@@ -38,7 +41,7 @@ export async function POST(request: Request) {
             totalPrice: getTotalPrice[0].totalPrice
         }
 
-        const response = await fetch('', {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/crezit`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -54,7 +57,7 @@ export async function POST(request: Request) {
                 message: '決済処理に失敗しました。クレジットカード会社でエラーが発生しています。',
                 statusCode: 502,
                 errorType: 'PAYMENT_GATEWAY_ERROR',
-                details: ''
+                details: response.error
             });
         }
 
@@ -79,8 +82,6 @@ export async function POST(request: Request) {
             return handleError(new ValidationError(error.issues));
         }
         handleError(error);
-    } finally {
-        await client.end();
-    }
+    } 
 }
 

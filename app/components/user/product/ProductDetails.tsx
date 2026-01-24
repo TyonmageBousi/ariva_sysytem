@@ -83,7 +83,7 @@ export default function ProductDetails({ productDetailsData }: Props) {
                                     <p className='text-6xl font-bold text-amber-300 mb-8'>{selected.price}</p>
                                     <div className='flex gap-4'>
                                         <button className='bg-amber-600 hover:bg-amber-700 font-bold py-4 px-8 rounded-full flex-1'
-                                            onClick={() => router.push(`${process.env.NEXT_PUBLIC_API_URL}/page/user/product1?id=${selected.id}`)}
+                                            onClick={() => router.push(`/page/user/product1/${selected.id}`)}
                                         >
                                             詳細へ
                                         </button>

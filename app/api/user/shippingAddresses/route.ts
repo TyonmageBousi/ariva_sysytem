@@ -3,7 +3,7 @@ import { temporaryOrders } from '@/lib/schema'
 import { eq, and } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { loginJudgment, db,getSessionId } from '@/lib/db'
+import { loginJudgment, db, getSessionId } from '@/lib/db'
 import { handleError, ValidationError } from '@/lib/errors'
 
 
@@ -41,9 +41,6 @@ export async function POST(request: Request) {
             return handleError(new ValidationError(error.issues));
         }
         return handleError(error);
-    }
-    finally {
-        await db.$client.end();
     }
 
 }

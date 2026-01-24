@@ -1,13 +1,16 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { cartItems } from '@/lib/schema';
 import { eq } from 'drizzle-orm';
-import { db, client, loginJudgment } from '@/lib/db'
+import { db } from '@/lib/db'
 import { AppError, handleError } from '@/lib/errors'
 
-export async function GET() {
+
+export async function GET(request: NextRequest) {
 
     try {
-        const user = await loginJudgment();
+        const { searchParams } = new URL(request.url);
+        const id = searchParams.get('id');
+        
         const result = await db.select({
             id: cartItems.id,
             productId: cartItems.productId,
@@ -15,7 +18,7 @@ export async function GET() {
             price: cartItems.price,
             quantity: cartItems.quantity
         }).from(cartItems)
-            .where(eq(cartItems.userId, Number(user.id)))
+            .where(eq(cartItems.userId, Number(id)))
 
         return NextResponse.json(
             {

@@ -55,7 +55,7 @@ export default  function Header() {
                 <header className='flex justify-between items-center py-4 relative'>
                     <h1 className='text-2xl font-bold text-white'>ロゴ</h1>
                     <div className='flex items-center'>
-                        <Link href={session ? "/page/user/product1" : "/login"}>
+                        <Link href={session ? "" : `${process.env.NEXT_PUBLIC_API_URL}/page/user/login`}>
                             <User size={45} className='text-white mx-3 hover:text-gray-300 cursor-pointer transition-colors' />
                         </Link>
 

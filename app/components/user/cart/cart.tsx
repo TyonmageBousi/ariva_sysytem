@@ -10,15 +10,20 @@ import toast from 'react-hot-toast';
 import { z } from 'zod';
 import { handleError } from '@/lib/errors';
 
+type Props = {
+    data: ProductCart[]
+}
 
-export default function Cart(data: ProductCart[]) {
+export default function Cart({ data }: Props) {
     const [carts, setCarts] = useState<ProductCart[]>([]);
     const [productError, setProductError] = useState<Record<number, ProductErrors[]>>()
     const router = useRouter()
     const controllerRef = useRef<AbortController | null>(null);
     const [zodErrors, setZodErrors] = useState<Record<number, string[]>>();
 
-    setCarts(data);
+    useEffect(() => {
+        setCarts(data);
+    }, [data]);
 
     const decreaseQuantity = (id: number) => {
         setCarts(carts.map((cart) => (
@@ -51,8 +56,9 @@ export default function Cart(data: ProductCart[]) {
                 productId: cart.productId,
                 name: cart.name,
                 price: cart.price,
-                quantity: cart.quantity
+                purchaseQuantity: cart.quantity
             }));
+
 
             const result = z.array(ProductPurchaseSchema).safeParse(formatCarts)
 
@@ -81,6 +87,8 @@ export default function Cart(data: ProductCart[]) {
                 body: JSON.stringify(result.data)
             });
 
+            console.log("settlement結果", response)
+
             if (!response.ok) {
                 toast.error('通信エラーが発生しました');
                 return;
@@ -105,7 +113,7 @@ export default function Cart(data: ProductCart[]) {
                 }
             }
             if (data.success) {
-                router.push('http://localhost:3000/page/user/addrss');
+                router.push('/page/user/address');
                 return;
             }
             throw new Error('予期しないエラーが発生しました')

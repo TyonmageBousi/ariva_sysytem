@@ -2,29 +2,24 @@ import Cart from '@/app/components/user/cart/cart'
 import HandleFrontError from '@/app/components/error/error';
 import { ProductCart } from '@/app/types/productCart'
 import { AppError } from '@/lib/errors';
-
+import { auth } from "@/auth";
+import { db, client, loginJudgment } from '@/lib/db'
 
 export default async function UserCart() {
 
-    const controller = new AbortController();
-
     try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/cart`,
-            { signal: controller.signal })
 
+        const user = await loginJudgment();
+        console.log(user.id)
+        const res = await fetch(`http://localhost:3000/api/user/cart?id=${user.id}`)
         const result = await res.json();
 
-        if (!res.ok || !result.success) {
-            throw new AppError({
-                message: result.message,
-                statusCode: res.status,
-                errorType: result.errorType,
-                details: result.details
-            });
-        }
+        if (!res.ok || !result.success) throw new Error(result);
+
         const data: ProductCart[] = result.data
+        console.log(data);
         return (
-            <Cart {...data} />
+            <Cart data={data} />
         )
     } catch (error) {
         if (error instanceof AppError) {

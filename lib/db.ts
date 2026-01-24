@@ -7,7 +7,6 @@ import { eq, and, SQL } from 'drizzle-orm';
 import { ProductPurchaseValues } from '@/app/schemas/productPurchase'
 import { auth } from "@/auth";
 import { cookies } from 'next/headers';
-import { randomUUID } from 'crypto';
 import { AuthError } from '@/lib/errors'
 import { createClient } from '@supabase/supabase-js';
 import { AppError } from '@/lib/errors'
@@ -18,10 +17,46 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
+declare global {
+  var __pgClient: postgres.Sql | undefined;
+}
 
-export const client = postgres(process.env.DATABASE_URL!, { prepare: false });
-export const db = drizzle(client, { schema });
+function createDbClient() {
+  // すでに作られてたら再利用
+  if (global.__pgClient) {
+    return global.__pgClient;
+  }
 
+  if (!process.env.DATABASE_URL_POOLING) {
+    throw new Error('DATABASE_URL_POOLING is not defined');
+  }
+
+  console.log('🔵 新しいDB接続プールを作成');
+
+  const client = postgres(process.env.DATABASE_URL_POOLING, {
+    prepare: false,
+    max: 10,
+    idle_timeout: 60 * 10,
+    connect_timeout: 30,
+    max_lifetime: 60 * 60,
+
+    onclose: () => {
+      console.log('⚠️ データベース接続が閉じられました');
+      global.__pgClient = undefined;
+    },
+
+    debug: process.env.NODE_ENV === 'development',
+  });
+
+  global.__pgClient = client;
+  return client;
+}
+
+// 1回だけ作成
+const pgClient = createDbClient();
+
+// Drizzle ORM
+export const db = drizzle(pgClient, { schema });
 export async function getAllCategories() {
   try {
     return await db.select({ id: categories.id, label: categories.name }).from(categories);
@@ -121,7 +156,7 @@ export async function insertTemporaryOrder(carts: ProductPurchaseValues[], userI
         orderId: orderId,
         productId: cart.productId,
         quantity: cart.purchaseQuantity,
-        name: cart.name,
+        productName: cart.name,
         price: cart.price,
       })
       ));
@@ -129,24 +164,23 @@ export async function insertTemporaryOrder(carts: ProductPurchaseValues[], userI
 }
 
 
-// セッションIDを取得または作成する
-// export async function getSessionId(): Promise<string> {
-//   const cookieStore = await cookies();
+export async function getSessionId(): Promise<string> {
+  const cookieStore = await cookies();
 
-//   let sessionId = cookieStore.get('session_id')?.value;
+  let sessionId = cookieStore.get('session_id')?.value;
 
-//   if (!sessionId) {
-//     sessionId = randomUUID();
-//     cookieStore.set('session_id', sessionId, {
-//       httpOnly: true,
-//       secure: process.env.NODE_ENV === 'production',
-//       sameSite: 'lax',
-//       maxAge: 60 * 15
-//     });
-//   }
+  if (!sessionId) {
+    sessionId = crypto.randomUUID();  // ← cryptoを追加
+    cookieStore.set('session_id', sessionId, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 15
+    });
+  }
 
-//   return sessionId;
-// }
+  return sessionId;
+}
 
 
 export async function finalStep(userId: number, sessionId: string) {
@@ -192,7 +226,7 @@ export async function finalStep(userId: number, sessionId: string) {
         orderId: temporaryOrderItems.orderId,
         productId: temporaryOrderItems.productId,
         quantity: temporaryOrderItems.quantity,
-        name: temporaryOrderItems.name,
+        productName: temporaryOrderItems.productName,
         price: temporaryOrderItems.price,
       }).from(temporaryOrderItems)
         .where(eq(temporaryOrderItems.orderId, temporaryOrderList.id))
@@ -207,7 +241,7 @@ export async function finalStep(userId: number, sessionId: string) {
           orderId: orderList.orderId,
           productId: temporaryOrderItem.productId,
           quantity: temporaryOrderItem.quantity,
-          name: temporaryOrderItem.name,
+          productName: temporaryOrderItem.productName,
           price: temporaryOrderItem.price,
         }))
       );
