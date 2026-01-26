@@ -1,10 +1,9 @@
 import { temporaryOrders } from '@/lib/schema'
-import { getSessionId, finalStep } from '@/lib/db'
+import { getSessionId } from '@/lib/db'
 import { eq } from 'drizzle-orm';
 import { settlementSchema, SettlementSchema } from '@/app/schemas/settlement'
-import { success, z } from 'zod';
 import { NextResponse } from 'next/server';
-import { db, client, loginJudgment } from '@/lib/db'
+import { db, loginJudgment } from '@/lib/db'
 import { AppError, handleError, ValidationError } from '@/lib/errors'
 import { ZodError } from 'zod';
 
@@ -18,7 +17,6 @@ export async function POST(request: Request) {
         const user = await loginJudgment();
         const sessionId = await getSessionId(); //これはちょっと考える　必要かどうか
 
-        console.log(user, sessionId)
 
         const getTotalPrice = await db.select({
             totalPrice: temporaryOrders.totalPrice,
@@ -57,19 +55,10 @@ export async function POST(request: Request) {
                 message: '決済処理に失敗しました。クレジットカード会社でエラーが発生しています。',
                 statusCode: 502,
                 errorType: 'PAYMENT_GATEWAY_ERROR',
-                details: response.error
             });
         }
 
-        const result = await finalStep(Number(user.id), sessionId)
 
-        if (!result.success) {
-            throw new AppError({
-                message: '購入履歴の更新に失敗しました。',
-                statusCode: 503,
-                errorType: ''
-            })
-        }
         return NextResponse.json(
             { success: true },
             { status: 200 }
@@ -82,6 +71,6 @@ export async function POST(request: Request) {
             return handleError(new ValidationError(error.issues));
         }
         handleError(error);
-    } 
+    }
 }
 

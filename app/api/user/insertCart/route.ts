@@ -1,6 +1,5 @@
 import { cartItems } from '@/lib/schema'
 import { NextResponse } from 'next/server';
-import { getAllUserCart, } from '@/lib/db';
 import { eq } from 'drizzle-orm';
 import { ProductPurchaseSchema } from '@/app/schemas/productPurchase'
 import { ZodError } from 'zod';
@@ -15,7 +14,14 @@ export async function POST(request: Request) {
         const data = await request.json();
         const parseData = ProductPurchaseSchema.parse(data)
 
-        const oldCart = await getAllUserCart(Number(user.id))
+        const oldCart = await db.select({
+            id: cartItems.id,
+            productId: cartItems.productId,
+            productName: cartItems.productName,
+            price: cartItems.price,
+            quantity: cartItems.quantity,
+        }).from(cartItems)
+            .where(eq(cartItems.userId, Number(user.id)));
 
         const sameProductItems = oldCart.filter(cart =>
             cart.productId === parseData.productId

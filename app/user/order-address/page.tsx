@@ -4,12 +4,8 @@ import { handleFrontError } from '@/lib/front-error';
 
 export default async function AddressPage() {
 
-    const TIMEOUT = Number(process.env.NEXT_PUBLIC_FETCH_TIMEOUT) || 10000;
-    const controller = new AbortController();
-    const timeOut = setTimeout(() => controller.abort(), TIMEOUT)
     try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/address`,
-            { signal: controller.signal })
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/address`)
         const result = await res.json();
 
         if (!res.ok) throw new Error(result)
@@ -22,8 +18,6 @@ export default async function AddressPage() {
         if (error instanceof Error) {
             return handleFrontError(error)
         }
-    } finally {
-        clearTimeout(timeOut)
-    }
+    } 
 
 }

@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 export const NewProductSchema =
     z.object({
+    id: z.number().min(0).optional(),
         name: z.string().min(1, "商品名を入力してください").trim(),
         skuCode: z.string().min(1, "SKUコードを入力してください").trim(),
         description: z.string()

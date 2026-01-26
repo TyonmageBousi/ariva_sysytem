@@ -1,8 +1,9 @@
-import { db, deleteStorage } from '@/lib/db'
 import { products, productImages, productCategories, productColors } from '@/lib/schema'
 import { eq } from 'drizzle-orm';
 import { handleError, AppError } from '@/lib/errors'
 import { NextResponse } from 'next/server';
+import { db, deleteStorage } from '@/lib/db'
+
 
 type Params = {
     params: Promise<{ id: string }>

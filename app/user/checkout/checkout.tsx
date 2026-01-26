@@ -1,43 +1,14 @@
 import React from 'react';
 import { ShoppingBag, MapPin, CreditCard, Package } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { TemOrdersData } from '@/app/types/temOrdersData'
+
+type Props = {
+    temOrdersData: TemOrdersData
+}
 
 
-export default function OrderConfirmation() {
-    // サンプルデータ（実際はpropsやAPIから取得）
-    const orderData = {
-        items: [
-            {
-                id: 1,
-                name: 'ワイヤレスイヤホン',
-                price: 8900,
-                quantity: 2,
-                image: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=200&h=200&fit=crop'
-            },
-            {
-                id: 2,
-                name: 'スマートウォッチ',
-                price: 24800,
-                quantity: 1,
-                image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200&h=200&fit=crop'
-            }
-        ],
-        shippingAddress: {
-            postalCode: '123-4567',
-            prefecture: '東京都',
-            city: '渋谷区',
-            address: '道玄坂1-2-3',
-            building: 'サンプルビル 402号室',
-            name: '山田 太郎',
-            phone: '090-1234-5678'
-        },
-        paymentMethod: 'クレジットカード',
-        cardLast4: '1234'
-    };
-
-
-
-
+export default function OrderConfirmation({ temOrdersData }: Props) {
 
     const handleConfirmOrder = async () => {
         try {
@@ -58,9 +29,8 @@ export default function OrderConfirmation() {
         }
     };
 
-    const subtotal = orderData.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const shipping = 500;
-    const total = subtotal + shipping;
+    const total = temOrdersData.totalPrice + shipping;
 
     return (
         <div className="min-h-screen bg-gray-50 py-8 px-4">
@@ -79,15 +49,15 @@ export default function OrderConfirmation() {
                     </div>
 
                     <div className="space-y-4">
-                        {orderData.items.map((item) => (
-                            <div key={item.id} className="flex gap-4 pb-4 border-b last:border-b-0">
+                        {temOrdersData.temporaryOrderItems.map((item) => (
+                            <div key={item.productId} className="flex gap-4 pb-4 border-b last:border-b-0">
                                 <img
-                                    src={item.image}
-                                    alt={item.name}
+                                    src={item.imageFilePath}
+                                    alt={item.productName}
                                     className="w-20 h-20 object-cover rounded-lg"
                                 />
                                 <div className="flex-1">
-                                    <h3 className="font-medium text-gray-900">{item.name}</h3>
+                                    <h3 className="font-medium text-gray-900">{item.productName}</h3>
                                     <p className="text-sm text-gray-600 mt-1">数量: {item.quantity}</p>
                                 </div>
                                 <div className="text-right">
@@ -106,7 +76,7 @@ export default function OrderConfirmation() {
                     <div className="mt-6 pt-4 border-t space-y-2">
                         <div className="flex justify-between text-gray-600">
                             <span>小計</span>
-                            <span>¥{subtotal.toLocaleString()}</span>
+                            <span>¥{temOrdersData.totalPrice.toLocaleString()}</span>
                         </div>
                         <div className="flex justify-between text-gray-600">
                             <span>送料</span>
@@ -127,17 +97,16 @@ export default function OrderConfirmation() {
                     </div>
 
                     <div className="space-y-2 text-gray-700">
-                        <p className="font-medium">{orderData.shippingAddress.name}</p>
-                        <p className="text-sm">〒{orderData.shippingAddress.postalCode}</p>
+                        <p className="text-sm">〒{temOrdersData.postalCode}</p>
                         <p className="text-sm">
-                            {orderData.shippingAddress.prefecture}
-                            {orderData.shippingAddress.city}
-                            {orderData.shippingAddress.address}
+                            {temOrdersData.prefecture}
+                            {temOrdersData.city}
+                            {temOrdersData.address1}
                         </p>
-                        {orderData.shippingAddress.building && (
-                            <p className="text-sm">{orderData.shippingAddress.building}</p>
+                        {temOrdersData.address2 && (
+                            <p className="text-sm">{temOrdersData.address2}</p>
                         )}
-                        <p className="text-sm mt-2">電話番号: {orderData.shippingAddress.phone}</p>
+                        <p className="text-sm mt-2">電話番号: {temOrdersData.phoneNum}</p>
                     </div>
                 </div>
 
@@ -153,8 +122,8 @@ export default function OrderConfirmation() {
                             <CreditCard className="w-6 h-6 text-white" />
                         </div>
                         <div>
-                            <p className="font-medium text-gray-900">{orderData.paymentMethod}</p>
-                            <p className="text-sm text-gray-600">**** **** **** {orderData.cardLast4}</p>
+                            {/* <p className="font-medium text-gray-900">{orderData.paymentMethod}</p>
+                            <p className="text-sm text-gray-600">**** **** **** {orderData.cardLast4}</p> */}
                         </div>
                     </div>
                 </div>

@@ -1,7 +1,7 @@
-import { products, cartItems, temporaryOrders, temporaryOrderItems } from '@/lib/schema';
-import { eq, sql, and } from 'drizzle-orm';
-import { db, client } from '@/lib/db'
-import { ProductPurchaseSchema, ProductPurchaseValues } from '@/app/schemas/productPurchase'
+import { cartItems } from '@/lib/schema';
+import { eq, and } from 'drizzle-orm';
+import { db } from '@/lib/db'
+import { ProductPurchaseValues } from '@/app/schemas/productPurchase'
 
 
 export type ProductPurchase = ProductPurchaseValues & {

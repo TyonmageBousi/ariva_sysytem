@@ -1,10 +1,10 @@
 
 import { ProductPurchaseSchema, ProductPurchaseValues } from '@/app/schemas/productPurchase'
-import { checkDbConnection, loginJudgment } from '@/lib/db'
+import { loginJudgment } from '@/lib/db'
 import { ValidationError, handleError, AppError } from '@/lib/errors'
 import { ZodError } from 'zod';
-import { validateSettlement, validateStockSettlement } from '@/app/api/user/settlement/helpers'
-import { updateCartTable, createOrder } from '@/app/api/user/settlement/database'
+import { validateSettlement, validateStockSettlement } from '@/lib/services/settlementService'
+import { updateCartTable, createOrder } from '@/lib/repositories/settlementRepositories'
 import { NextResponse } from 'next/server';
 
 
@@ -56,17 +56,6 @@ export async function POST(request: Request) {
 
 
     try {
-
-
-        const isConnected = await checkDbConnection();
-        if (!isConnected) {
-            return NextResponse.json(
-                { error: 'データベース接続エラー' },
-                { status: 503 }
-            );
-        }
-
-
         const user = await loginJudgment();
 
         const data = await request.json();

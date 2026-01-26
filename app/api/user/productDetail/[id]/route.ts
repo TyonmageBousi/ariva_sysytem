@@ -33,6 +33,7 @@ export async function GET(request: Request, { params }: Params) {
                 errorType: 'PRODUCT_NOT_FOUND'
             })
         }
+        
         const categoriesName = product.productCategories.map(
             (category) => String(category.category.id)
         );

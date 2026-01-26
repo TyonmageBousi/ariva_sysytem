@@ -1,10 +1,8 @@
-import Cart from '@/app/components/user/cart/cart'
+import Checkout from '@/app/user/checkout/checkout'
 import HandleFrontError from '@/app/components/error/error';
-import { ProductCart } from '@/app/types/productCart'
 import { AppError } from '@/lib/errors';
-import { db, loginJudgment, getSessionId } from '@/lib/db'
-import { temporaryOrders } from '@/lib/schema'
-import { eq, and } from 'drizzle-orm';
+import { getCheckoutData } from '@/lib/services/checkoutService'
+import { loginJudgment, getSessionId } from '@/lib/db';
 
 export default async function CheckOut() {
 
@@ -13,19 +11,28 @@ export default async function CheckOut() {
         const user = await loginJudgment();
         const sessionId = await getSessionId();
 
-        const data = await db.query.temporaryOrders.findMany({
-            where: and(
-                eq(temporaryOrders.userId, Number(user.id)),
-                eq(temporaryOrders.sessionId, sessionId)
-            ),
-            with: {
-                temporaryOrderItems: true,      
-            }
-        });
+        const userId = Number(user.id);
 
+        if (isNaN(userId)) {
+            throw new AppError({
+                message: "無効なユーザーIDです",
+                statusCode: 400,
+                errorType: "INVALID_USER_ID"
+            });
+        }
 
+        if (!sessionId) {
+            throw new AppError({
+                message: "セッションが無効です",
+                statusCode: 401,
+                errorType: "INVALID_SESSION"
+            });
+        }
 
-        return ( )
+        const temOrdersData = await getCheckoutData(userId, sessionId)
+
+        return (<Checkout temOrdersData={temOrdersData} />)
+        
     } catch (error) {
         if (error instanceof AppError) {
             const errorData = {

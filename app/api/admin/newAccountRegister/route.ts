@@ -17,7 +17,6 @@ export async function POST(request: Request) {
             birthday: date
         })
 
-        console.log(ValidateData)
         const { name, email, password, birthday, phone, postalCode, prefecture, city, address1, address2 } = ValidateData;
 
         const alreadyUser = await db.select().from(users)
@@ -36,7 +35,7 @@ export async function POST(request: Request) {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const user = {
+        await db.insert(users).values({
             name,
             email,
             password: hashedPassword,
@@ -47,9 +46,8 @@ export async function POST(request: Request) {
             city,
             address1,
             address2: address2 ?? ''
-        };
-        await db.insert(users).values(user)
-        
+        })
+
 
         return NextResponse.json(
             {

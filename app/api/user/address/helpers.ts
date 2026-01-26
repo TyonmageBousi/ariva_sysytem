@@ -1,7 +1,7 @@
-import { products, cartItems, temporaryOrders, temporaryOrderItems } from '@/lib/schema';
-import { eq, sql, and } from 'drizzle-orm';
-import { ProductPurchaseSchema, ProductPurchaseValues } from '@/app/schemas/productPurchase'
-import { insertTemporaryOrder, getSessionId, loginJudgment, db, client } from '@/lib/db'
+import { products } from '@/lib/schema';
+import { eq, sql, } from 'drizzle-orm';
+import { ProductPurchaseValues } from '@/app/schemas/productPurchase'
+import { db, } from '@/lib/db'
 
 
 

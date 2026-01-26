@@ -1,10 +1,7 @@
 
-import { eq, not, sql } from 'drizzle-orm';
-import { products } from '@/lib/schema'
 import { NextResponse } from 'next/server';
-import { db, client } from '@/lib/db'
 import { AppError, handleError } from '@/lib/errors'
-import { productGetQuery } from '@/app/api/admin/productList/route';
+import { productList, ProductList } from '@/lib/repositories/productDetailsRepositories';
 
 export async function GET(request: Request,) {
 
@@ -26,74 +23,10 @@ export async function GET(request: Request,) {
 
 
     try {
-        const productList = await (async (id: number | null) => {
-            if (id) {
-                return await db.query.products.findMany({
-                    columns: {
-                        id: true,
-                        skuCode: true,
-                        name: true,
-                        price: true,
-                        discountPrice: true,
-                        description: true,
-                    },
-                    with: {
-                        productCategories: {
-                            with: {
-                                category: {
-                                    columns: { id: true }
-                                }
-                            }
-                        },
-                        productColors: {
-                            with: {
-                                colorCategory: {
-                                    columns: { id: true }
-                                }
-                            }
-                        },
-                        productImages: {
-                            columns: { filePath: true },
-                        },
-                    },
-                    where: not(eq(products.id, id)),
-                    orderBy: sql`RANDOM()`,
-                    limit: 20,
-                });
 
-            } else {
-                return await db.query.products.findMany({
-                    columns: {
-                        id: true,
-                        skuCode: true,
-                        name: true,
-                        price: true,
-                        discountPrice: true,
-                        description: true,
-                    },
-                    with: {
-                        productCategories: {
-                            with: {
-                                category: {
-                                    columns: { id: true }
-                                }
-                            }
-                        },
-                        productColors: {
-                            with: {
-                                colorCategory: {
-                                    columns: { id: true }
-                                }
-                            }
-                        },
-                        productImages: {
-                            columns: { filePath: true },
-                        },
-                    },
-                });
-            }
-        })(productId)
-        const data = productList.map((product) => {
+        const products: ProductList = await productList(productId);
+
+        const data = products.map((product) => {
             const categoriesName = product.productCategories.map(
                 (category) => String(category.category.id)
             );

@@ -2,7 +2,6 @@ import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { handleError, } from '@/lib/errors'
 import { NextRequest } from 'next/server';
-import { eq } from 'drizzle-orm';
 
 export const productGetQuery = {
     columns: {
