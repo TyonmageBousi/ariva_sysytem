@@ -6,5 +6,5 @@ export type ProductList = {
     description: string
     categoryId: string[]
     colorCategories: string[]
-    image: string
+    image: string[]
 }

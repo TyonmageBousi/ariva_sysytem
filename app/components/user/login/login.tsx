@@ -10,6 +10,7 @@ import { useForm } from 'react-hook-form';
 import React, { useState } from 'react';
 import { LoginSchema, LoginValues } from '@/app/schemas/login'
 import { signIn } from 'next-auth/react';
+import Link from "next/link"
 
 export default function LoginPage() {
 
@@ -28,7 +29,7 @@ export default function LoginPage() {
                 password: data.password,
                 redirect: false,
             });
-            
+
             if (result.ok) {
                 toast.success('ログインに成功しました');
                 const shoppingFlg = sessionStorage.getItem('shopping');
@@ -155,12 +156,12 @@ export default function LoginPage() {
                             </div>
                         </form>
                         <div>
-                            <p className='mt-6 text-center text-sm text-brown-700/80 dark:text-neutral-300'>
+                            <div className='mt-6 text-center text-sm text-brown-700/80 dark:text-neutral-300'>
                                 アカウントをお持ちでないですか？
-                                <a href='/account/register' className='ml-1 font-semibold text-amber-700 hover:underline dark:text-amber-400'>
-                                    新規登録
-                                </a>
-                            </p>
+                                <Link href={`${process.env.NEXT_PUBLIC_API_URL}/page/user/new-account`}>
+                                    <p className='ml-1 font-semibold text-amber-700 hover:underline dark:text-amber-400'>新規登録</p>
+                                </Link>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -4,11 +4,11 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import Image from 'next/image';
-import { ProductsInfo } from '@/app/api/mock/line_up/route';
+import { ProductFormatted } from "@/app/types/responseProduct";
 
 type Props = {
     titleCss: string
-    data: ProductsInfo[]
+    data: ProductFormatted[]
 };
 
 export default function ProductLineUp({ titleCss: titleCss, data: productsInfo }: Props) {

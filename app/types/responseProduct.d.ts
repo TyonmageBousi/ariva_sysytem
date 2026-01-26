@@ -9,10 +9,12 @@ type ProductSelected = Pick<
     "discountPrice" |
     "status" |
     "stock" |
+    "description" |
     "updatedAt"
 >
 
 export type ProductFormatted = ProductSelected & {
     productCategories: string[];
     productColors: string[];
+    productImages: string[];
 };

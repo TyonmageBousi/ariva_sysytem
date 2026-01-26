@@ -1,155 +1,24 @@
 'use client';
+import { Data } from '@/app/components/user/main/TopMainContainer'
 
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay } from 'swiper/modules';
-import 'swiper/css';
-import Image from 'next/image';
-import { motion } from 'framer-motion';
-import 'swiper/css/effect-flip';
-import React, { useState, useEffect } from 'react';
-import { SlideImage } from '@/app/api/mock/top_main_slide/route';
+type props = {
+    data: Data[]
+}
 
-
-type Props = {
-    data: SlideImage[];
-};
-
-const radius: number = 380; // レイアウトで使用している円の半径:400px
-
-export default function TopMainSlide({ data }: Props) {
-
-    const characters: string = 'Velour Cacao – Treat Yourself – '; //回転の文字の内容
-    const charArray: string[] = characters.split(''); //上記の文字を一文字づつ配列に格納
-    const [isVisible, setIsVisible] = useState<boolean>(true);
-    const [isMounted, setIsMounted] = useState<boolean>(false);
-    useEffect(() => {
-
-        setIsMounted(true);
-
-        const handleScroll = () => {
-            const scrollY = window.scrollY;
-            setIsVisible(scrollY < 1000);
-        };
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+export default function TopMainSlide({ data }: props) {
 
     return (
-        <div className={
-            'flex h-[90vh] mt-[1vh] w-full transition-all duration-500 ' +
-            (isVisible
-                ? 'opacity-100 translate-y-0'
-                : 'opacity-0 -translate-y-8'
-            )
-        }>
-            <div className='relative w-[50%] '>
-                <div className='absolute inset-0 flex items-center justify-center pointer-events-none z-20'>
-                    <div className='relative'>
-                        <div
-                            className='relative animate-spin'
-                            style={{
-                                width: `${radius * 2}px`,
-                                height: `${radius * 2}px`,
-                                animationDuration: '10s',
-                            }}
-                        >
-                            {charArray.map((char, index) => {
-                                const angle = (index / charArray.length) * 2 * Math.PI;
-                                const x = Math.cos(angle) * radius;
-                                const y = Math.sin(angle) * radius;
-                                return (
-                                    <span
-                                        key={index}
-                                        className='absolute text-2xl font-bold text-yellow-300'
-                                        style={{
-                                            left: '50%',
-                                            top: '50%',
-                                            transform: `translate(${x}px, ${y}px) translate(-50%, -50%)`,
-
-                                        }}
-                                    >
-                                        {char}
-                                    </span>
-                                );
-                            })}
+        <div className='grid grid-cols-3 grid-rows-2 gap-4 p-4  h-[90vh] mt-[10vh]'>
+            {data.map((slide, index) => {
+                return (
+                    <div key={index} className={`relative ${slide.style} z-40` }>
+                        <img className='relative w-full h-full object-cover z-60 hover:translate-y-10 transform duration-300' src={slide.src} alt={slide.alt} />
+                        <div className='absolute top-0 left-0 z-50 '>
+                            <p className='z-50 p-3'>{slide.imgExplain}</p>
                         </div>
                     </div>
-                </div>
-                <motion.div
-                    className='w-full h-[93vh]'
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }}
-                >
-                    <Swiper
-                        style={{ width: '100%', height: '100%' }}
-                        direction='vertical'
-                        modules={[Autoplay]}
-                        slidesPerView={1}
-                        loop={true}
-                        autoplay={{ delay: 3000, disableOnInteraction: false }}
-                        speed={800}
-                    >
-                        {data.map((slideImage, index) => (
-                            <SwiperSlide
-                                key={index}
-                                style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    height: '100%'
-                                }}
-                            >
-                                <Image
-                                    className='w-[60%] aspect-square object-cover rounded-lg'
-                                    src={slideImage.src}
-                                    alt={slideImage.alt}
-                                    width={0}
-                                    height={0}
-                                    sizes='60vw'
-                                    style={{ width: '60%', height: 'auto' }}
-                                />
-                            </SwiperSlide>
-                        ))}
-                    </Swiper>
-                </motion.div>
-            </div>
-            <div className='relative w-[50%]'>
-                <motion.p
-                    initial={{ y: +20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{
-                        type: 'tween',
-                        duration: 0.8,
-                        ease: 'easeInOut',
-                    }}
-                    className='text-9xl mt-[25vh] underline decoration-3'>
-                    Velour Cacao</motion.p>
-
-                <motion.p
-                    initial={{ y: +20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{
-                        type: 'tween',
-                        duration: 0.9,
-                        ease: 'easeInOut',
-                    }}
-                    className='text-6xl mt-[10vh] underline decoration-3'>自分へのご褒美に</motion.p>
-                <motion.p
-                    initial={{ y: +20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{
-                        type: 'tween',
-                        duration: 1.0,
-                        ease: 'easeInOut',
-                    }}
-                    className=' text-3xl mt-[5vh] underline decoration-3'>
-                    日々の忙しさのなかでひとつくらいご褒美があってもいいじゃない
-                    そんな思いで作りました</motion.p>
-            </div>
+                )
+            })}
         </div >
-
     );
 }

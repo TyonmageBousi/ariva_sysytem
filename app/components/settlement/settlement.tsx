@@ -54,7 +54,7 @@ export default function Settlement() {
 
     const onSubmit = async (data: SettlementSchema) => {
         try {
-            const response = await fetch('', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/requestSettlement`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -66,20 +66,37 @@ export default function Settlement() {
 
         }
 
-    };
-
+    }
 
     return (
-        <div>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <TextForm props={cartNumberProps} />
-                <TextForm props={cardHolderNameProps} />
-                <TextForm props={expiryMonthProps} />
-                <TextForm props={expiryYearProps} />
-                <TextForm props={securityCodeProps} />
-            </form>
-        </div >
+        <div className="min-h-screen  py-8">
+            <div className="max-w-2xl mx-auto px-4">
+                <div className="bg-white rounded-lg shadow-md p-8">
+                    <h2 className="text-2xl font-bold text-gray-800 mb-6">
+                        カード情報入力
+                    </h2>
 
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                        <TextForm props={cartNumberProps} />
+                        <TextForm props={cardHolderNameProps} />
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <TextForm props={expiryMonthProps} />
+                            <TextForm props={expiryYearProps} />
+                        </div>
+
+                        <TextForm props={securityCodeProps} />
+
+                        <button
+                            type="submit"
+                            className="w-full bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-sm"
+                        >
+                            送信
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
     )
 
 }

@@ -1,24 +1,20 @@
-import React from 'react'
-import OurProductThoughts from '.././user/OurProductThoughts'
-import { notFound } from 'next/navigation';
-
+import OurProductThoughts from '@/app/components/user/OurProductThoughts'
+import { getPublicImages } from '@/lib/getPublicFiles';
 
 export type OurThought = {
   title: string;
   text: string;
-  src1: string;
-  src2: string;
+  src: string;
+  alt: string;
 };
+
 export default async function OurProductContainer({ titleCss }: { titleCss: string }) {
 
-  const res = await fetch('http://localhost:3000/api/mock/our_thoughts')
+  const images = getPublicImages("top");
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/productDetails`);
+  const result = await res.json();
+  if (!res.ok) throw new Error(result);
+  if (!result.success) throw new Error(result)
 
-  if (res.status === 404) notFound();
-
-  if (!res.ok) throw new Error(`/api/mock/our_thoughts fetch failed: ${res.status} ${res.statusText}`);
-
-
-  const data: OurThought[] = await res.json()
-
-  return <OurProductThoughts titleCss={titleCss} data={data} />
+  return <OurProductThoughts data={images[0]} productList={result.data} />
 }

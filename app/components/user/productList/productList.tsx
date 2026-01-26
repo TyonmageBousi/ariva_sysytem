@@ -1,16 +1,19 @@
+'use client'
+
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ProductList } from '@/app/types/productList'
 
-type Props = ProductList[];
+type Props = {
+    productList: ProductList[];
+};
 
-
-export default function ProductListPage(productList: Props) {
+export default function ProductListPage({productList}: Props) {
 
     const [selected, setSelected] = useState<ProductList | null>(null)
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8 px-4">
+        <div className="min-h-screen  py-8 px-4 relative z-80">
             <div className="max-w-6xl mx-auto">
                 <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
                     商品一覧
@@ -23,7 +26,7 @@ export default function ProductListPage(productList: Props) {
                             whileHover={{ scale: 1.05, y: -4 }}
                             onClick={() => setSelected(product)}
                         >
-                            <img src={product.image} alt={product.name} className='w-full h-full object-cover' />
+                            {/* <img src={product.image[0]} alt={product.name} className='w-full h-full object-cover' /> */}
                             <div className='absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/70 to-transparent'>
                                 <h3 className='text-lg font-semibold'>{product.name}</h3>
                                 <span className='text-2xl font-bold text-amber-300'>{product.price}</span>
@@ -49,7 +52,7 @@ export default function ProductListPage(productList: Props) {
                             onClick={(e) => e.stopPropagation()}
                         >
                             <div className='grid md:grid-cols-2'>
-                                <img src={selected.image} alt={selected.name} className='w-full h-96 md:h-auto object-cover' />
+                                <img src={selected.image[0]} alt={selected.name} className='w-full h-96 md:h-auto object-cover' />
                                 <div className='p-8 flex flex-col justify-center'>
                                     <h2 className='text-5xl font-bold mb-4'>{selected.name}</h2>
                                     <p className='text-gray-300 mb-6'>厳選されたカカオ豆を使用した、こだわりのチョコレート。</p>

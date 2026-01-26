@@ -1,72 +1,64 @@
 import { NextResponse } from 'next/server';
-import { products, productImages, productCategories, productColors } from '@/lib/schema'
-import { db, insertStorage, client } from '@/lib/db'
+import { products } from '@/lib/schema'
+import { db } from '@/lib/db'
+import { newProductRegister } from '@/lib/repositories/newProductRegisterRepositories'
 import { NewProductSchema } from '@/app/schemas/product'
-import {  handleError, ValidationError } from '@/lib/errors'
+import { handleError, ValidationError, AppError } from '@/lib/errors'
 import { ZodError } from 'zod';
+import { eq } from 'drizzle-orm';
 
 export async function POST(request: Request) {
 
     try {
         const formdata = await request.formData();
-
-        const imageEntries = formdata.getAll('images')
-
-        const data = Object.fromEntries(formdata);
+        const data = {
+            id: formdata.get('id') ? Number(formdata.get('id')) : undefined,
+            name: formdata.get('name') as string,
+            skuCode: formdata.get('skuCode') as string,
+            price: Number(formdata.get('price')),
+            discountPrice: formdata.get('discountPrice') ? Number(formdata.get('discountPrice')) : undefined,
+            saleStartAt: new Date(formdata.get('saleStartAt') as string),
+            saleEndAt: new Date(formdata.get('saleEndAt') as string),
+            status: formdata.get('status') as string,
+            stock: Number(formdata.get('stock')),
+            description: formdata.get('description') as string,
+            categoryIds: formdata.getAll('categoryIds').map(String),
+            colorIds: formdata.getAll('colorCategoryIds').map(String),
+            images: formdata.getAll('images'),
+            defaultImages: formdata.getAll('defaultImages'),
+        };
 
         const result = NewProductSchema.parse(data);
 
-        const uploadResults: string[] = await insertStorage(imageEntries)
 
+        const existingProduct =
+            await db.select()
+                .from(products)
+                .where(eq(products.skuCode, result.skuCode))
+                .limit(1);
 
-        await db.transaction(async (tx) => {
-            const insertProduct = await tx.insert(products).values({
-                name: result.name,
-                skuCode: result.skuCode,
-                price: result.price,
-                discountPrice: result.discountPrice,
-                saleStartAt: result.saleStartAt,
-                saleEndAt: result.saleEndAt,
-                status: result.status,
-                stock: result.stock,
-                description: result.description,
-            }).returning({ productId: products.id });
-
-            await Promise.all([
-                ...uploadResults.map((uploadImage) => (
-                    tx.insert(productImages).values({
-                        productId: insertProduct[0].productId,
-                        filePath: uploadImage
-                    })
-                )),
-
-                ...(result.categoryIds?.map((categoryId) => (
-                    tx.insert(productCategories).values({
-                        productId: insertProduct[0].productId,
-                        categoryId: Number(categoryId)
-                    })
-                )) ?? []),
-
-                ...(result.colorIds?.map((colorId) => (
-                    tx.insert(productColors).values({
-                        productId: insertProduct[0].productId,
-                        colorId: Number(colorId)
-                    })
-                )) ?? [])
-            ])
-            return NextResponse.json(
+        if (existingProduct.length > 0 && !(data.id)) {
+            throw new AppError(
                 {
-                    success: true,
-                },
-                { status: 200 }
-            );
-        })
+                    message: 'SKU_CODEが一意ではありません。',
+                    statusCode: 400,
+                    errorType: 'VALIDATION_ERROR'
+
+                }
+            )
+        }
+
+        await newProductRegister(result)
+        return NextResponse.json(
+            {
+                success: true,
+            },
+            { status: 200 }
+        );
     } catch (error) {
         if (error instanceof ZodError) {
             return handleError(new ValidationError(error.issues));
         }
         return handleError(error);
-    } finally {
-        await client.end();
     }
 }
