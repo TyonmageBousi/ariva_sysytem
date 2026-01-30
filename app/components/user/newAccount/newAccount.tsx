@@ -1,6 +1,6 @@
 'use client'
 
-import { Mail, Lock, User, Phone, Calendar, Home } from 'lucide-react'
+import { Mail, Lock, User, Phone, Calendar, } from 'lucide-react'
 import { useForm } from 'react-hook-form';
 import TextForm, { FieldTextProps } from '@/app/components/public/form/TextForm';
 import DateForm, { FieldDateProps } from '@/app/components/public/form/DateForm';
@@ -11,7 +11,9 @@ import AddressContainer from '@/app/components/user/address/AddressContainer';
 import { handleError } from '@/lib/errors';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
+import AccountSection from '@/components/layouts/AccountSection'
+
 
 
 export default function NewAccount() {
@@ -124,110 +126,128 @@ export default function NewAccount() {
         }
     }
     return (
-        <div className='min-h-screen md:pl-[50vw] relative'>
-            <div className='
-            md:flex
-            md:fixed 
-            md:inset-y-0 
-            md:left-0 
-            md:w-1/2 
-            hidden 
-            items-center 
-            justify-center 
-            p-12
-            bg-gradient-to-br from-black via-[#050505] to-[#0a255f]
-            '>
-                <div className='relative z-10 text-center'>
-                    <h1 className='text-4xl lg:text-5xl font-extrabold tracking-tight text-brown-900'>
-                        Velour Cacao
-                        <span className='block text-amber-400 mt-2'>Treat Yourself</span>
-                    </h1>
-                    <p className='mt-4 text-brown-700/80 max-w-md mx-auto'>
-                        ログインして、あなたのとっておきのチョコをお届け。<br />
-                        会員限定の先行セールや、バレンタインのギフト予約も。
-                    </p>
+        <div className="min-h-screen md:pl-[50vw] relative bg-[#07080b] text-white">
+            {/* LEFT fixed panel */}
+            <AccountSection />
+            {/* RIGHT scroll area */}
+            <div className="relative grid place-items-center px-6 py-14 sm:px-10">
+                {/* right subtle background */}
+                <div className="pointer-events-none absolute inset-0">
+                    <div className="absolute inset-0 bg-[radial-gradient(900px_circle_at_30%_20%,rgba(255,220,170,0.10),rgba(0,0,0,0.0)_55%)]" />
+                    <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.65),rgba(0,0,0,0.92))]" />
+                </div>
+
+                <div className="relative w-full max-w-xl">
+                    <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[0_30px_120px_rgba(0,0,0,0.55)]">
+                        <div className="p-7 sm:p-8">
+                            <p className="text-[11px] tracking-[0.45em] text-white/55">CREATE ACCOUNT</p>
+                            <h1 className="mt-4 text-3xl font-extralight tracking-wide">新規登録</h1>
+                            <p className="mt-3 text-sm text-white/55">
+                                必要事項を入力してください。後から変更できる項目もあります。
+                            </p>
+
+                            <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-8 space-y-10">
+                                {/* アカウント情報 */}
+                                <section className="space-y-5">
+                                    <div className="flex items-end justify-between">
+                                        <h2 className="text-sm tracking-[0.35em] text-white/70">ACCOUNT</h2>
+                                        <span className="text-xs text-white/40">アカウント情報</span>
+                                    </div>
+
+                                    <div className="grid gap-5">
+                                        <div>
+                                            <label htmlFor="fullName" className="mb-2 inline-flex items-center gap-2 text-sm text-white/70">
+                                                <User className="h-4 w-4" aria-hidden="true" /> 氏名
+                                            </label>
+                                            <TextForm props={nameProps} />
+                                        </div>
+
+                                        <div>
+                                            <label htmlFor="email" className="mb-2 inline-flex items-center gap-2 text-sm text-white/70">
+                                                <Mail className="h-4 w-4" aria-hidden="true" /> メールアドレス
+                                            </label>
+                                            <TextForm props={emailProps} />
+                                        </div>
+
+                                        <div className="grid gap-5 sm:grid-cols-2">
+                                            <div>
+                                                <label htmlFor="password" className="mb-2 inline-flex items-center gap-2 text-sm text-white/70">
+                                                    <Lock className="h-4 w-4" aria-hidden="true" /> パスワード
+                                                </label>
+                                                <PasswordForm props={passwordProps} />
+                                            </div>
+
+                                            <div>
+                                                <label htmlFor="confirmPwd" className="mb-2 inline-flex items-center gap-2 text-sm text-white/70">
+                                                    <Lock className="h-4 w-4" aria-hidden="true" /> 確認用
+                                                </label>
+                                                <PasswordForm props={confirmPassWordProps} />
+                                            </div>
+                                        </div>
+
+                                        <div className="grid gap-5 sm:grid-cols-2">
+                                            <div>
+                                                <label htmlFor="phone" className="mb-2 inline-flex items-center gap-2 text-sm text-white/70">
+                                                    <Phone className="h-4 w-4" aria-hidden="true" /> 電話番号 <span className="text-white/40">（任意）</span>
+                                                </label>
+                                                <TextForm props={phoneProps} />
+                                            </div>
+
+                                            <div>
+                                                <label htmlFor="birthday" className="mb-2 inline-flex items-center gap-2 text-sm text-white/70">
+                                                    <Calendar className="h-4 w-4" aria-hidden="true" /> 生年月日 <span className="text-white/40">（任意）</span>
+                                                </label>
+                                                <DateForm props={birthdayProps} />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <div className="h-px w-full bg-white/10" />
+
+                                {/* お届け先情報 */}
+                                <section className="space-y-5">
+                                    <div className="flex items-end justify-between">
+                                        <h2 className="text-sm tracking-[0.35em] text-white/70">ADDRESS</h2>
+                                        <span className="text-xs text-white/40">お届け先情報</span>
+                                    </div>
+
+                                    <AddressContainer props={addressProps} />
+                                </section>
+
+                                {/* submit */}
+                                <button
+                                    type="submit"
+                                    className="
+                group w-full rounded-xl border border-white/12
+                bg-white/[0.06] py-4
+                text-sm tracking-[0.18em] uppercase text-white/90
+                transition
+                hover:bg-white/[0.10] hover:border-white/20
+                focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/10
+                disabled:opacity-50 disabled:cursor-not-allowed
+              "
+                                >
+                                    登録する
+                                </button>
+
+                                <p className="text-center text-sm text-white/55">
+                                    すでにアカウントをお持ちの方は{" "}
+                                    <a href="/account/login" className="text-amber-200/90 hover:text-amber-200 hover:underline">
+                                        ログイン
+                                    </a>
+                                </p>
+                            </form>
+                        </div>
+
+                        <div className="h-px w-full bg-white/10" />
+                        <div className="px-7 sm:px-8 py-5 text-xs text-white/45">
+                            入力内容は安全に送信されます。パスワードは暗号化して管理します。
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div className='grid place-items-center p-6 sm:p-10 bg-black'>
-                <div className='w-full max-w-md h-auto border bg-black grid p-6 font-bold rounded-2xl'>
-                    <div className='mt-5'>
-                        <h1 className='text-3xl'>新規登録</h1>
-                    </div>
-                    <form onSubmit={handleSubmit(onSubmit)} noValidate className='space-y-8'>
-                        {/* アカウント情報 */}
-                        <section className='space-y-4'>
-                            <h2 className='text-lg font-semibold'>アカウント情報</h2>
-                            {/* 氏名 */}
-                            <div>
-                                <label htmlFor='fullName' className='inline-flex items-center gap-1.5'>
-                                    <User className='w-4 h-4' aria-hidden='true' /> 氏名
-                                </label>
-                                <TextForm props={nameProps} />
-                            </div>
-                            {/* メール */}
-                            <div>
-                                <label htmlFor='email' className='inline-flex items-center gap-1.5'>
-                                    <Mail className='w-4 h-4' aria-hidden='true' /> メールアドレス
-                                </label>
-                                <TextForm props={emailProps} />
-                            </div>
+        </div>
 
-                            {/* パスワード */}
-                            <div>
-                                <label htmlFor='password' className='inline-flex items-center gap-1.5'>
-                                    <Lock className='w-4 h-4' aria-hidden='true' /> パスワード
-                                </label>
-                                <PasswordForm props={passwordProps} />
-                            </div>
-
-                            {/* パスワード（確認） */}
-                            <div>
-                                <label htmlFor='confirmPwd' className='inline-flex items-center gap-1.5'>
-                                    <Lock className='w-4 h-4' aria-hidden='true' /> パスワード（確認）
-                                </label>
-                                <PasswordForm props={confirmPassWordProps} />
-                            </div>
-
-                            {/* 電話番号(任意) */}
-                            <div>
-                                <label htmlFor='phone' className='inline-flex items-center gap-1.5'>
-                                    <Phone className='w-4 h-4' aria-hidden='true' /> 電話番号（任意）
-                                </label>
-                                <TextForm props={phoneProps} />
-                            </div>
-                            {/* 生年月日(任意) */}
-                            <div>
-                                <label htmlFor='birthday' className='inline-flex items-center gap-1.5'>
-                                    <Calendar className='w-4 h-4' aria-hidden='true' /> 生年月日（任意）
-                                </label>
-                                <DateForm props={birthdayProps} />
-                            </div>
-
-                        </section>
-
-                        {/* お届け先情報 */}
-                        <h2 className='text-lg font-semibold'>お届け先情報</h2>
-                        <AddressContainer props={addressProps} />
-                        <section className='space-y-4'>
-                        </section>
-                        <button
-                            type='submit'
-                            className='flex w-full items-center justify-center rounded-xl 
-                            bg-amber-400 px-4 py-2.5 text-white 
-                            font-medium shadow-lg shadow-amber-400/20 
-                            hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-4 
-                            focus-visible:ring-amber-500/30 disabled:opacity-70 disabled:cursor-not-allowed'
-                        >
-                            送信
-                        </button>
-                        <p className='text-center text-sm text-brown-700/80 dark:text-white/70'>
-                            すでにアカウントをお持ちの方は{' '}
-                            <a href='/account/login' className='font-medium text-amber-700 hover:underline dark:text-amber-400'>こちら</a>
-                            からログイン
-                        </p>
-                    </form>
-                </div>
-            </div >
-        </div >
     )
 }

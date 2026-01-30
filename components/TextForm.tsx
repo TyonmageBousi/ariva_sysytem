@@ -1,6 +1,6 @@
 'use client';
 
-import type { FieldValues, UseFormRegister, Path ,FieldErrors} from 'react-hook-form';
+import type { FieldValues, UseFormRegister, Path, FieldErrors } from 'react-hook-form';
 
 export type FieldTextProps<T extends FieldValues> = {
     label: string;
@@ -16,7 +16,7 @@ type Props<T extends FieldValues> = { props: FieldTextProps<T> };
 
 export default function NormalForm<T extends FieldValues>({ props }: Props<T>) {
 
-    const { label, name, register, labelStyle, inputStyle, placeholder ,errors} = props;
+    const { label, name, register, labelStyle, inputStyle, placeholder, errors } = props;
     return (
         <div>
             <label className={labelStyle}>{label}</label>
@@ -24,7 +24,9 @@ export default function NormalForm<T extends FieldValues>({ props }: Props<T>) {
                 id={name}
                 type='text'
                 inputMode='text'
-                {...register(name)}
+                {...register(name, {
+                    setValueAs: (v) => (v === '' || v === null ? undefined : String(v)),
+                })}
                 className={inputStyle}
                 placeholder={placeholder}
             />

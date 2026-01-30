@@ -22,7 +22,6 @@ declare global {
 }
 
 function createDbClient() {
-  // すでに作られてたら再利用
   if (global.__pgClient) {
     return global.__pgClient;
   }
@@ -52,11 +51,11 @@ function createDbClient() {
   return client;
 }
 
-// 1回だけ作成
 const pgClient = createDbClient();
 
-// Drizzle ORM
 export const db = drizzle(pgClient, { schema });
+
+
 export async function getAllCategories() {
   try {
     return await db.select({ id: categories.id, label: categories.name }).from(categories);
@@ -65,6 +64,7 @@ export async function getAllCategories() {
     return []
   }
 }
+
 export async function getAllColorCategories() {
   try {
     return await db.select({ id: colorCategories.id, label: colorCategories.name }).from(colorCategories)

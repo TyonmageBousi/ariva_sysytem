@@ -1,7 +1,6 @@
-import { ProductDetailData } from '@/app/components/user/product/ProductDetail'
-import { ProductDetailsData } from '@/app/components/user/product/ProductDetails'
-import Product from '@/app/components/user/product/Product'
-import HandleFrontError from '@/app/components/error/error';
+import { ProductDetailData } from '@/app/user/products/[id]/ProductDetail'
+import { ProductDetailsData } from '@/app/user/products/[id]/ProductGallery'
+import ProductContainer from '@/app/user/products/[id]/ProductContainer'
 
 
 async function fetchUrl<T>(url: string, options: RequestInit = {}): Promise<T> {
@@ -17,7 +16,6 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
 
     const paramId = await params;
     const id = paramId.id;
-    const controller = new AbortController();
 
     let productDetail: ProductDetailData | null = null;
     let productDetails: ProductDetailsData[] | null = null;
@@ -27,23 +25,20 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
 
         [productDetail, productDetails] = await Promise.all([
             fetchUrl<ProductDetailData>
-                (`${process.env.NEXT_PUBLIC_API_URL}/api/admin/productDetail/${id}`,
-                    { signal: controller.signal }),
+                (`${process.env.NEXT_PUBLIC_API_URL}/api/admin/productDetail/${id}`),
             fetchUrl<ProductDetailsData[]>
-                (`${process.env.NEXT_PUBLIC_API_URL}/api/user/productDetails?id=${id}`,
-                    { signal: controller.signal })
+                (`${process.env.NEXT_PUBLIC_API_URL}/api/user/productDetails?id=${id}`)
         ]);
 
         return (
-            <Product
+            <ProductContainer
                 productDetail={productDetail}
                 productDetails={productDetails}
             />
         );
     }
     catch (error) {
-        if (error instanceof Error)
-            return <HandleFrontError {...error} />
+
     }
 }
 

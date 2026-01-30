@@ -27,7 +27,6 @@ export default function CheckBoxForm<T extends FieldValues>({ props }: Props<T>)
             <label className={labelStyle}>{label}</label>
             {labels.map((label, index) => (
                 <label key={label.id} className={inputStyle}>
-
                     <input
                         type='checkbox'
                         {...register(name)}
