@@ -10,8 +10,12 @@ import toast from 'react-hot-toast';
 import { z } from 'zod';
 import { handleError } from '@/lib/errors';
 
+type Props = {
+    data: ProductCart[]
+}
 
-export default function Cart(data: ProductCart[]) {
+
+export default function Cart({ data }: Props) {
     const [carts, setCarts] = useState<ProductCart[]>([]);
     const [productError, setProductError] = useState<Record<number, ProductErrors[]>>()
     const router = useRouter()

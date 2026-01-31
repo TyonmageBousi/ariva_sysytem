@@ -24,7 +24,7 @@ export default async function UserCart() {
         }
         const data: ProductCart[] = result.data
         return (
-            <Cart {...data} />
+            <Cart data={data} />
         )
     } catch (error) {
         if (error instanceof AppError) {

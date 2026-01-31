@@ -1,6 +1,3 @@
-import { ProductList } from '@/app/types/productList';
-import ProductListPage from '@/app/components/user/productList/productList';
-import HandleFrontError from '@/app/components/error/error'
 import ProductDetails, { ProductDetailsData } from '@/app/components/user/product/ProductDetails'
 
 export default async function TopMainContainer({ titleCss }: { titleCss: string }) {
@@ -21,6 +18,6 @@ export default async function TopMainContainer({ titleCss }: { titleCss: string 
         return <ProductDetails productDetailsData={productDetails} />
     } catch (error) {
         if (error instanceof Error)
-            return <HandleFrontError {...error} />
+            return
     }
 }

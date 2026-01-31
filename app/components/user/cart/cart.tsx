@@ -122,130 +122,189 @@ export default function Cart({ data }: Props) {
         }
     })
     return (
-        <div>
-            <h1>ショッピングカート</h1>
+        <div className="min-h-screen bg-[#07080b] text-white">
+            {/* header */}
+            <div className="mx-auto max-w-5xl px-6 pt-16 pb-10">
+                <p className="text-[11px] tracking-[0.35em] text-white/55">CART</p>
+                <h1 className="mt-3 text-3xl md:text-4xl font-extralight tracking-wide">
+                    ショッピングカート
+                </h1>
+                <p className="mt-3 text-sm text-white/55">
+                    静けさを崩さずに、必要な情報だけを。
+                </p>
+            </div>
+
             {carts.length === 0 ? (
-                <div>カートは空です</div>
+                <div className="mx-auto max-w-5xl px-6 pb-20">
+                    <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-10 text-white/70">
+                        カートは空です
+                    </div>
+                </div>
             ) : (
-                <div className="min-h-screen bg-gray-50 p-6">
-                    <div className="max-w-4xl mx-auto">
-                        <h2 className="text-3xl font-bold text-gray-800 mb-8">カート商品一覧</h2>
+                <div className="mx-auto max-w-5xl px-6 pb-24">
+                    <div className="grid gap-10 lg:grid-cols-[1fr_360px]">
+
                         <div className="space-y-4">
                             {carts.map((cart) => {
                                 const errors = productError ? productError[cart.productId] : [];
                                 const hasErrors = errors.length > 0;
+
                                 const zodError = zodErrors ? zodErrors[cart.id] : [];
                                 const hasZodErrors = zodError.length > 0;
-                                return (
 
+                                return (
                                     <div
                                         key={cart.id}
-                                        className="bg-white rounded-lg shadow-md p-6 flex items-center gap-6 hover:shadow-lg transition-shadow"
+                                        className={`group rounded-2xl border bg-white/[0.03] backdrop-blur-xl
+                  ${hasErrors || hasZodErrors ? 'border-red-500/30' : 'border-white/10'}
+                `}
                                     >
-                                        {hasZodErrors && (
-                                            zodError.map((error, index) => (
-                                                <p key={index}>{error}</p>
-                                            ))
-                                        )}
-                                        {/* 商品画像 */}
-                                        <img
-                                            src={cart.image}
-                                            alt={cart.name}
-                                            className="w-24 h-24 object-cover rounded-lg"
-                                        />
+                                        {(hasZodErrors || hasErrors) && (
+                                            <div className="border-b border-white/10 px-5 py-4">
+                                                <div className="space-y-2">
+                                                    {hasZodErrors &&
+                                                        zodError.map((e, i) => (
+                                                            <p key={i} className="text-sm text-red-200/90">
+                                                                {e}
+                                                            </p>
+                                                        ))}
 
-                                        {/* 商品情報 */}
-                                        <div className="flex-1">
-                                            <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                                                {cart.name}
-                                            </h3>
-                                            <p className="text-2xl font-bold text-blue-600">
-                                                ¥{cart.price.toLocaleString()}
-                                            </p>
-                                            {/* エラー表示 */}
-                                            {hasErrors && (
-                                                <div className='mt-3 space-y-2'>
-                                                    {errors.map((error, index) => (
-                                                        <div key={index} className='bg-red-50 border-l-4 border-red-500 p-3 rounded'>
-                                                            {error.type === 'STOCK_ERROR' && (
-                                                                <div className='text-sm text-red-700'>
-                                                                    <p className='font-semibold'>⚠️ 在庫不足</p>
-                                                                    <p>リクエスト: {(error as StockError).requested}個 / 在庫: {(error as StockError).stock}個</p>
-                                                                </div>
-                                                            )}
-                                                            {error.type === 'PRICE_ERROR' && (
-                                                                <div className='text-sm text-red-700'>
-                                                                    <p className='font-semibold'>⚠️ 価格変更</p>
-                                                                    <p>カート内: ¥{(error as PriceError).price.toLocaleString()} → 現在: ¥{(error as PriceError).productPrice.toLocaleString()}</p>
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    ))}
+                                                    {hasErrors &&
+                                                        errors.map((error, index) => (
+                                                            <div
+                                                                key={index}
+                                                                className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3"
+                                                            >
+                                                                {error.type === 'STOCK_ERROR' && (
+                                                                    <div className="text-sm text-red-100">
+                                                                        <p className="font-medium tracking-wide">在庫不足</p>
+                                                                        <p className="mt-1 text-red-100/80">
+                                                                            リクエスト: {(error as StockError).requested} / 在庫: {(error as StockError).stock}
+                                                                        </p>
+                                                                    </div>
+                                                                )}
+                                                                {error.type === 'PRICE_ERROR' && (
+                                                                    <div className="text-sm text-red-100">
+                                                                        <p className="font-medium tracking-wide">価格変更</p>
+                                                                        <p className="mt-1 text-red-100/80">
+                                                                            カート内: ¥{(error as PriceError).price.toLocaleString()}
+                                                                            {' '}→ 現在: ¥{(error as PriceError).productPrice.toLocaleString()}
+                                                                        </p>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        ))}
                                                 </div>
-                                            )}
-                                        </div>
+                                            </div>
+                                        )}
 
-                                        {/* 数量調整 */}
-                                        <div className="flex items-center gap-3">
-                                            <button
-                                                onClick={() => decreaseQuantity(cart.id)}
-                                                disabled={cart.quantity <= 1 || hasErrors}
-                                                className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transition-colors"
-                                            >
-                                                <Minus size={16} />
-                                            </button>
-                                            <span className="text-2xl font-bold text-gray-800 w-12 text-center">
-                                                {cart.quantity}
-                                            </span>
-                                            <button
-                                                onClick={() => increaseQuantity(cart.id)}
-                                                disabled={hasErrors}
-                                                className="w-8 h-8 rounded-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center transition-colors disabled:opacity-50"
-                                            >
-                                                <Plus size={16} />
-                                            </button>
-                                        </div>
+                                        <div className="flex gap-5 px-5 py-5">
+                                            {/* image */}
+                                            <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-white/10 bg-black/30">
+                                                <img
+                                                    src={cart.image}
+                                                    alt={cart.name}
+                                                    className="h-full w-full object-cover opacity-[0.92] transition duration-700 group-hover:scale-[1.03]"
+                                                />
+                                            </div>
 
-                                        {/* 小計 */}
-                                        <div className="text-right min-w-[120px]">
-                                            <p className="text-sm text-gray-500 mb-1">小計</p>
-                                            <p className="text-2xl font-bold text-gray-800">
-                                                ¥{(cart.price * cart.quantity).toLocaleString()}
-                                            </p>
-                                        </div>
+                                            <div className="min-w-0 flex-1">
+                                                <div className="flex items-start justify-between gap-4">
+                                                    <div className="min-w-0">
+                                                        <p className="truncate text-[15px] font-light tracking-wide">
+                                                            {cart.name}
+                                                        </p>
+                                                        <p className="mt-2 text-sm text-white/55">
+                                                            単価 <span className="text-white/80">¥{cart.price.toLocaleString()}</span>
+                                                        </p>
+                                                    </div>
 
-                                        {/* 削除ボタン */}
-                                        <button
-                                            onClick={() => removeItem(cart.id)}
-                                            className="ml-4 p-2 rounded-full hover:bg-red-100 text-red-600 transition-colors"
-                                            title="削除"
-                                        >
-                                            <Trash2 size={20} />
-                                        </button>
+                                                    <button
+                                                        onClick={() => removeItem(cart.id)}
+                                                        className="rounded-full border border-white/10 bg-white/[0.02] p-2 text-white/65
+                                   transition hover:border-white/20 hover:bg-white/[0.05] hover:text-white"
+                                                        title="削除"
+                                                    >
+                                                        <Trash2 size={18} />
+                                                    </button>
+                                                </div>
+
+                                                <div className="mt-5 flex items-center justify-between gap-4">
+
+                                                    <div className="flex items-center gap-3 rounded-full border border-white/10 bg-white/[0.02] px-3 py-2">
+                                                        <button
+                                                            onClick={() => decreaseQuantity(cart.id)}
+                                                            disabled={cart.quantity <= 1 || hasErrors}
+                                                            className="h-8 w-8 rounded-full border border-white/10 bg-black/30
+                                     text-white/70 transition hover:bg-white/[0.05]
+                                     disabled:opacity-40 disabled:cursor-not-allowed"
+                                                        >
+                                                            <div className="flex items-center justify-center">
+                                                                <Minus size={14} />
+                                                            </div>
+                                                        </button>
+
+                                                        <span className="w-10 text-center text-sm font-light tracking-widest text-white/85">
+                                                            {cart.quantity}
+                                                        </span>
+
+                                                        <button
+                                                            onClick={() => increaseQuantity(cart.id)}
+                                                            disabled={hasErrors}
+                                                            className="h-8 w-8 rounded-full border border-white/10 bg-white/[0.06]
+                                     text-white transition hover:bg-white/[0.10]
+                                     disabled:opacity-40 disabled:cursor-not-allowed"
+                                                        >
+                                                            <div className="flex items-center justify-center">
+                                                                <Plus size={14} />
+                                                            </div>
+                                                        </button>
+                                                    </div>
+
+                                                    <div className="text-right">
+                                                        <p className="text-[11px] tracking-[0.25em] text-white/45">SUBTOTAL</p>
+                                                        <p className="mt-1 text-lg font-light tracking-wide text-white/90">
+                                                            ¥{(cart.price * cart.quantity).toLocaleString()}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 );
                             })}
                         </div>
 
-                        {/* 合計金額 */}
-                        <div className="mt-8 bg-white rounded-lg shadow-md p-6">
-                            <div className="flex justify-between items-center">
-                                <span className="text-xl font-semibold text-gray-700">合計金額</span>
-                                <span className="text-3xl font-bold text-blue-600">
+                        <aside className="h-fit rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-6">
+                            <p className="text-[11px] tracking-[0.35em] text-white/55">SUMMARY</p>
+
+                            <div className="mt-5 flex items-end justify-between">
+                                <span className="text-sm text-white/60">合計金額</span>
+                                <span className="text-2xl font-light tracking-wide text-white">
                                     ¥{total.toLocaleString()}
                                 </span>
                             </div>
+
+                            <div className="mt-5 h-px w-full bg-white/10" />
+
                             <button
                                 onClick={() => settlement()}
-                                className="w-full mt-6 bg-blue-600 text-white py-4 rounded-lg font-bold text-lg hover:bg-blue-700 transition-colors"
+                                className="mt-6 w-full rounded-xl border border-white/10 bg-white/[0.06] py-4
+                       text-sm tracking-[0.18em] uppercase text-white/90
+                       transition hover:bg-white/[0.10] hover:border-white/20"
                             >
                                 購入手続きへ進む
                             </button>
-                        </div>
+
+                            <p className="mt-4 text-xs leading-relaxed text-white/45">
+                                在庫・価格は購入手続き時点で確定します。
+                            </p>
+                        </aside>
                     </div>
                 </div>
             )}
         </div>
+
     )
 
 
