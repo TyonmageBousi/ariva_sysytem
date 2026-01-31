@@ -17,9 +17,9 @@ async function main() {
 
 
         await db.insert(categories).values([
-            { name: "NEW", sortOrder: 1, isActive: true  },
-            { name: "ギフト", sortOrder: 2, isActive: true  },
-            { name: "期間限定", sortOrder: 3, isActive: true  },
+            { name: "NEW", sortOrder: 1 },
+            { name: "ギフト", sortOrder: 2, },
+            { name: "期間限定", sortOrder: 3, },
         ]);
         console.log("🌱 categories seeded!");
     } finally {

@@ -15,10 +15,10 @@ export const NewAccountSchema = z.object({
     .trim(),
 
   birthday: z
-    .date()
+    .date({ message: '有効な日付けを入力してください' })
+    .refine((date) => !isNaN(date.getTime()), { message: "有効な日付を入力してください" })
     .min(new Date("1900-01-01"), "1900年以降の日付を入力してください")
     .max(new Date(), "未来の日付は選択できません"),
-
   password: z
     .string()
     .min(8, "8文字以上で入力してください")
@@ -27,13 +27,13 @@ export const NewAccountSchema = z.object({
   confirmPassword: z
     .string()
     .min(1, "確認用パスワードを入力してください"),
-
 })
+
   .extend(AddressSchema.shape)
-  
+
   .refine((v) => v.password === v.confirmPassword, {
     path: ["confirmPassword"],
     message: "パスワードが一致しません",
-  });
+  })
 
 export type NewAccountValues = z.infer<typeof NewAccountSchema>;

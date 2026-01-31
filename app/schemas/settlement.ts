@@ -12,4 +12,7 @@ export const settlementSchema = z.object({
     return inputYear >= currentYear && currentYear + 10 >= inputYear;
 }, '有効期限が正しくありません。')
 
+export const cashSettlementSchema = z.object({})
+
+
 export type SettlementSchema = z.infer<typeof settlementSchema>; 

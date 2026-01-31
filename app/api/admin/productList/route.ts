@@ -1,49 +1,66 @@
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
-import { handleError, AppError } from '@/lib/errors'
+import { handleError, } from '@/lib/errors'
+import { NextRequest } from 'next/server';
 
-export async function GET() {
-    try {
-        const products = await db.query.products.findMany({
-            columns: {
-                skuCode: true,
-                name: true,
-                price: true,
-                discountPrice: true,
-                status: true,
-                stock: true,
-                updatedAt: true,
-            },
+export const productGetQuery = {
+    columns: {
+        id: true,
+        skuCode: true,
+        name: true,
+        price: true,
+        discountPrice: true,
+        status: true,
+        stock: true,
+        description: true,
+        updatedAt: true,
+    },
+    with: {
+        productCategories: {
             with: {
-                productCategories: {
-                    with: {
-                        category: {
-                            columns: {
-                                name: true
-                            }
-                        }
-                    }
-                },
-                productColors: {
-                    with: {
-                        colorCategory: {
-                            columns: {
-                                name: true
-                            }
-                        }
-                    }
-                },
-            },
-        });
-        const data = products.map((product) => {
-            const categoriesName = product.productCategories.map((category) => category.category.name)
-            const colorName = product.productColors.map((colorCategory) => colorCategory.colorCategory.name);
-            return {
-                ...product,
-                productCategories: categoriesName,
-                productColors: colorName
+                category: {
+                    columns: { id: true }
+                }
             }
-        });
+        },
+        productColors: {
+            with: {
+                colorCategory: {
+                    columns: { id: true }
+                }
+            }
+        },
+        productImages: {
+            columns: { filePath: true },
+        }
+    },
+} as const;
+
+
+export async function GET(request: NextRequest) {
+    try {
+        const productList = await db.query.products.findMany(productGetQuery)
+
+        if (productList.length === 0) {
+            throw new Error('')
+        }
+        const data = productList.map((product) => {
+            const categoriesName = product.productCategories.map(
+                (category) => String(category.category.id)
+            );
+            const colorName = product.productColors.map(
+                (colorCategory) => String(colorCategory.colorCategory.id)
+            );
+            const imageUrl = product.productImages.map(
+                (productImage) =>
+                    `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/${productImage.filePath}`
+            );
+            return ({
+                ...product,
+                productImages: imageUrl
+            })
+        })
+
 
         return NextResponse.json(
             {

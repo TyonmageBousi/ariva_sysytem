@@ -1,12 +1,11 @@
 import { sql } from 'drizzle-orm';
 import { products, productImages, productCategories, productColors } from '@/lib/schema'
 import { NextResponse } from 'next/server';
-import { db, client, } from '@/lib/db'
-import { AppError, handleError } from '@/lib/errors'
+import { db} from '@/lib/db'
+import {  handleError } from '@/lib/errors'
 
 
 export async function GET() {
-
     try {
         const result = await db.select({
             id: products.id,
@@ -37,8 +36,5 @@ export async function GET() {
         return NextResponse.json({ success: true, result: result }, { status: 200 })
     } catch (error) {
         return handleError(error)
-    } finally {
-        await client.end();
-    }
-
+    } 
 }

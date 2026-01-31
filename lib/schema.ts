@@ -112,7 +112,7 @@ export const orderItems = pgTable('order_items', {
     orderId: integer('order_id').notNull(),
     productId: integer('product_id').notNull(),
     quantity: integer('quantity').notNull(),
-    name: text('productName').notNull(),
+    productName: text('product_name').notNull(),
     price: integer('price').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
@@ -139,7 +139,7 @@ export const temporaryOrderItems = pgTable('temporary_order_items', {
     orderId: integer('order_id').notNull(),
     productId: integer('product_id').notNull(),
     quantity: integer('quantity').notNull(),
-    name: text('product_name').notNull(),
+    productName: text('product_name').notNull(),
     price: integer('price').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
@@ -228,3 +228,19 @@ export const orderItemsRelations = relations(orderItems, ({ one }) => ({
         references: [products.id]
     })
 }))
+
+
+export const temporaryOrdersRelations = relations(temporaryOrders, ({ many }) => ({
+    temporaryOrderItems: many(temporaryOrderItems)
+}));
+
+export const temporaryOrderItemsRelations = relations(temporaryOrderItems, ({ one }) => ({
+    temporaryOrder: one(temporaryOrders, {
+        fields: [temporaryOrderItems.orderId],
+        references: [temporaryOrders.id]
+    }),
+    product: one(products, {
+        fields: [temporaryOrderItems.productId],
+        references: [products.id]
+    })
+}));

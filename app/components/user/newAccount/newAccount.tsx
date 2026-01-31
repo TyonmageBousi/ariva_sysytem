@@ -10,13 +10,19 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import AddressContainer from '@/app/components/user/address/AddressContainer';
 import { handleError } from '@/lib/errors';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
+import toast, { Toaster } from 'react-hot-toast';
 
 
 export default function NewAccount() {
-    const { handleSubmit, register, formState: { errors } }
+
+    const { handleSubmit, register, formState: { errors }, watch }
         = useForm<NewAccountValues>({
             resolver: zodResolver(NewAccountSchema),
         });
+
+    const prefecture = watch('prefecture');
+
 
     const nameProps: FieldTextProps<NewAccountValues> = {
         label: '名前',
@@ -85,22 +91,31 @@ export default function NewAccount() {
 
     const onSubmit = async (data: NewAccountValues) => {
         try {
-            const response = await fetch('http://localhost:3000/api/newAccount', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/newAccountRegister`, {
                 method: 'POST',
                 body: JSON.stringify(data)
             });
 
             const result = await response.json();
-            if (!response.ok) {
+
+            if (!result.ok || !result.success) {
                 handleError(result)
             }
-            if (!result.success) {
-                handleError(result);
-                return;
-            }
+
             if (result.success) {
-                router.push('');
-                return
+                const result = await signIn('credentials', {
+                    email: data.email,
+                    password: data.password,
+                    redirect: false,
+                });
+                if (result.ok) {
+                    toast.success('ログインに成功しました');
+                    router.push(`${process.env.NEXT_PUBLIC_API_URL}`)
+                    return;
+                } else {
+                    toast.error('自動ログインに失敗しました。ログインページからログインしてください。');
+                    router.push(`${process.env.NEXT_PUBLIC_API_URL}/page/user/login`);
+                }
             }
             throw new Error('予期しないエラーが発生しました')
         }

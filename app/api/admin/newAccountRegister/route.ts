@@ -3,32 +3,39 @@ import { eq, sql } from 'drizzle-orm';
 import { NewAccountSchema } from '@/app/schemas/newAccount';
 import { users } from '@/lib/schema';
 import bcrypt from 'bcryptjs';
-import { AppError, handleError, ValidationError } from '@/lib/errors'
-import { ZodError } from 'zod';
+import { AppError, handleError } from '@/lib/errors'
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
     try {
         const data = await request.json();
-        const ValidateData = NewAccountSchema.parse(data)
+
+        const date = new Date(data.birthday)
+
+        const ValidateData = NewAccountSchema.parse({
+            ...data,
+            birthday: date
+        })
+
         const { name, email, password, birthday, phone, postalCode, prefecture, city, address1, address2 } = ValidateData;
 
         const alreadyUser = await db.select().from(users)
             .where(eq(users.email, email))
+        console.log(alreadyUser)
 
-        if (alreadyUser) {
+        if (alreadyUser.length !== 0) {
             throw new AppError(
                 {
                     message: 'そのメールアドレスは既に登録されています。',
                     statusCode: 400,
-                    errorType: 'ALREADY_USER'
+                    errorType: 'VALIDATION_ERROR'
                 }
             );
         };
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const user = {
+        await db.insert(users).values({
             name,
             email,
             password: hashedPassword,
@@ -39,8 +46,8 @@ export async function POST(request: Request) {
             city,
             address1,
             address2: address2 ?? ''
-        };
-        await db.insert(users).values(user)
+        })
+
 
         return NextResponse.json(
             {
@@ -50,8 +57,8 @@ export async function POST(request: Request) {
         );
     }
     catch (error) {
-        if (error instanceof ZodError) {
-            return handleError(new ValidationError(error.issues));
+        if (error instanceof AppError) {
+            return handleError(error);
         }
         return handleError(error);
 
