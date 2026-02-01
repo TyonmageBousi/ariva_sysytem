@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form';
 import { AddressSchema, AddressValues } from '@/app/schemas/address'
-import AddressContainer from '@/app/user/AddressContainer'
+import AddressContainer from '@/app/components/user/address/AddressContainer'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useErrorHandler } from '@/app/components/public/error/error';
 import { useRouter } from 'next/navigation';

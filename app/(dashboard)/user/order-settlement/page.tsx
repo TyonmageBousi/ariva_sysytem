@@ -1,4 +1,4 @@
-import Settlement from "@/app/user/settlement/settlement"
+import Settlement from "@/app/components/settlement/settlement"
 
 export default function SettlementPage() {
     return (

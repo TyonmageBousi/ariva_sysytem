@@ -1,4 +1,4 @@
-import Cart from '@/app/components/user/cart/cart'
+import Cart from '@/app/user/cart/cart'
 import HandleFrontError from '@/app/components/error/error';
 import { ProductCart } from '@/app/types/productCart'
 import { AppError } from '@/lib/errors';

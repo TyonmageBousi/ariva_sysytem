@@ -1,5 +1,5 @@
 import { AddressValues } from '@/app/schemas/address'
-import Address from '@/app/components/admin/address/address'
+import Address from '@/app/user/address/Address'
 import HandleFrontError from '@/app/components/error/error';
 import { db, loginJudgment } from '@/lib/db'
 import { users } from '@/lib/schema';

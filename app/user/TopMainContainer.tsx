@@ -1,4 +1,4 @@
-import TopMainSlide from '@/app/components/user/TopMainSlide'
+import TopMainSlide from '@/app/user/TopMainSlide'
 import { getPublicImages, Images } from '@/lib/getPublicFiles';
 
 export type Data = Images & {

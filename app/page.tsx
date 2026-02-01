@@ -1,8 +1,8 @@
 import Header from './components/user/Header';
-import OurProductContainer from '@/app/components/user/main/OurProductContainer';
-import TopMainContainer from '@/app/components/user/main/TopMainContainer';
+import OurProductContainer from '@/app/user/OurProductContainer';
+import TopMainContainer from '@/app/user/TopMainContainer';
 import ProductDetails, { ProductDetailsData } from '@/app/components/user/product/ProductDetails'
-import OtherProduct from '@/app/components/user/OtherProduct';
+import OtherProduct from '@/app/user/OtherProduct';
 import Footer from '@/app/components/user/Footer';
 
 export default async function Index() {
