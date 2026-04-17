@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-type Menu = {
+export type Menu = {
     label: string;
     href: string;
 };

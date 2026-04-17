@@ -2,30 +2,26 @@
 
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import { User, ShoppingCart, Share2 } from 'lucide-react';
+import { User, ShoppingCart } from 'lucide-react';
 import Logo from '@/components/layouts/Logo'
-import HumbergerMenu from '@/components/layouts/HumbergerMenu'
+import HumbergerMenu, { Menu } from '@/components/layouts/HumbergerMenu'
 import { useState, useEffect } from "react"
- 
-type Menu = {
-    label: string;
-    href: string;
-};
+
 
 export default function Header() {
     const { data: session } = useSession();
-
     const [winWindth, setWinWidth] = useState(0);
 
     useEffect(() => {
-        const getWinWidh = () => {
+        const getWinWidth = () => {
             setWinWidth(window.innerWidth)
         };
 
-        window.addEventListener("resize", getWinWidh)
-        getWinWidh();
+        window.addEventListener("resize", getWinWidth);
 
-        return () => window.removeEventListener("resize", getWinWidh);
+        getWinWidth();
+
+        return () => window.removeEventListener("resize", getWinWidth);
     }, []);
 
     const menu: Menu[] = [
