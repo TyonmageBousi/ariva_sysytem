@@ -13,7 +13,7 @@ export type Props = {
 export default function HumbergerMenu({ menu, css }: Props) {
 
     const [isOpen, setIsOpen] = useState(false)
-    const layout = "block w-full h-[2px] bg-white transition-all duration-all duration-300 z-[20]"
+    const layout = "block w-full h-[2px] bg-white transition-all duration-all duration-300 z-[40]"
 
     return (
         <>
@@ -37,7 +37,7 @@ export default function HumbergerMenu({ menu, css }: Props) {
                 `}
                 />
             </button >
-            <nav className={`transition-all duration-300 ease-in-out inset-0 fixed bg-black z-[10]
+            <nav className={`transition-all duration-300 ease-in-out inset-0 fixed bg-black z-[30]
             ${isOpen ? "opacity-70 pointer-events-auto" : "opacity-0 pointer-events-none"}
             `}>
                 <ul className="transition-all duration-500 text-white">

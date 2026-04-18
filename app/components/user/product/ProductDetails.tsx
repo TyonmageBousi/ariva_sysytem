@@ -30,20 +30,14 @@ export default function ProductDetails({ productDetailsData }: Props) {
 
     const handleCloseModal = () => {
         setIsModalOpen(false);
-        setTimeout(() => setSelected(null), 300); 
+        setTimeout(() => setSelected(null), 300);
     };
 
+
     return (
-        <section
-            className="relative z-50 min-h-screen text-white pt-12"
-            style={{
-                background:
-                    'radial-gradient(1200px circle at 50% 18%, rgba(255,220,170,0.10), rgba(0,0,0,0.0) 45%), radial-gradient(circle at 50% 60%, rgba(255,255,255,0.04) 0%, rgba(0,0,0,0.92) 58%, rgba(0,0,0,1) 100%)'
+        <section className="relative z-50 min-h-screen text-white pt-12">
 
-            }}
-        >
-
-            <div className="relative mx-auto  max-w-7xl px-6 pt-32 pb-16 z-50 bg-gradient-to-br from-[#1a1d22] via-[#0f1116] to-[#05070c]">
+            <div className="relative mx-auto  max-w-7xl px-6 pt-32 pb-16 z-50 ">
                 {/* ヘッダー */}
                 <header className="text-center">
                     <p className="text-[11px] font-light tracking-[0.45em] text-white/55 uppercase">
@@ -51,7 +45,7 @@ export default function ProductDetails({ productDetailsData }: Props) {
                     </p>
 
                     <h1 className="mt-5 text-[clamp(28px,3.3vw,44px)] font-extralight tracking-wide text-white">
-                        白十字 商品ギャラリー
+                        残十字 商品ギャラリー
                     </h1>
 
                     <p className="mt-4 text-sm font-light leading-relaxed text-white/55">
@@ -62,37 +56,45 @@ export default function ProductDetails({ productDetailsData }: Props) {
                 </header>
 
                 <div className="relative mt-14 h-[320px] overflow-hidden">
-                    <div className="pointer-events-none absolute inset-y-0 left-0 w-28 bg-gradient-to-r from-black to-transparent z-10" />
-                    <div className="pointer-events-none absolute inset-y-0 right-0 w-28 bg-gradient-to-l from-black to-transparent z-10" />
+                    <div className="pointer-events-none absolute inset-y-0 left-0 w-10 md:w-28 bg-gradient-to-r from-black to-transparent z-10" />
+                    <div className="pointer-events-none absolute inset-y-0 right-0 w-10 md:w-28 bg-gradient-to-l from-black to-transparent z-10" />
 
+                    {/* 商品カード */}
                     <div className="slider-container absolute flex h-full items-center gap-8">
                         {[...productDetailsData, ...productDetailsData].map((product, index) => (
                             <button
                                 key={`${product.id}-${index}`}
                                 type="button"
                                 onClick={() => handleProductClick(product)}
-                                className="product-card group relative h-[280px] w-[340px] shrink-0 overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[0_30px_120px_rgba(0,0,0,0.65)] transition-transform duration-300 hover:scale-[1.03] hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-white/20"
+                                className="product-card group relative h-[280px] w-[300px] aspect-squre md:w-[340px] shrink-0 overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[0_30px_120px_rgba(0,0,0,0.65)] transition-transform duration-300 hover:scale-[1.03] hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-white/20"
                             >
+
+                                {/* 商品画像    */}
                                 <img
                                     src={product.productImages[0]}
                                     alt={product.name}
                                     className="h-full w-full object-cover opacity-[0.95] transition-transform duration-700 group-hover:scale-[1.02]"
                                 />
 
-                                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(900px_circle_at_50%_20%,rgba(255,255,255,0.08),rgba(0,0,0,0.0)_55%)]" />
-                                <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.100),rgba(0,0,0,0.00)_55%)]" />
-
+                                {/* 商品名 */}
                                 <div className="absolute inset-x-0 bottom-0 p-5">
                                     <h3 className="mt-2 text-lg font-light tracking-wide text-white">
                                         {product.name}
                                     </h3>
 
+                                    {/* 商品価格 */}
                                     <div className="mt-3 flex items-end justify-between">
-                                        <span className="text-sm font-light text-white/85">Price</span>
-                                        <span className="text-xl font-extralight tracking-wide text-amber-200/90">
-                                            {product.price}
-                                        </span>
+                                        <span className="text-xl font-light text-white/85">Price</span>
+                                        <div>
+                                            {product.discountPrice && (
+                                                <span className='text-xl font-extralight tracking-wide text-red-400 pr-2'>割引後：{product.discountPrice}</span>
+                                            )}
+                                            <span className={`text-lg font-extralight tracking-wide   ${product.discountPrice ? "line-through decoration-red-400" : "no-underline"}`}>
+                                                {product.price}
+                                            </span>
+                                        </div>
                                     </div>
+
 
                                     <div className="mt-4 h-px w-full bg-white/10" />
                                 </div>
@@ -103,17 +105,15 @@ export default function ProductDetails({ productDetailsData }: Props) {
                 <div className="absolute bottom-0 left-0 w-full h-[10vh] z-50 bg-gradient-to-b from-transparent to-black pointer-events-none" />
             </div>
 
+
             {selected && (
                 <div
-                    className={`
-            fixed inset-0 z-[200] flex items-center justify-center bg-black/85 p-6 backdrop-blur-2xl transition-opacity duration-300
-            ${isModalOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}
-        `}
+                    className={`fixed inset-0 z-[200] flex items-center justify-center bg-black/85 p-6 backdrop-blur-2xl transition-opacity duration-300
+                                            ${isModalOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}  `}
                     onClick={handleCloseModal}
                 >
                     <div
-                        className={`
-            w-full max-w-5xl overflow-hidden rounded-[32px] border border-white/10 bg-black/60 backdrop-blur-xl shadow-[0_30px_180px_rgba(0,0,0,0.80)]
+                        className={`w-full max-w-5xl overflow-hidden rounded-[32px] border border-white/10 bg-black/60 backdrop-blur-xl shadow-[0_30px_180px_rgba(0,0,0,0.80)]
             transition-all duration-300
             ${isModalOpen ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'}
             `}
@@ -140,16 +140,19 @@ export default function ProductDetails({ productDetailsData }: Props) {
                                 </h2>
 
                                 <p className="mt-6 text-sm font-light leading-relaxed text-white/55">
-                                    厳選されたカカオ豆を使用した、こだわりのチョコレート。
-                                    <br />
-                                    余韻まで含めて、体験になるように設計しました。
+                                    {selected.description}
                                 </p>
 
                                 <div className="mt-10 flex items-end justify-between">
-                                    <span className="text-sm font-light text-white/55">Price</span>
-                                    <span className="text-[clamp(28px,3.2vw,54px)] font-extralight tracking-wide text-amber-200/95">
-                                        {selected.price}
-                                    </span>
+                                    <span className="text-2xl font-light text-white/85">Price</span>
+                                    <div>
+                                        {selected.discountPrice && (
+                                            <span className='text-2xl font-extralight tracking-wide text-red-400 pr-2'>割引後：{selected.discountPrice}</span>
+                                        )}
+                                        <span className={`text-xl font-extralight tracking-wide   ${selected.discountPrice ? "line-through decoration-red-400" : "no-underline"}`}>
+                                            {selected.price}
+                                        </span>
+                                    </div>
                                 </div>
 
                                 <div className="mt-10 h-px w-full bg-white/10" />
