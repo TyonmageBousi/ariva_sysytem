@@ -1,6 +1,6 @@
 import Header from './components/user/Header';
 import OurProductContainer from '@/app/components/user/main/OurProductContainer';
-import TopMainContainer from '@/app/components/user/main/TopMainContainer';
+import TopMainContainer from '@/app/components/user/main/TopSection/TopMainContainer';
 import ProductDetails, { ProductDetailsData } from '@/app/components/user/product/ProductDetails'
 import OtherProduct from '@/app/components/user/OtherProduct';
 import Footer from '@/app/components/user/Footer';
@@ -19,8 +19,8 @@ export default async function Index() {
       <div className='w-full'>
      {/* <p className='text-black'>こんにちは</p> */}
         <Header />
-        {/* <TopMainContainer />
-        <ProductDetails productDetailsData={result.data} />
+        <TopMainContainer />
+        {/* <ProductDetails productDetailsData={result.data} />
         <OurProductContainer titleCss={titleCss} />
         <OtherProduct />
         <Footer />  */}

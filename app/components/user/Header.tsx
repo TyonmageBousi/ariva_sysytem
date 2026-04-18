@@ -38,7 +38,7 @@ export default function Header() {
 
     return (
         <>
-            <div className="mx-auto max-w-8xl px-3">
+            <div className="mx-auto max-w-8xl px-3 h-[10vh]">
                 <header className="h-[70px] md:h-[100px] flex items-center justify-between">
                     {/* タイトル */}
                     <Link href="/" className="group">

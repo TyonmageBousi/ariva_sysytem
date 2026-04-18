@@ -9,7 +9,6 @@ export type Images = {
 export const getPublicImages = (imagePath: string) => {
     const dir = path.join(process.cwd(), "public", imagePath);
     const images: Images[] = [];
-    console.log(dir)
     fs.readdirSync(dir)
         .sort((a, b) => a.localeCompare(b))
         .forEach((image) => {
@@ -21,7 +20,6 @@ export const getPublicImages = (imagePath: string) => {
 
                 }
                 images.push(temImage);
-
             }
         });
     return images
