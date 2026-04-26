@@ -42,12 +42,11 @@ export default async function Index() {
 
     return (
       <div className='w-full'>
-        {/* <p className='text-black'>こんにちは</p> */}
         <Header />
         <TopMainContainer />
         <ProductDetails productDetailsData={data} />
-        {/* <OurProductContainer titleCss={titleCss} />
-        <OtherProduct />
+        <OurProductContainer titleCss={titleCss} />
+        {/* <OtherProduct />
         <Footer />  */}
       </div>
     )
