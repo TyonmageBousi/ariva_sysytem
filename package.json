@@ -2,6 +2,7 @@
   "name": "ariva_system",
   "version": "0.1.0",
   "private": true,
+  "homepage": ".",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
@@ -19,10 +20,11 @@
     "@hookform/resolvers": "^5.2.2",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.91.1",
+    "@tailwindcss/cli": "^4.2.2",
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.2",
     "dotenv": "^17.2.1",
-    "drizzle-orm": "^0.44.5",
+    "drizzle-orm": "^0.44.7",
     "framer-motion": "^12.23.11",
     "lucide-react": "^0.536.0",
     "next": "15.3.5",
@@ -44,7 +46,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "drizzle-kit": "^0.31.4",
-    "tailwindcss": "^4",
+    "tailwindcss": "^4.2.2",
     "tsx": "^4.20.5",
     "typescript": "^5"
   }

@@ -14,7 +14,7 @@ import { ProductErrors, StockError } from '@/app/api/user/settlement/route'
 
 export const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!
 );
 
 declare global {
@@ -26,13 +26,13 @@ function createDbClient() {
     return global.__pgClient;
   }
 
-  if (!process.env.DATABASE_URL_POOLING) {
-    throw new Error('DATABASE_URL_POOLING is not defined');
+  if (!process.env.DATABASE_URL) {
+    throw new Error('DATABASE_URL is not defined');
   }
 
   console.log('🔵 新しいDB接続プールを作成');
 
-  const client = postgres(process.env.DATABASE_URL_POOLING, {
+  const client = postgres(process.env.DATABASE_URL, {
     prepare: false,
     max: 10,
     idle_timeout: 60 * 10,
